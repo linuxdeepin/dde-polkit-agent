@@ -37,5 +37,5 @@ target_link_libraries(${PROJECT_NAME}
 
 install(TARGETS ${PROJECT_NAME}
         DESTINATION /usr/lib/polkit-1-dde/)
-install(FILES dde-polkit-agent.desktop
+install(FILES polkit-dde-authentication-agent-1.desktop
         DESTINATION /etc/xdg/autostart/)
