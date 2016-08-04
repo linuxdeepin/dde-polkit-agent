@@ -34,3 +34,8 @@ target_link_libraries(${PROJECT_NAME}
         ${POLKITQT-1_LIBRARIES}
         ${DTKBASE_LIBRARIES}
         ${DTKWIDGET_LIBRARIES})
+
+install(TARGETS ${PROJECT_NAME}
+        DESTINATION /usr/lib/polkit-1-dde/)
+install(FILES dde-polkit-agent.desktop
+        DESTINATION /etc/xdg/autostart/)
