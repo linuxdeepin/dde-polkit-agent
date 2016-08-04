@@ -3,12 +3,10 @@
 #include <QProcess>
 #include <QPainter>
 #include <QStandardItemModel>
-#include <QDebug>
 #include <QDesktopServices>
 #include <QDialogButtonBox>
 #include <QVBoxLayout>
 #include <QUrl>
-#include <QLabel>
 
 #include <PolkitQt1/Authority>
 #include <PolkitQt1/Details>
@@ -184,11 +182,13 @@ void AuthDialog::setupUI()
         }
     });
 
+    QPixmap icon;
     if (!m_iconName.isEmpty() && QIcon::hasThemeIcon(m_iconName)) {
-        setIconPixmap(QIcon::fromTheme(m_iconName).pixmap(48, 48));
+        icon = QIcon::fromTheme(m_iconName).pixmap(48, 48);
     } else {
-        setIconPixmap(QIcon::fromTheme("deepin-movie").pixmap(48, 48));
+        icon = QPixmap(":/images/default.svg");
     }
+    setIconPixmap(icon);
 
     m_adminsCombo->setFixedHeight(24);
     m_adminsCombo->hide();

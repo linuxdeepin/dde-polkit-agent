@@ -24,7 +24,7 @@ include_directories(BEFORE ${DTKBASE_INCLUDE_DIRS})
 include_directories(BEFORE ${DTKWIDGET_INCLUDE_DIRS})
 
 qt5_add_dbus_adaptor(SRC_LIST com.deepin.Polkit1AuthAgent.xml policykitlistener.h PolicyKitListener)
-add_executable(${PROJECT_NAME} ${SRC_LIST})
+add_executable(${PROJECT_NAME} ${SRC_LIST} images.qrc)
 
 target_link_libraries(${PROJECT_NAME}
         Qt5::Core

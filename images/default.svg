@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="64px" height="64px" viewBox="0 0 64 64" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 39.1 (31720) - http://www.bohemiancoding.com/sketch -->
+    <title>gksu</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <rect id="path-1" x="0" y="0" width="380" height="170" rx="4"></rect>
+        <filter x="-50%" y="-50%" width="200%" height="200%" filterUnits="objectBoundingBox" id="filter-2">
+            <feMorphology radius="1" operator="dilate" in="SourceAlpha" result="shadowSpreadOuter1"></feMorphology>
+            <feOffset dx="0" dy="10" in="shadowSpreadOuter1" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="7" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feComposite in="shadowBlurOuter1" in2="SourceAlpha" operator="out" result="shadowBlurOuter1"></feComposite>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.1 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
+        </filter>
+        <mask id="mask-3" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="-1" y="-1" width="382" height="172">
+            <rect x="-1" y="-1" width="382" height="172" fill="white"></rect>
+            <use xlink:href="#path-1" fill="black"></use>
+        </mask>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="97.6283482%" id="linearGradient-4">
+            <stop stop-color="#FFD200" offset="0%"></stop>
+            <stop stop-color="#FFB223" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="对话框" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="授权" transform="translate(-20.000000, -17.000000)">
+            <g id="Rectangle-921">
+                <use fill="black" fill-opacity="1" filter="url(#filter-2)" xlink:href="#path-1"></use>
+                <use fill="#FEFEFF" fill-rule="evenodd" xlink:href="#path-1"></use>
+                <use stroke-opacity="0.1" stroke="#000000" mask="url(#mask-3)" stroke-width="2" xlink:href="#path-1"></use>
+            </g>
+            <g id="notification-network-wireless-full" transform="translate(20.000000, 17.000000)">
+                <image id="Bitmap" x="2.192" y="2.78121739" width="60" height="60" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADwAAAA8CAYAAAA6/NlyAAAABGdBTUEAA1teXP8meAAABQBJREFUaAXlmody2zAQBeP0/v//mV6dW4iLOcKgSVEuJHMzF3QQi3eAJUZXT+7Proap27T3xOuh0pRizvfGrKpzMasGdwY539NoI0/6bEits09UFwPsb/I/Q556oU2j6jJrH75mNucQ8HlMor8Y8kBncJ8jFJD47+S/hrreBkTTOnOx60afVGQOYIB7Gf5q8AyLuj2FVa5VGNifg/8YUjaDfm5SZM+3tcCMy6BAvgl/HQ40CquozzCNpq4JTwoYgIJ/i/z3cOCpR3XMMafSgn/nFtFOYX8VFVRYVO0p2c6zpKySggOto35WfMl8pQ8LX2rA4qgH4Pvwj0NKGVjms19kLzLnYU6eyfweE9rckLNUXgrsw3kgcB8GfxepIUyf+zLmJnIEJ22hFz1/CbAPAwxAVAUYcMazkIcw16HiPejZdcwB+xBgcwhzdhm7aFdnV3FeB9ckOGXCmovMMJ+c8TZgJsIzrCH8UKpOLTxDu/Hc7EJPjSsqTTUCxZk1jLcCm9fLGnGFA/hWaDvmScizg5wRzqk3MUo/trKxhBsmNGs2tIHuWg+YgdTn25gzu0VYoTK0od2F7gEz2HObb2Mn32rquWZ9fCjxg8lovS1wG8pvo7fX/2jgBgusXUdlv3yMlpqB7Uz48icI3+q5HUGkggycZT+SAl+tBUZNVDWUKe/NgMY4wzdU9iJyZ/zoyLeePcICCkvmyKKObl4aCGFgGeBORXZ35sUrC+XCkxUGmPO7t3PbUwM4IvQGTwa2w97VdQNggwUBa1grtTtCB+siu2uTSeBRSLsbqEz+CAYgysKEU75STRtIy05EegSDBVi4ipCqSVorI38UU+XKpsIZ+GgKC01aQho1KQhP+UgGl14vqCMDIx58xSA/upVQDsgC/T8AjwQV2Ld9pEezEdt/CewO3Pq2b8eywyfbtQr74ov0SGENS2Yrf5as7L702rGyLF11Ubi86skKA6z0dD6CAQkXDnwNaUCp5B1Q2YlI926q63styjWkKdDgfzSXRjrs2GBARJhq5BrSNFJJ41FUlkfgQBu+I5bcCdgfkNB5z8axRDh+FwIw5RK1fE9sjTpe9fiWoG3fQ5lQ5vcgn8OBrvdSD5gwB3av77eAQ1Vgv4SjdLUeMI1ZZc95HbThjHfR11jjp3DVLeHMuqeAaVNl+tTvkzRs2FAXSGCBRt0KG/kusB2ABBpH5a1DAwsgoYxzAdezG/liPYUBAxoXmn5bDm3WykXFmVVdyooX2ZP1gG3bC7Sw3MrA3rioBCJdAsyEKK3KW1KatfGZQVhCmRtasSI7ttuA6elAzsLWoFmbf29RVljWSlvX5oA9z0ziBUCdlxj5xzDW0sJySaH2JCwLnQOmD8YkTOaEjwnNGriNvaBU1rVF07QtBWYGdlXorDbwOv3uy1SVv7PCko4+K889/Bxg5spKE1IswhASmvQuTVDA/ASFqvmDhWuYfe65wE6I0gATWqRT4bQWHgCcuQH1i4B/Y/1lfDTVDSc/a2sX5DguLzbN34bwmwp+ZuC3Ldroq0d20oREUTcUWEIYB5INdnMXqxpjqrnwWnFmxvGA+zEUeN06wf0b7jghSTMoYMDi5C8GjTmK+WDLa1PnIQVOB9g8KcBCR7aEI7CopntELOd7YpWqPEhzoZbvInVOUlxI8zzDPq3CwllP34shmUTzwZbvOs3z53z7nAyV822/i8v/ABTIdQtSGU9/AAAAAElFTkSuQmCC"></image>
+                <circle id="Oval" fill="url(#linearGradient-4)" cx="32.018087" cy="31.6073043" r="27.826087"></circle>
+                <g id="ic_verified_user" transform="translate(15.000000, 15.000000)">
+                    <g id="Icon-24px">
+                        <polygon id="Shape" points="0 0 34 0 34 34 0 34"></polygon>
+                        <path d="M17,1.41666667 L4.25,7.08333333 L4.25,15.5833333 C4.25,23.4458333 9.69,30.7983333 17,32.5833333 C24.31,30.7983333 29.75,23.4458333 29.75,15.5833333 L29.75,7.08333333 L17,1.41666667 L17,1.41666667 Z M14.1666667,24.0833333 L8.5,18.4166667 L10.4975,16.4191667 L14.1666667,20.0741667 L23.5025,10.7383333 L25.5,12.75 L14.1666667,24.0833333 L14.1666667,24.0833333 Z" id="Shape" fill="#000000"></path>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
