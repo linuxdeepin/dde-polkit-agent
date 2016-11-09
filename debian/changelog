@@ -1,0 +1,5 @@
+dde-polkit-agent (1.0) unstable; urgency=medium
+
+  * Initial release (Closes: #nnnn)  <nnnn is the bug number of your ITP>
+
+ -- Deepin Packages Builder <packages@deepin.com>  Thu, 04 Aug 2016 15:42:28 +0800
