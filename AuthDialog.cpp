@@ -25,6 +25,9 @@ AuthDialog::AuthDialog(const QString &actionId,
       m_passwordInput(new DPasswordEdit(this)),
       m_tooltip(new ErrorTooltip(tr("Wrong password")))
 {
+    Q_UNUSED(details)
+    Q_UNUSED(parent)
+
     // TODO: associate this dialog with its parent.
     setupUI();
 
@@ -58,6 +61,9 @@ AuthDialog::~AuthDialog()
 
 void AuthDialog::setRequest(const QString &request, bool requiresAdmin)
 {
+    Q_UNUSED(request)
+    Q_UNUSED(requiresAdmin)
+
     /*
     qDebug() << request;
     PolkitQt1::Identity identity = adminUserSelected();
@@ -227,6 +233,10 @@ AuthDetails::AuthDetails(const PolkitQt1::Details &details,
                          QWidget *parent)
     : QWidget(parent)
 {
+    Q_UNUSED(details)
+    Q_UNUSED(actionDescription)
+    Q_UNUSED(appname)
+
     /*
     setupUi(this);
 

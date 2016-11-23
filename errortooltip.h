@@ -14,7 +14,7 @@ class ErrorTooltip : public DArrowRectangle
     Q_OBJECT
 public:
     ErrorTooltip(QString errorMessage);
-    ~ErrorTooltip(){};
+    ~ErrorTooltip(){}
 
     void setMessage(QString message);
 

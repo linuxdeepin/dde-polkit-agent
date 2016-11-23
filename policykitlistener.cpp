@@ -9,7 +9,8 @@
 
 #include "policykitlistener.h"
 #include "AuthDialog.h"
-#include "polkit1authagentadaptor.h"
+
+#include "polkit1authagent_adaptor.h"
 
 PolicyKitListener::PolicyKitListener(QObject *parent)
         : Listener(parent)
