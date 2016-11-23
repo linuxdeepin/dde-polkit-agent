@@ -22,11 +22,11 @@ AuthDialog::AuthDialog(const QString &actionId,
       m_iconName(iconName),
       m_iconLabel(new QLabel(this)),
       m_adminsCombo(new DComboBox(this)),
-      m_passwordInput(new DPasswordEdit(this))
+      m_passwordInput(new DPasswordEdit(this)),
+      m_tooltip(new ErrorTooltip(tr("Wrong password")))
 {
     // TODO: associate this dialog with its parent.
     setupUI();
-
 
     // find action description for actionId
     foreach(const PolkitQt1::ActionDescription &desc, PolkitQt1::Authority::instance()->enumerateActionsSync()) {
@@ -51,6 +51,9 @@ AuthDialog::AuthDialog(const QString &actionId,
 
 AuthDialog::~AuthDialog()
 {
+    qDebug() << "~AuthDialog";
+    m_tooltip->hide();
+    m_tooltip->deleteLater();
 }
 
 void AuthDialog::setRequest(const QString &request, bool requiresAdmin)
@@ -160,12 +163,19 @@ void AuthDialog::authenticationFailure()
 {
     // TODO: show error messages.
     m_passwordInput->setEnabled(true);
+    m_passwordInput->setAlert(true);
     m_passwordInput->clear();
     m_passwordInput->setFocus();
+
+    QPoint globalStart = mapToGlobal(m_passwordInput->pos());
+    m_tooltip->show(globalStart.x() + m_passwordInput->width() / 2,
+                    globalStart.y() + m_passwordInput->height());
 }
 
 void AuthDialog::setupUI()
 {
+    setMaximumWidth(380);
+
     addButtons(QStringList() << tr("Cancel") << tr("Confirm"));
     setOnButtonClickedClose(false);
     setDefaultButton(1);
@@ -182,6 +192,11 @@ void AuthDialog::setupUI()
         }
     });
 
+    connect(m_passwordInput, &DPasswordEdit::textChanged, [this] {
+        m_tooltip->hide();
+        m_passwordInput->setAlert(false);
+    });
+
     QPixmap icon;
     if (!m_iconName.isEmpty() && QIcon::hasThemeIcon(m_iconName)) {
         icon = QIcon::fromTheme(m_iconName).pixmap(48, 48);
@@ -194,6 +209,8 @@ void AuthDialog::setupUI()
     m_adminsCombo->hide();
     m_passwordInput->setFixedHeight(24);
     m_passwordInput->setFocus();
+    m_passwordInput->setEchoMode(QLineEdit::Password);
+    m_tooltip->hide();
 
     addSpacing(10);
     addContent(m_adminsCombo);
