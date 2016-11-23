@@ -9,6 +9,8 @@
 #include <PolkitQt1/Identity>
 #include <PolkitQt1/ActionDescription>
 
+#include "errortooltip.h"
+
 namespace PolkitQt1
 {
 class Details;
@@ -56,6 +58,7 @@ private:
     QLabel * m_iconLabel;
     DComboBox * m_adminsCombo;
     DPasswordEdit * m_passwordInput;
+    ErrorTooltip *m_tooltip;
 
     void setupUI();
     void createUserCB(const PolkitQt1::Identity::List &identities);
