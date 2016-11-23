@@ -117,12 +117,8 @@ void PolicyKitListener::finishObtainPrivilege()
 
     if (!m_gainedAuthorization && !m_wasCancelled && !m_dialog.isNull()) {
         m_dialog.data()->authenticationFailure();
-
-#ifndef QT_DEBUG
+        
         if (m_numTries < 3) {
-#else
-        if (m_numTries < 1) {
-#endif
             m_session.data()->deleteLater();
 
             tryAgain();

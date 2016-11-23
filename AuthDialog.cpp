@@ -193,6 +193,8 @@ void AuthDialog::setupUI()
     });
 
     connect(m_passwordInput, &DPasswordEdit::textChanged, [this] {
+        if (m_passwordInput->text().length() == 0) return;
+
         m_tooltip->hide();
         m_passwordInput->setAlert(false);
     });
