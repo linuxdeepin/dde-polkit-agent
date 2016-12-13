@@ -174,6 +174,7 @@ void AuthDialog::authenticationFailure()
 
 void AuthDialog::setupUI()
 {
+    setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint);
     setMaximumWidth(380);
 
     addButtons(QStringList() << tr("Cancel") << tr("Confirm"));
