@@ -76,6 +76,7 @@ void PolicyKitListener::initiateAuthentication(const QString &actionId,
     m_dialog.data()->setOptions();
     m_dialog.data()->show();
     qDebug() << "WinId of the shown dialog is " << m_dialog.data()->winId() << m_dialog.data()->effectiveWinId();
+    m_dialog.data()->activateWindow();
 
     if (identities.length() == 1) {
         m_selectedUser = identities[0];
