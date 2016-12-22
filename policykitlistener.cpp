@@ -136,9 +136,7 @@ void PolicyKitListener::finishObtainPrivilege()
 
     if (!m_dialog.isNull()) {
         m_dialog.data()->hide();
-        // FIXME(hualet): why deleteLater is not working as exptected ?
-        // m_dialog.data()->deleteLater();
-        delete m_dialog.data();
+        m_dialog.data()->deleteLater();
     }
 
     m_inProgress = false;
