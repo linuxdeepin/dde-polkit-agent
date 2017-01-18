@@ -20,9 +20,19 @@ RESOURCES += images.qrc
 DISTFILES += com.deepin.Polkit1AuthAgent.xml \
     polkit-dde-authentication-agent-1.desktop
 
+TRANSLATIONS = translations/dde-polkit-agent.ts
+
+# Automating generation .qm files from .ts files
+CONFIG(release, debug|release) {
+    system($$PWD/translate_generation.sh)
+}
+
 target.path = /usr/lib/polkit-1-dde
 
 desktop.path = /etc/xdg/autostart/
 desktop.files += polkit-dde-authentication-agent-1.desktop
 
-INSTALLS += target desktop
+qm_files.path = /usr/share/dde-polkit-agent/translations/
+qm_files.files = translations/*.qm
+
+INSTALLS += target desktop qm_files

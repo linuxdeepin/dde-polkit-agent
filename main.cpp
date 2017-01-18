@@ -15,6 +15,7 @@ int main(int argc, char *argv[])
     a.setQuitOnLastWindowClosed(false);
 
     a.setTheme("light");
+    a.loadTranslator();
 
     PolkitQt1::UnixSessionSubject session(getpid());
 
