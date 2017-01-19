@@ -7,6 +7,7 @@
 #include <QDialogButtonBox>
 #include <QVBoxLayout>
 #include <QUrl>
+#include <QAbstractButton>
 
 #include <PolkitQt1/Authority>
 #include <PolkitQt1/Details>
@@ -183,9 +184,16 @@ void AuthDialog::setupUI()
     setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint);
     setMaximumWidth(380);
 
-    addButtons(QStringList() << tr("Cancel") << tr("Confirm"));
+    int cancelId = addButton(tr("Cancel"));
+    int confirmId = addButton(tr("Confirm"));
+
     setOnButtonClickedClose(false);
     setDefaultButton(1);
+
+    getButton(cancelId)->setAccessibleName("Cancel");
+    getButton(confirmId)->setAccessibleName("Confirm");
+    m_passwordInput->setAccessibleName("PasswordInput");
+    m_adminsCombo->setAccessibleName("AdminUsers");
 
     connect(this, &AuthDialog::buttonClicked, [this](int index, QString) {
         switch (index) {
