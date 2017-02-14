@@ -137,7 +137,11 @@ void PolicyKitListener::finishObtainPrivilege()
 
     if (!m_dialog.isNull()) {
         m_dialog.data()->hide();
-        m_dialog.data()->deleteLater();
+
+        // FIXME(hualet): don't know why deleteLater doesn't do its job,
+        // combined invokeMethod with Qt::QueuedConnection works well.
+        // m_dialog.data()->deleteLater();
+        QMetaObject::invokeMethod(m_dialog.data(), "deleteLater", Qt::QueuedConnection);
     }
 
     m_inProgress = false;
