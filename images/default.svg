@@ -1,42 +1,20 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg width="64px" height="64px" viewBox="0 0 64 64" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
     <!-- Generator: Sketch 39.1 (31720) - http://www.bohemiancoding.com/sketch -->
-    <title>gksu</title>
+    <title>授权</title>
     <desc>Created with Sketch.</desc>
     <defs>
-        <rect id="path-1" x="0" y="0" width="380" height="170" rx="4"></rect>
-        <filter x="-50%" y="-50%" width="200%" height="200%" filterUnits="objectBoundingBox" id="filter-2">
-            <feMorphology radius="1" operator="dilate" in="SourceAlpha" result="shadowSpreadOuter1"></feMorphology>
-            <feOffset dx="0" dy="10" in="shadowSpreadOuter1" result="shadowOffsetOuter1"></feOffset>
-            <feGaussianBlur stdDeviation="7" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
-            <feComposite in="shadowBlurOuter1" in2="SourceAlpha" operator="out" result="shadowBlurOuter1"></feComposite>
-            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.1 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
-        </filter>
-        <mask id="mask-3" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="-1" y="-1" width="382" height="172">
-            <rect x="-1" y="-1" width="382" height="172" fill="white"></rect>
-            <use xlink:href="#path-1" fill="black"></use>
-        </mask>
-        <linearGradient x1="50%" y1="0%" x2="50%" y2="97.6283482%" id="linearGradient-4">
-            <stop stop-color="#FFD200" offset="0%"></stop>
-            <stop stop-color="#FFB223" offset="100%"></stop>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="98.3896684%" id="linearGradient-1">
+            <stop stop-color="#FED000" offset="0%"></stop>
+            <stop stop-color="#FFB200" offset="100%"></stop>
         </linearGradient>
     </defs>
-    <g id="对话框" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g id="授权" transform="translate(-20.000000, -17.000000)">
-            <g id="Rectangle-921">
-                <use fill="black" fill-opacity="1" filter="url(#filter-2)" xlink:href="#path-1"></use>
-                <use fill="#FEFEFF" fill-rule="evenodd" xlink:href="#path-1"></use>
-                <use stroke-opacity="0.1" stroke="#000000" mask="url(#mask-3)" stroke-width="2" xlink:href="#path-1"></use>
-            </g>
-            <g id="notification-network-wireless-full" transform="translate(20.000000, 17.000000)">
-                <image id="Bitmap" x="2.192" y="2.78121739" width="60" height="60" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADwAAAA8CAYAAAA6/NlyAAAABGdBTUEAA1teXP8meAAABQBJREFUaAXlmody2zAQBeP0/v//mV6dW4iLOcKgSVEuJHMzF3QQi3eAJUZXT+7Proap27T3xOuh0pRizvfGrKpzMasGdwY539NoI0/6bEits09UFwPsb/I/Q556oU2j6jJrH75mNucQ8HlMor8Y8kBncJ8jFJD47+S/hrreBkTTOnOx60afVGQOYIB7Gf5q8AyLuj2FVa5VGNifg/8YUjaDfm5SZM+3tcCMy6BAvgl/HQ40CquozzCNpq4JTwoYgIJ/i/z3cOCpR3XMMafSgn/nFtFOYX8VFVRYVO0p2c6zpKySggOto35WfMl8pQ8LX2rA4qgH4Pvwj0NKGVjms19kLzLnYU6eyfweE9rckLNUXgrsw3kgcB8GfxepIUyf+zLmJnIEJ22hFz1/CbAPAwxAVAUYcMazkIcw16HiPejZdcwB+xBgcwhzdhm7aFdnV3FeB9ckOGXCmovMMJ+c8TZgJsIzrCH8UKpOLTxDu/Hc7EJPjSsqTTUCxZk1jLcCm9fLGnGFA/hWaDvmScizg5wRzqk3MUo/trKxhBsmNGs2tIHuWg+YgdTn25gzu0VYoTK0od2F7gEz2HObb2Mn32rquWZ9fCjxg8lovS1wG8pvo7fX/2jgBgusXUdlv3yMlpqB7Uz48icI3+q5HUGkggycZT+SAl+tBUZNVDWUKe/NgMY4wzdU9iJyZ/zoyLeePcICCkvmyKKObl4aCGFgGeBORXZ35sUrC+XCkxUGmPO7t3PbUwM4IvQGTwa2w97VdQNggwUBa1grtTtCB+siu2uTSeBRSLsbqEz+CAYgysKEU75STRtIy05EegSDBVi4ipCqSVorI38UU+XKpsIZ+GgKC01aQho1KQhP+UgGl14vqCMDIx58xSA/upVQDsgC/T8AjwQV2Ld9pEezEdt/CewO3Pq2b8eywyfbtQr74ov0SGENS2Yrf5as7L702rGyLF11Ubi86skKA6z0dD6CAQkXDnwNaUCp5B1Q2YlI926q63styjWkKdDgfzSXRjrs2GBARJhq5BrSNFJJ41FUlkfgQBu+I5bcCdgfkNB5z8axRDh+FwIw5RK1fE9sjTpe9fiWoG3fQ5lQ5vcgn8OBrvdSD5gwB3av77eAQ1Vgv4SjdLUeMI1ZZc95HbThjHfR11jjp3DVLeHMuqeAaVNl+tTvkzRs2FAXSGCBRt0KG/kusB2ABBpH5a1DAwsgoYxzAdezG/liPYUBAxoXmn5bDm3WykXFmVVdyooX2ZP1gG3bC7Sw3MrA3rioBCJdAsyEKK3KW1KatfGZQVhCmRtasSI7ttuA6elAzsLWoFmbf29RVljWSlvX5oA9z0ziBUCdlxj5xzDW0sJySaH2JCwLnQOmD8YkTOaEjwnNGriNvaBU1rVF07QtBWYGdlXorDbwOv3uy1SVv7PCko4+K889/Bxg5spKE1IswhASmvQuTVDA/ASFqvmDhWuYfe65wE6I0gATWqRT4bQWHgCcuQH1i4B/Y/1lfDTVDSc/a2sX5DguLzbN34bwmwp+ZuC3Ldroq0d20oREUTcUWEIYB5INdnMXqxpjqrnwWnFmxvGA+zEUeN06wf0b7jghSTMoYMDi5C8GjTmK+WDLa1PnIQVOB9g8KcBCR7aEI7CopntELOd7YpWqPEhzoZbvInVOUlxI8zzDPq3CwllP34shmUTzwZbvOs3z53z7nAyV822/i8v/ABTIdQtSGU9/AAAAAElFTkSuQmCC"></image>
-                <circle id="Oval" fill="url(#linearGradient-4)" cx="32.018087" cy="31.6073043" r="27.826087"></circle>
-                <g id="ic_verified_user" transform="translate(15.000000, 15.000000)">
-                    <g id="Icon-24px">
-                        <polygon id="Shape" points="0 0 34 0 34 34 0 34"></polygon>
-                        <path d="M17,1.41666667 L4.25,7.08333333 L4.25,15.5833333 C4.25,23.4458333 9.69,30.7983333 17,32.5833333 C24.31,30.7983333 29.75,23.4458333 29.75,15.5833333 L29.75,7.08333333 L17,1.41666667 L17,1.41666667 Z M14.1666667,24.0833333 L8.5,18.4166667 L10.4975,16.4191667 L14.1666667,20.0741667 L23.5025,10.7383333 L25.5,12.75 L14.1666667,24.0833333 L14.1666667,24.0833333 Z" id="Shape" fill="#000000"></path>
-                    </g>
-                </g>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="授权">
+            <g id="Group" transform="translate(1.000000, 2.000000)">
+                <image id="Bitmap" x="0" y="0" width="62" height="62" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAD4AAAA+CAYAAABzwahEAAAABGdBTUEAA1teXP8meAAABQhJREFUaAXlmol2ozAMANu973v//yv3ProammEVAwWT5hVcvacaHFvWSLKhaS8vziuXhfnyvvj44qroKO+Lj9ffzjlSaznb47pU7DnGVrjccp2VeYhjru9O+OniJ5jopmqHVn0Q1ygixN+4RhEhnOt45zPG8c53ji1jVomLrpock5yvszj/8GDsT7S/Q9c6ic1HodkegTAIcbnadu84RmqkBMY5FMd+Hdpobk0I6ONQWgKKnhQAAcLOYnGOpWlGfoYFy3ixscqBrPnkMAd4twJdVZWl0wdbsw3QKPMsQzKMVi0c49cIa7h9qACTUG2rBjxDsyhOfD+01QufOMEAEHwUqQr8EnCBzTTQlBmlfdeCH+5/wIWfrYQacCILNMCU9lbEg869L/yN/s2Bm21LitJmoa0Jhxx+LYa/CVxoxmCQTG8ROtzqxFLHV68PHw2bKfAMTXlzkm6pvIck1z1kHt89fCfLfgyciQifaeBH17OPH1QlvqNmXqaegBNxTOhnIi37em+Cz5lh4D9wWXKJs1fI9LnfxvL6t3lNtp8e/B+U/FjGgecUZzB7e6/iGx4sN5Z6zjaD91jiZZJggIXKlq8bU2acDxnEAbHlR1fn/IIfcgjeTxHcaDCglWwLOZp1wRkEvPd7PdCEza0ssMHYiaDc0Em29/Cigr81AhNsA3CzTalv4beuGqglY2GCrc+6F4LzCLM0lhjcyxiZel5LXXAH7AWoxk9OeMH7w+w+gJPUSfAWnt1TVTDIONlGiMZ9AIf1Mu9xAjB4mWdUIwIbjF2iBYeNjpYPN9g6aGAF7zvobFwGGYfXQLTIfsTmjXu75czL1rEKTobp4LWuVYHNBPelTQfKl4util+cdvBk3Chw6rWecZ9aV5Y68HTyq1urAhuMfcYBFZxAGAz6WxG5JsF5ZX3eCm3igAm2I3Cybcb58FloawJTBh/scT7kgGvpkJMngx/tZ7LOl/Do69BWBBa5YOwkH2SWO1/MURotnPAwwAJTv7/jerSkebWjPJjwLXTP8j6cB5i/AfonpS7rOeMA0sle4FtJ3nT8D4O43J3gOwz+Q0Nf5pBMHWJknaDwGPgaukf5EE6TZcCPsg1MmXH6iIwTCMA7Oncm+IzvGfoIYSrjDmLyi1CCsZe/sLwMX1+F8jezXOazpQ7s0aCDIY3E7WaFfwTgQAPaA43DbSBTGQdeIQjc8zzklB81FP13LTy6PocCDDjbVV/LRE4ebjGnEyaonAdvQreYeTINNL4Bzbbk6aTvcXksUxnPo4wWLZl/G0okWWQLwn7+GGqmZ6Fxegk444ycpUPZM5fo3qWwn6lCtqCZHjy6xhxcAu5+z/AEgGc8J6gRHrN/rj5Lm5cU3jOEtrxn110Cno2U8Myn9Hm9pfStiLg8i/Am9imUNcksmfb0FhofZ6UWHIMlPLCcqLw00BKARYvHuKWCXcqatzHWI8Moa3l661d0zYtlPD/y/wjncMqjOIVSdvn9+EvcU4ZkYo2QFF6e2E7YZUsBKqzAVllVsIUIe1XiPFoUJ1ECQDmq9OEgzuo49wRDhwmecw0cLbYYxzzVuWVZV0GHvc5p2rVSBiBD5GBwbYUYLOdaorQEAwUsQ3rNZ46Py/VbysUxcopoJ0MJWraOyesJI3jZ+jktYnt9t+KnDq+YOjol2xMwt0xyjK0QueU6q4s5xvvVrYuvNjAzsbRf3pfTS7Dyvhy/+v4fra1pWYxQ1MYAAAAASUVORK5CYII="></image>
+                <circle id="Oval" fill="url(#linearGradient-1)" cx="31" cy="30" r="28"></circle>
+                <path d="M31.8970601,13.4485301 C31.4016275,13.2008137 30.5961056,13.2019472 30.1029399,13.4485301 L17.8970601,19.5514699 C17.4016275,19.7991863 16.9513128,20.4514479 16.9057889,20.9886093 C16.9057889,20.9886093 15.8886805,28.4809779 19,36 C22.1113195,43.5190221 30.125898,47.5176184 30.125898,47.5176184 C30.6086512,47.7840304 31.3852836,47.7777233 31.8598811,47.4908016 C31.8598811,47.4908016 40.1113195,42.9809779 43,36 C45.8886805,29.0190221 45.0689176,20.9864199 45.0689176,20.9864199 C45.0308554,20.4416352 44.5961056,19.7980528 44.1029399,19.5514699 L31.8970601,13.4485301 L31.8970601,13.4485301 L31.8970601,13.4485301 Z M29.63968,39.1059993 L42.1234948,24.9938608 L39.8765052,23.0061392 L29.3781465,34.9094503 L22.9823958,29.3664664 L21.0176042,31.6335336 L29.63968,39.1059993 L29.63968,39.1059993 L29.63968,39.1059993 Z" id="Combined-Shape" fill="#242424"></path>
             </g>
         </g>
     </g>

@@ -8,6 +8,7 @@ DWIDGET_USE_NAMESPACE
 
 int main(int argc, char *argv[])
 {
+    DApplication::loadDXcbPlugin();
     DApplication a(argc, argv);
     a.setApplicationName("dde-polkit-agent");
     a.setApplicationDisplayName("Deepin Polkit Agent");
