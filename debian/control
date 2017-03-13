@@ -9,7 +9,8 @@ Homepage: http://www.deepin.org
 Package: dde-polkit-agent
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
-Breaks: policykit-1-gnome
+Conflicts: policykit-1-gnome
+Provides: policykit-1-gnome
 Description: PolicyKit agent for DDE.
  PolicyKit agent is usually a dialog used to provide a way to let users 
  grant permission to specific actions, this package serves the role in
