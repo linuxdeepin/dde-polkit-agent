@@ -50,6 +50,9 @@ signals:
 private slots:
     void on_userCB_currentIndexChanged(int index);
 
+protected:
+    void moveEvent(QMoveEvent *event) Q_DECL_OVERRIDE;
+
 private:
     QString m_appname;
     QString m_message;

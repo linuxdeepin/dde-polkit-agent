@@ -161,6 +161,17 @@ void AuthDialog::on_userCB_currentIndexChanged(int /*index*/)
      */
 }
 
+void AuthDialog::moveEvent(QMoveEvent *event)
+{
+    DDialog::moveEvent(event);
+
+    if (m_tooltip->isVisible()) {
+        QPoint globalStart = mapToGlobal(m_passwordInput->pos());
+        m_tooltip->show(globalStart.x() + m_passwordInput->width() / 2,
+                        globalStart.y() + m_passwordInput->height());
+    }
+}
+
 QString AuthDialog::password() const
 {
     return m_passwordInput->text();
