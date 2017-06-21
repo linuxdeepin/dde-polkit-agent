@@ -59,7 +59,7 @@ private:
     QString m_iconName;
 
     QLabel * m_iconLabel;
-    DComboBox * m_adminsCombo;
+    QComboBox * m_adminsCombo;
     DPasswordEdit * m_passwordInput;
     ErrorTooltip *m_tooltip;
 

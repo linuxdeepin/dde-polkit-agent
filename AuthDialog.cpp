@@ -22,7 +22,7 @@ AuthDialog::AuthDialog(const QString &actionId,
       m_message(message),
       m_iconName(iconName),
       m_iconLabel(new QLabel(this)),
-      m_adminsCombo(new DComboBox(this)),
+      m_adminsCombo(new QComboBox(this)),
       m_passwordInput(new DPasswordEdit(this)),
       m_tooltip(new ErrorTooltip(tr("Wrong password")))
 {
@@ -112,17 +112,17 @@ void AuthDialog::createUserCB(const PolkitQt1::Identity::List &identities)
     m_adminsCombo->clear();
 
     // For each user
-            foreach(const PolkitQt1::Identity &identity, identities) {
-            if (!identity.isValid()) {
-                continue;
-            }
-
-            // appends the user item
-            QString username = identity.toString().remove("unix-user:");
-            m_adminsCombo->addItem(username, identity.toString());
-
-            // TODO: select the current user.
+    foreach(const PolkitQt1::Identity &identity, identities) {
+        if (!identity.isValid()) {
+            continue;
         }
+
+        // appends the user item
+        QString username = identity.toString().remove("unix-user:");
+        m_adminsCombo->addItem(username, identity.toString());
+
+        // TODO: select the current user.
+    }
 
     m_adminsCombo->show();
 }
@@ -203,6 +203,7 @@ void AuthDialog::setupUI()
 
     getButton(cancelId)->setAccessibleName("Cancel");
     getButton(confirmId)->setAccessibleName("Confirm");
+
     m_passwordInput->setAccessibleName("PasswordInput");
     m_adminsCombo->setAccessibleName("AdminUsers");
 
