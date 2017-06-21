@@ -142,23 +142,17 @@ PolkitQt1::Identity AuthDialog::adminUserSelected() const
 
 void AuthDialog::on_userCB_currentIndexChanged(int /*index*/)
 {
-    /*
     PolkitQt1::Identity identity = adminUserSelected();
     // itemData is Null when "Select user" is selected
     if (!identity.isValid()) {
         m_passwordInput->setEnabled(false);
-        lblPassword->setEnabled(false);
-        m_buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
     } else {
         m_passwordInput->setEnabled(true);
-        lblPassword->setEnabled(true);
-        m_buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
         // We need this to restart the auth with the new user
         emit adminUserSelected(identity);
         // git password label focus
         m_passwordInput->setFocus();
     }
-     */
 }
 
 void AuthDialog::moveEvent(QMoveEvent *event)
