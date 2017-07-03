@@ -119,10 +119,16 @@ void AuthDialog::createUserCB(const PolkitQt1::Identity::List &identities)
 
         // appends the user item
         QString username = identity.toString().remove("unix-user:");
-        m_adminsCombo->addItem(username, identity.toString());
+
+        if (username == qgetenv("USER"))
+            m_adminsCombo->insertItem(0, username, identity.toString());
+        else
+            m_adminsCombo->addItem(username, identity.toString());
 
         // TODO: select the current user.
     }
+
+    m_adminsCombo->setCurrentIndex(0);
 
     m_adminsCombo->show();
 }
