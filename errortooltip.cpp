@@ -9,6 +9,7 @@ ErrorTooltip::ErrorTooltip(QString errorMessage) :
     m_label(new QLabel(errorMessage))
 {
     setWindowFlags(Qt::ToolTip);
+    setBackgroundColor(DBlurEffectWidget::LightColor);
 
     m_label->setStyleSheet("padding: 5px 10px; color: #f9704f");
     m_label->adjustSize();
