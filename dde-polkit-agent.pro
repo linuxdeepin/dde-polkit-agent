@@ -2,18 +2,20 @@ TARGET = dde-polkit-agent
 TEMPLATE = app
 QT = core gui widgets dbus
 CONFIG += link_pkgconfig c++11
-PKGCONFIG += dtkwidget polkit-qt5-1
+PKGCONFIG += dtkwidget polkit-qt5-1 dframeworkdbus
 
 DBUS_ADAPTORS += com.deepin.Polkit1AuthAgent.xml
 
 SOURCES += policykitlistener.cpp \
     AuthDialog.cpp \
     main.cpp \
-    errortooltip.cpp
+    errortooltip.cpp \
+    usersmanager.cpp
 
 HEADERS += policykitlistener.h \
     AuthDialog.h \
-    errortooltip.h
+    errortooltip.h \
+    usersmanager.h
 
 RESOURCES += images.qrc
 

@@ -12,6 +12,8 @@
 #include <PolkitQt1/Authority>
 #include <PolkitQt1/Details>
 
+#include "usersmanager.h"
+
 AuthDialog::AuthDialog(const QString &actionId,
                        const QString &message,
                        const QString &iconName,
@@ -119,6 +121,9 @@ void AuthDialog::createUserCB(const PolkitQt1::Identity::List &identities)
 
         // appends the user item
         QString username = identity.toString().remove("unix-user:");
+
+        QString fullname = UsersManager::instance()->getFullName(username);
+        if (!fullname.isEmpty()) username = fullname;
 
         if (username == qgetenv("USER"))
             m_adminsCombo->insertItem(0, username, identity.toString());
