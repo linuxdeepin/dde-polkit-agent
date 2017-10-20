@@ -28,6 +28,8 @@
 #include <QUrl>
 #include <QAbstractButton>
 
+#include <DHiDPIHelper>
+
 #include <PolkitQt1/Authority>
 #include <PolkitQt1/Details>
 
@@ -251,10 +253,12 @@ void AuthDialog::setupUI()
     });
 
     QPixmap icon;
+
+    const qreal dpr = devicePixelRatioF();
     if (!m_iconName.isEmpty() && QIcon::hasThemeIcon(m_iconName)) {
-        icon = QIcon::fromTheme(m_iconName).pixmap(48, 48);
+        icon = QIcon::fromTheme(m_iconName).pixmap(48 * dpr, 48 * dpr);
     } else {
-        icon = QPixmap(":/images/default.svg");
+        icon = DHiDPIHelper::loadNxPixmap(":/images/default.svg");
     }
     setIconPixmap(icon);
 
