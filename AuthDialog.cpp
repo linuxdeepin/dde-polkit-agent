@@ -260,6 +260,8 @@ void AuthDialog::setupUI()
     } else {
         icon = DHiDPIHelper::loadNxPixmap(":/images/default.svg");
     }
+
+    icon.setDevicePixelRatio(dpr);
     setIconPixmap(icon);
 
     m_adminsCombo->setFixedHeight(24);
