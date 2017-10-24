@@ -205,6 +205,8 @@ void PolicyKitListener::completed(bool gainedAuthorization)
 void PolicyKitListener::showError(const QString &text)
 {
     qDebug() << "Error: " << text;
+
+    m_dialog.data()->setError(text);
 }
 
 void PolicyKitListener::dialogAccepted()

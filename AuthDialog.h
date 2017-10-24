@@ -53,7 +53,9 @@ public:
                WId parent);
     ~AuthDialog();
 
+    void setError(const QString &error);
     void setRequest(const QString &request, bool requiresAdmin);
+
     void setOptions();
     QString password() const;
     void authenticationFailure();
@@ -71,6 +73,7 @@ private slots:
 
 protected:
     void moveEvent(QMoveEvent *event) Q_DECL_OVERRIDE;
+    void focusInEvent(QFocusEvent *event) Q_DECL_OVERRIDE;
 
 private:
     QString m_appname;
@@ -84,6 +87,7 @@ private:
 
     void setupUI();
     void createUserCB(const PolkitQt1::Identity::List &identities);
+    void showErrorTip();
 };
 
 class AuthDetails : public QWidget

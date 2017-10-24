@@ -47,7 +47,7 @@ AuthDialog::AuthDialog(const QString &actionId,
       m_iconLabel(new QLabel(this)),
       m_adminsCombo(new QComboBox(this)),
       m_passwordInput(new DPasswordEdit(this)),
-      m_tooltip(new ErrorTooltip(tr("Wrong password")))
+      m_tooltip(new ErrorTooltip(""))
 {
     Q_UNUSED(details)
     Q_UNUSED(parent)
@@ -81,6 +81,14 @@ AuthDialog::~AuthDialog()
     qDebug() << "~AuthDialog";
     m_tooltip->hide();
     m_tooltip->deleteLater();
+}
+
+void AuthDialog::setError(const QString &error)
+{
+    if (error == "Failed to match fingerprint") {
+        m_tooltip->setMessage(tr("Failed to match fingerprint"));
+        showErrorTip();
+    }
 }
 
 void AuthDialog::setRequest(const QString &request, bool requiresAdmin)
@@ -159,6 +167,13 @@ void AuthDialog::createUserCB(const PolkitQt1::Identity::List &identities)
     m_adminsCombo->show();
 }
 
+void AuthDialog::showErrorTip()
+{
+    QPoint globalStart = mapToGlobal(m_passwordInput->pos());
+    m_tooltip->show(globalStart.x(),
+                    globalStart.y() + m_passwordInput->height());
+}
+
 PolkitQt1::Identity AuthDialog::adminUserSelected() const
 {
     qDebug() << m_adminsCombo->currentIndex() << m_adminsCombo->currentData().toString();
@@ -192,9 +207,16 @@ void AuthDialog::moveEvent(QMoveEvent *event)
     DDialog::moveEvent(event);
 
     if (m_tooltip->isVisible()) {
-        QPoint globalStart = mapToGlobal(m_passwordInput->pos());
-        m_tooltip->show(globalStart.x() + m_passwordInput->width() / 2,
-                        globalStart.y() + m_passwordInput->height());
+        showErrorTip();
+    }
+}
+
+void AuthDialog::focusInEvent(QFocusEvent *event)
+{
+    DDialog::focusInEvent(event);
+
+    if (m_tooltip->isVisible()) {
+        m_tooltip->hide();
     }
 }
 
@@ -211,9 +233,8 @@ void AuthDialog::authenticationFailure()
     m_passwordInput->clear();
     m_passwordInput->setFocus();
 
-    QPoint globalStart = mapToGlobal(m_passwordInput->pos());
-    m_tooltip->show(globalStart.x() + m_passwordInput->width() / 2,
-                    globalStart.y() + m_passwordInput->height());
+    m_tooltip->setMessage(tr("Wrong password"));
+    showErrorTip();
 }
 
 void AuthDialog::setupUI()

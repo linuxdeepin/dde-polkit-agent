@@ -25,16 +25,18 @@
 
 ErrorTooltip::ErrorTooltip(QString errorMessage) :
     DArrowRectangle(DArrowRectangle::ArrowTop),
-    m_label(new QLabel(errorMessage))
+    m_label(new QLabel)
 {
     setWindowFlags(Qt::ToolTip);
     setBackgroundColor(DBlurEffectWidget::LightColor);
 
     m_label->setStyleSheet("padding: 5px 10px; color: #f9704f");
-    m_label->adjustSize();
     setContent(m_label);
+    setMessage(errorMessage);
 }
 
 void ErrorTooltip::setMessage(QString message) {
     m_label->setText(message);
+    m_label->adjustSize();
+    resizeWithContent();
 }
