@@ -93,39 +93,9 @@ void AuthDialog::setError(const QString &error)
 
 void AuthDialog::setRequest(const QString &request, bool requiresAdmin)
 {
-    Q_UNUSED(request)
     Q_UNUSED(requiresAdmin)
 
-    /*
-    qDebug() << request;
-    PolkitQt1::Identity identity = adminUserSelected();
-    if (request.startsWith(QLatin1String("password:"), Qt::CaseInsensitive)) {
-        if (requiresAdmin) {
-            if (!identity.isValid()) {
-                lblPassword->setText(tr("Password for root:"));
-            } else {
-                lblPassword->setText(tr("Password for %1:",
-                                          identity.toString().remove("unix-user:")));
-            }
-        } else {
-            lblPassword->setText(tr("Password:"));
-        }
-    } else if (request.startsWith(QLatin1String("password or swipe finger:"),
-                                  Qt::CaseInsensitive)) {
-        if (requiresAdmin) {
-            if (!identity.isValid()) {
-                lblPassword->setText(tr("Password or swipe finger for root:"));
-            } else {
-                lblPassword->setText(tr("Password or swipe finger for %1:",
-                                          identity.toString().remove("unix-user:")));
-            }
-        } else {
-            lblPassword->setText(tr("Password or swipe finger:"));
-        }
-    } else {
-        lblPassword->setText(request);
-    }
-    */
+    m_passwordInput->setPlaceholderText(request);
 }
 
 void AuthDialog::setOptions()
