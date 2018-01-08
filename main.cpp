@@ -23,24 +23,35 @@
 
 #include "policykitlistener.h"
 
+#include <QDebug>
+
 DWIDGET_USE_NAMESPACE
+
+#define APP_NAME "dde-polkit-agent"
+#define APP_DISPLAY_NAME "Deepin Polkit Agent"
+#define AUTH_DBUS_PATH "/com/deepin/polkit/AuthenticationAgent"
 
 int main(int argc, char *argv[])
 {
     DApplication::loadDXcbPlugin();
     DApplication a(argc, argv);
-    a.setApplicationName("dde-polkit-agent");
-    a.setApplicationDisplayName("Deepin Polkit Agent");
+    a.setApplicationName(APP_NAME);
+    a.setApplicationDisplayName(APP_DISPLAY_NAME);
     a.setApplicationVersion("0.1");
     a.setQuitOnLastWindowClosed(false);
-
-    a.setTheme("light");
-    a.loadTranslator();
 
     PolkitQt1::UnixSessionSubject session(getpid());
 
     PolicyKitListener listener;
-    listener.registerListener(session, "/com/deepin/polkit/AuthenticationAgent");
+
+    if (!a.setSingleInstance(APP_NAME, DApplication::UserScope) ||
+            !listener.registerListener(session, AUTH_DBUS_PATH)) {
+        qDebug() << "polkit is running!";
+        return 0;
+    }
+
+    a.setTheme("light");
+    a.loadTranslator();
 
     return a.exec();
 }
