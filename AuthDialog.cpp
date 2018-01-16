@@ -33,6 +33,8 @@
 #include <PolkitQt1/Authority>
 #include <PolkitQt1/Details>
 
+#include <libintl.h>
+
 #include "usersmanager.h"
 
 AuthDialog::AuthDialog(const QString &actionId,
@@ -54,6 +56,8 @@ AuthDialog::AuthDialog(const QString &actionId,
 
     // TODO: associate this dialog with its parent.
     setupUI();
+
+    setlocale(LC_ALL, "");
 
     // find action description for actionId
     foreach(const PolkitQt1::ActionDescription &desc, PolkitQt1::Authority::instance()->enumerateActionsSync()) {
@@ -95,7 +99,14 @@ void AuthDialog::setRequest(const QString &request, bool requiresAdmin)
 {
     Q_UNUSED(requiresAdmin)
 
-    m_passwordInput->setPlaceholderText(request);
+    // NOTE: Here needs to be processed for a character ending with a colon.
+
+    QString placeHolder;
+    if (!request.isEmpty() && QString(request.at(request.size() - 1)) == QString(":")) {
+        placeHolder = request + " ";
+    }
+
+    m_passwordInput->setPlaceholderText(QString(dgettext("Linux-PAM", placeHolder.toLatin1())));
 }
 
 void AuthDialog::setOptions()
