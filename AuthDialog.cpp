@@ -99,14 +99,7 @@ void AuthDialog::setRequest(const QString &request, bool requiresAdmin)
 {
     Q_UNUSED(requiresAdmin)
 
-    // NOTE: Here needs to be processed for a character ending with a colon.
-
-    QString placeHolder;
-    if (!request.isEmpty() && QString(request.at(request.size() - 1)) == QString(":")) {
-        placeHolder = request + " ";
-    }
-
-    m_passwordInput->setPlaceholderText(QString(dgettext("Linux-PAM", placeHolder.toLatin1())));
+    m_passwordInput->setPlaceholderText(QString(dgettext("Linux-PAM", request.toUtf8().data())));
 }
 
 void AuthDialog::setOptions()
