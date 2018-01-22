@@ -6,14 +6,14 @@ DDE Polkit Agent is the [polkit](https://www.freedesktop.org/software/polkit/doc
 
 ### Build dependencies
 
-* qmake (>= 5.3)
+* Qt (>= 5.6)
 * libpolkit-qt5
 * [dtk](https://github.com/linuxdeepin/libdtk)
 
 ### Runtime dependencies
 
 * polkit
-* Qt5 (>= 5.3)
+* Qt5 (>= 5.6)
   * Qt5-Gui
   * Qt5-Widgets
   * Qt5-DBus
