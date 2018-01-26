@@ -10,12 +10,16 @@ SOURCES += policykitlistener.cpp \
     AuthDialog.cpp \
     main.cpp \
     errortooltip.cpp \
-    usersmanager.cpp
+    usersmanager.cpp \
+    pluginmanager.cpp
 
 HEADERS += policykitlistener.h \
     AuthDialog.h \
     errortooltip.h \
-    usersmanager.h
+    usersmanager.h \
+    pluginmanager.h \
+    agent-extension.h \
+    agent-extension-proxy.h
 
 RESOURCES += images.qrc
 
@@ -37,4 +41,7 @@ desktop.files += polkit-dde-authentication-agent-1.desktop
 qm_files.path = /usr/share/dde-polkit-agent/translations/
 qm_files.files = translations/*.qm
 
-INSTALLS += target desktop qm_files
+headers.path = /usr/include/dpa
+headers.files = agent-extension-proxy.h agent-extension.h
+
+INSTALLS += target desktop qm_files headers

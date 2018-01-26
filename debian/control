@@ -13,3 +13,9 @@ Description: PolicyKit agent for DDE.
  PolicyKit agent is usually a dialog used to provide a way to let users 
  grant permission to specific actions, this package serves the role in
  Deepin Desktop Environment.
+
+Package: dde-polkit-agent-dev
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: developement files of dde-polkit-agent extensions.
+ Development files of dde-polkit-agent extensions.

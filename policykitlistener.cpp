@@ -31,6 +31,8 @@
 
 #include "polkit1authagent_adaptor.h"
 
+#include "pluginmanager.h"
+
 PolicyKitListener::PolicyKitListener(QObject *parent)
         : Listener(parent)
         , m_inProgress(false)
@@ -46,6 +48,8 @@ PolicyKitListener::PolicyKitListener(QObject *parent)
     }
 
     qDebug() << "Listener online";
+
+    m_pluginManager = new PluginManager(this);
 }
 
 PolicyKitListener::~PolicyKitListener()
@@ -81,6 +85,7 @@ void PolicyKitListener::initiateAuthentication(const QString &actionId,
     m_session.clear();
 
     m_inProgress = true;
+    m_actionID = actionId;
 
     WId parentId = 0;
     if (m_actionsToWID.contains(actionId)) {
@@ -91,6 +96,8 @@ void PolicyKitListener::initiateAuthentication(const QString &actionId,
     connect(m_dialog.data(), SIGNAL(okClicked()), SLOT(dialogAccepted()));
     connect(m_dialog.data(), SIGNAL(rejected()), SLOT(dialogCanceled()));
     connect(m_dialog.data(), SIGNAL(adminUserSelected(PolkitQt1::Identity)), SLOT(userSelected(PolkitQt1::Identity)));
+
+    // TODO(hualet): show extended action information.
 
     qDebug() << "WinId of the dialog is " << m_dialog.data()->winId() << m_dialog.data()->effectiveWinId();
     m_dialog.data()->setOptions();
@@ -146,6 +153,10 @@ void PolicyKitListener::finishObtainPrivilege()
             return;
         }
     }
+
+    m_pluginManager.data()->reduce(m_actionID,
+                                   m_selectedUser.toString().remove("unix-user:"),
+                                   m_dialog.data()->password());
 
     if (!m_session.isNull()) {
         m_session.data()->result()->setCompleted();
