@@ -40,14 +40,18 @@ int main(int argc, char *argv[])
     a.setApplicationVersion("0.1");
     a.setQuitOnLastWindowClosed(false);
 
-    PolkitQt1::UnixSessionSubject session(getpid());
 
+    if (!a.setSingleInstance(APP_NAME, DApplication::UserScope)) {
+        qWarning() << "polkit is running!";
+        return 0;
+    }
+
+    PolkitQt1::UnixSessionSubject session(getpid());
     PolicyKitListener listener;
 
-    if (!a.setSingleInstance(APP_NAME, DApplication::UserScope) ||
-            !listener.registerListener(session, AUTH_DBUS_PATH)) {
-        qDebug() << "polkit is running!";
-        return 0;
+    if (!listener.registerListener(session, AUTH_DBUS_PATH)) {
+        qWarning() << "register listener failed!";
+        return -1;
     }
 
     a.setTheme("light");
