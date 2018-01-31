@@ -27,6 +27,7 @@
 #include <QVBoxLayout>
 #include <QUrl>
 #include <QAbstractButton>
+#include <QButtonGroup>
 
 #include <DHiDPIHelper>
 
@@ -102,12 +103,17 @@ void AuthDialog::setRequest(const QString &request, bool requiresAdmin)
     m_passwordInput->setPlaceholderText(QString(dgettext("Linux-PAM", request.toUtf8().data())));
 }
 
-void AuthDialog::setOptions()
+void AuthDialog::addOptions(QButtonGroup *bg)
 {
-    /*
-    lblContent->setText(tr("An application is attempting to perform an action that requires privileges."
-                             " Authentication is required to perform this action."));
-    */
+    QList<QAbstractButton*> btns = bg->buttons();
+
+    if (btns.length() > 0) {
+        addSpacing(10);
+    }
+
+    for (QAbstractButton *btn : btns) {
+        addContent(btn);
+    }
 }
 
 void AuthDialog::createUserCB(const PolkitQt1::Identity::List &identities)

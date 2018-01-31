@@ -56,7 +56,8 @@ public:
     void setError(const QString &error);
     void setRequest(const QString &request, bool requiresAdmin);
 
-    void setOptions();
+    void addOptions(QButtonGroup *bg);
+
     QString password() const;
     void authenticationFailure();
 

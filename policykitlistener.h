@@ -66,7 +66,6 @@ private:
     bool m_gainedAuthorization;
     bool m_wasCancelled;
     int m_numTries;
-    QString m_actionID;
     PolkitQt1::Identity::List m_identities;
     PolkitQt1::Agent::AsyncResult* m_result;
     QString m_cookie;

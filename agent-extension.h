@@ -2,6 +2,7 @@
 #define AGENTEXTENSION_H
 
 #include <QtCore>
+#include <QButtonGroup>
 
 namespace dpa {
 
@@ -33,6 +34,11 @@ public:
      * It will show with the polkit agent dialog to tell people the potential risks.
      */
     virtual QString description() const = 0;
+
+    /**
+     * @brief options returns options left to user to choose.
+     */
+    virtual QButtonGroup* options() = 0;
 
     /**
      * @brief extendedDo is where extension actually do the dirty work.

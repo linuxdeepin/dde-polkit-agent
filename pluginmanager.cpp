@@ -18,6 +18,19 @@ PluginManager::PluginManager(QObject *parent)
     load();
 }
 
+QList<QButtonGroup*> PluginManager::reduceGetOptions(const QString &actionID)
+{
+    QList<QButtonGroup*> ret;
+
+    for (AgentExtension *plugin : m_plugins) {
+        if (plugin->interestedActions().contains(actionID) || plugin->interestedActions().isEmpty()) {
+            ret << plugin->options();
+        }
+    }
+
+    return ret;
+}
+
 void PluginManager::load()
 {
 
@@ -48,6 +61,8 @@ AgentExtension *PluginManager::loadFile(const QString &filePath)
 
         if (ret) ret->initialize(this);
 
+        qDebug() << "done loading plugin: " << filePath;
+
         return ret;
     } else {
         qWarning() << "failed to load plugin file: " << loader->errorString();
@@ -59,19 +74,22 @@ AgentExtension *PluginManager::loadFile(const QString &filePath)
 
 }
 
-void PluginManager::reduce(const QString &actionID, const QString &username, const QString passwd)
+void PluginManager::reduce(const QString &username, const QString passwd)
 {
-    m_actionID = actionID;
     m_username = username;
     m_password = passwd;
 
     for (AgentExtension *plugin : m_plugins) {
-        if (plugin->interestedActions().contains(actionID) || plugin->interestedActions().isEmpty()) {
+        if (plugin->interestedActions().contains(m_actionID) || plugin->interestedActions().isEmpty()) {
             plugin->extendedDo();
         }
     }
 
-    m_actionID = "";
     m_username = "";
     m_password = "";
+}
+
+void PluginManager::setActionID(const QString &actionID)
+{
+    m_actionID = actionID;
 }

@@ -85,12 +85,13 @@ void PolicyKitListener::initiateAuthentication(const QString &actionId,
     m_session.clear();
 
     m_inProgress = true;
-    m_actionID = actionId;
 
     WId parentId = 0;
     if (m_actionsToWID.contains(actionId)) {
         parentId = m_actionsToWID[actionId];
     }
+
+    m_pluginManager.data()->setActionID(actionId);
 
     m_dialog = new AuthDialog(actionId, message, iconName, details, identities, parentId);
     connect(m_dialog.data(), SIGNAL(okClicked()), SLOT(dialogAccepted()));
@@ -99,8 +100,12 @@ void PolicyKitListener::initiateAuthentication(const QString &actionId,
 
     // TODO(hualet): show extended action information.
 
+    QList<QButtonGroup*> optionsList = m_pluginManager.data()->reduceGetOptions(actionId);
+    for (QButtonGroup *bg : optionsList) {
+        m_dialog.data()->addOptions(bg);
+    }
+
     qDebug() << "WinId of the dialog is " << m_dialog.data()->winId() << m_dialog.data()->effectiveWinId();
-    m_dialog.data()->setOptions();
     m_dialog.data()->show();
     qDebug() << "WinId of the shown dialog is " << m_dialog.data()->winId() << m_dialog.data()->effectiveWinId();
     m_dialog.data()->activateWindow();
@@ -154,8 +159,7 @@ void PolicyKitListener::finishObtainPrivilege()
         }
     }
 
-    m_pluginManager.data()->reduce(m_actionID,
-                                   m_selectedUser.toString().remove("unix-user:"),
+    m_pluginManager.data()->reduce(m_selectedUser.toString().remove("unix-user:"),
                                    m_dialog.data()->password());
 
     if (!m_session.isNull()) {

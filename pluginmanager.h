@@ -3,23 +3,28 @@
 
 #include <QObject>
 #include <QMap>
+#include <QList>
 
 #include "agent-extension.h"
 #include "agent-extension-proxy.h"
 
 using namespace dpa;
 
+class QButtonGroup;
 class PluginManager : public QObject, AgentExtensionProxy
 {
     Q_OBJECT
 public:
     explicit PluginManager(QObject *parent = nullptr);
 
-    void reduce(const QString &actionID, const QString &username, const QString passwd);
+    QList<QButtonGroup*> reduceGetOptions(const QString &actionID);
+    void reduce(const QString &username, const QString passwd);
 
     const QString & actionID() const Q_DECL_OVERRIDE { return m_actionID; }
     const QString & username() const Q_DECL_OVERRIDE { return m_username; }
     const QString & password() const Q_DECL_OVERRIDE { return m_password; }
+
+    void setActionID(const QString &actionID);
 
 private:
     QList<AgentExtension*> m_plugins;
