@@ -24,6 +24,9 @@
 #include "policykitlistener.h"
 
 #include <QDebug>
+#include <QDir>
+#include <QFile>
+#include <QStandardPaths>
 
 DWIDGET_USE_NAMESPACE
 
@@ -35,11 +38,11 @@ int main(int argc, char *argv[])
 {
     DApplication::loadDXcbPlugin();
     DApplication a(argc, argv);
+    a.setOrganizationName("deepin");
     a.setApplicationName(APP_NAME);
     a.setApplicationDisplayName(APP_DISPLAY_NAME);
     a.setApplicationVersion("0.1");
     a.setQuitOnLastWindowClosed(false);
-
 
     if (!a.setSingleInstance(APP_NAME, DApplication::UserScope)) {
         qWarning() << "polkit is running!";
@@ -52,6 +55,21 @@ int main(int argc, char *argv[])
     if (!listener.registerListener(session, AUTH_DBUS_PATH)) {
         qWarning() << "register listener failed!";
         return -1;
+    }
+
+    // create PID file to ~/.cache/deepin/dde-polkit-agent
+    const QString cachePath = QStandardPaths::standardLocations(QStandardPaths::CacheLocation).first();
+
+    QDir dir(cachePath);
+    if (!dir.exists()) {
+        dir.mkpath(cachePath);
+    }
+
+    QFile PID(cachePath + QDir::separator() + "pid");
+    if (PID.open(QIODevice::WriteOnly)) {
+        QTextStream out(&PID);
+        out << getpid();
+        PID.close();
     }
 
     a.setTheme("light");
