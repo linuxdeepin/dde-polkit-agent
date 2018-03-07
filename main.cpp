@@ -18,6 +18,7 @@
  */
 
 #include <DApplication>
+#include <DLog>
 
 #include <PolkitQt1/Subject>
 
@@ -29,6 +30,7 @@
 #include <QStandardPaths>
 
 DWIDGET_USE_NAMESPACE
+DCORE_USE_NAMESPACE
 
 #define APP_NAME "dde-polkit-agent"
 #define APP_DISPLAY_NAME "Deepin Polkit Agent"
@@ -43,6 +45,9 @@ int main(int argc, char *argv[])
     a.setApplicationDisplayName(APP_DISPLAY_NAME);
     a.setApplicationVersion("0.1");
     a.setQuitOnLastWindowClosed(false);
+
+    DLogManager::registerConsoleAppender();
+    DLogManager::registerFileAppender();
 
     if (!a.setSingleInstance(APP_NAME, DApplication::UserScope)) {
         qWarning() << "polkit is running!";
