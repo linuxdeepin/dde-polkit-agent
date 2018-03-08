@@ -159,8 +159,9 @@ void PolicyKitListener::finishObtainPrivilege()
         }
     }
 
-    m_pluginManager.data()->reduce(m_selectedUser.toString().remove("unix-user:"),
-                                   m_dialog.data()->password());
+    if (m_gainedAuthorization)
+        m_pluginManager.data()->reduce(m_selectedUser.toString().remove("unix-user:"),
+                                       m_dialog.data()->password());
 
     if (!m_session.isNull()) {
         m_session.data()->result()->setCompleted();
