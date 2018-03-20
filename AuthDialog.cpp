@@ -100,7 +100,16 @@ void AuthDialog::setRequest(const QString &request, bool requiresAdmin)
 {
     Q_UNUSED(requiresAdmin)
 
-    m_passwordInput->setPlaceholderText(QString(dgettext("Linux-PAM", request.toUtf8().data())));
+    // FIXME(sbw):
+    // Let's Do some evil here:
+    // in current environment, Don't know why but request text "Password: "
+    // missing last character ' '. so the translated message not load currectly.
+    // This really is a bug.
+    QString text = request;
+    if (request.startsWith("Password:"))
+        text = "Password: ";
+
+    m_passwordInput->setPlaceholderText(QString(dgettext("Linux-PAM", text.toStdString().c_str())));
 }
 
 void AuthDialog::addOptions(QButtonGroup *bg)
