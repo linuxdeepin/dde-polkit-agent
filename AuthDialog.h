@@ -20,11 +20,11 @@
 #ifndef AUTHDIALOG_H
 #define AUTHDIALOG_H
 
-#include <QWindow>
-#include <QComboBox>
-
 #include <ddialog.h>
 #include <dpasswordedit.h>
+
+#include <QWindow>
+#include <QComboBox>
 
 #include <PolkitQt1/Identity>
 #include <PolkitQt1/ActionDescription>
@@ -46,6 +46,11 @@ class AuthDialog : public DDialog
 {
     Q_OBJECT
 public:
+    enum AuthMode {
+        FingerPrint = 0,
+        Password = 1
+    };
+
     AuthDialog(const QString &actionId,
                const QString &message,
                const QString &iconName,
@@ -56,6 +61,9 @@ public:
 
     void setError(const QString &error);
     void setRequest(const QString &request, bool requiresAdmin);
+
+    AuthMode authMode();
+    void setAuthMode(AuthMode mode);
 
     void addOptions(QButtonGroup *bg);
 
@@ -69,6 +77,7 @@ public:
 signals:
     void adminUserSelected(PolkitQt1::Identity);
     void okClicked();
+    void usePassword();
 
 private slots:
     void on_userCB_currentIndexChanged(int index);
@@ -86,6 +95,9 @@ private:
     QComboBox * m_adminsCombo;
     DPasswordEdit * m_passwordInput;
     ErrorTooltip *m_tooltip;
+    DLineEdit *m_fprintTip;
+
+    AuthMode m_currentAuthMode;
 
     void setupUI();
     void createUserCB(const PolkitQt1::Identity::List &identities);

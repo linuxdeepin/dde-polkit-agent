@@ -21,6 +21,8 @@ HEADERS += policykitlistener.h \
     agent-extension.h \
     agent-extension-proxy.h
 
+include(libdde-auth/libdde-auth.pri)
+
 RESOURCES += images.qrc
 
 DISTFILES += com.deepin.Polkit1AuthAgent.xml

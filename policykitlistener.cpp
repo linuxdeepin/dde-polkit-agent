@@ -20,11 +20,11 @@
 #include <QDBusConnection>
 #include <QDebug>
 
-#include <PolkitQt1/Agent/Listener>
-#include <PolkitQt1/Agent/Session>
-#include <PolkitQt1/Subject>
-#include <PolkitQt1/Identity>
-#include <PolkitQt1/Details>
+#include <polkit-qt5-1/PolkitQt1/Agent/Listener>
+#include <polkit-qt5-1/PolkitQt1/Agent/Session>
+#include <polkit-qt5-1/PolkitQt1/Subject>
+#include <polkit-qt5-1/PolkitQt1/Identity>
+#include <polkit-qt5-1/PolkitQt1/Details>
 
 #include "policykitlistener.h"
 #include "AuthDialog.h"
@@ -33,12 +33,20 @@
 
 #include "pluginmanager.h"
 
+#include "libdde-auth/deepinauthframework.h"
+
 PolicyKitListener::PolicyKitListener(QObject *parent)
         : Listener(parent)
-        , m_inProgress(false)
         , m_selectedUser(0)
+        , m_inProgress(false)
+        , m_usePassword(false)
+        , m_numFPrint(0)
 {
     (void) new Polkit1AuthAgentAdaptor(this);
+
+    m_deepinAuthFramework = new DeepinAuthFramework(this, this);
+    m_fprintdInter = new FPrintd("com.deepin.daemon.Fprintd", "/com/deepin/daemon/Fprintd",
+                                 QDBusConnection::sessionBus(), this);
 
     QDBusConnection sessionBus = QDBusConnection::sessionBus();
     if (!sessionBus.registerService("com.deepin.Polkit1AuthAgent")) {
@@ -66,6 +74,31 @@ void PolicyKitListener::setWIdForAction(const QString& action, qulonglong wID)
     m_actionsToWID[action] = wID;
 }
 
+void PolicyKitListener::onDisplayErrorMsg(const QString &msg)
+{
+    qDebug() << msg;
+
+    if (msg == "Verification timed out") {
+        if (!m_dialog.isNull()) {
+            m_dialog->setAuthMode(AuthDialog::AuthMode::Password);
+        }
+    }
+}
+
+void PolicyKitListener::onDisplayTextInfo(const QString &msg)
+{
+    qDebug() << msg;
+}
+
+void PolicyKitListener::onPasswordResult(const QString &msg)
+{
+    qDebug() << msg;
+
+    m_password = msg;
+    m_session->initiate();
+    m_session->setResponse(m_password);
+}
+
 void PolicyKitListener::initiateAuthentication(const QString &actionId,
         const QString &message,
         const QString &iconName,
@@ -87,6 +120,7 @@ void PolicyKitListener::initiateAuthentication(const QString &actionId,
     m_cookie = cookie;
     m_result = result;
     m_session.clear();
+    m_password.clear();
 
     m_inProgress = true;
 
@@ -98,6 +132,8 @@ void PolicyKitListener::initiateAuthentication(const QString &actionId,
     m_pluginManager.data()->setActionID(actionId);
 
     m_dialog = new AuthDialog(actionId, message, iconName, details, identities, parentId);
+    m_dialog.data()->setAuthMode(m_fprintdInter->GetDevices().value().isEmpty() ? AuthDialog::Password : AuthDialog::FingerPrint);
+
     connect(m_dialog.data(), SIGNAL(okClicked()), SLOT(dialogAccepted()));
     connect(m_dialog.data(), SIGNAL(rejected()), SLOT(dialogCanceled()));
     connect(m_dialog.data(), SIGNAL(adminUserSelected(PolkitQt1::Identity)), SLOT(userSelected(PolkitQt1::Identity)));
@@ -128,6 +164,7 @@ void PolicyKitListener::tryAgain()
 {
     qDebug() << "Trying again";
     m_wasCancelled = false;
+    m_password.clear();
 
     qDebug() << m_selectedUser.isValid() << m_selectedUser.toString();
 
@@ -139,9 +176,10 @@ void PolicyKitListener::tryAgain()
         connect(m_session.data(), SIGNAL(completed(bool)), this, SLOT(completed(bool)));
         connect(m_session.data(), SIGNAL(showError(QString)), this, SLOT(showError(QString)));
 
-        m_session.data()->initiate();
+        m_deepinAuthFramework->Clear();
+        m_deepinAuthFramework->SetUser(m_selectedUser.toString().replace("unix-user:", ""));
+        m_deepinAuthFramework->Authenticate();
     }
-
 }
 
 void PolicyKitListener::finishObtainPrivilege()
@@ -186,6 +224,11 @@ void PolicyKitListener::finishObtainPrivilege()
 
     m_inProgress = false;
 
+    m_numFPrint = 0;
+    m_usePassword = false;
+
+    m_deepinAuthFramework->Clear();
+
     qDebug() << "Finish obtain authorization:" << m_gainedAuthorization;
 }
 
@@ -206,11 +249,15 @@ void PolicyKitListener::cancelAuthentication()
 void PolicyKitListener::request(const QString &request, bool echo)
 {
     Q_UNUSED(echo);
-    qDebug() << "Request: " << request;
+    qDebug() << ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" << "Request: " << request;
 
     if (!m_dialog.isNull()) {
         m_dialog.data()->setRequest(request, m_selectedUser.isValid() &&
                 m_selectedUser.toString() == "unix-user:root");
+
+        if (request.simplified().remove(":") == "Password") {
+            m_session.data()->setResponse(m_password);
+        }
     }
 }
 
@@ -232,10 +279,11 @@ void PolicyKitListener::showError(const QString &text)
 
 void PolicyKitListener::dialogAccepted()
 {
-    qDebug() << "Dialog accepted";
-
     if (!m_dialog.isNull()) {
-        m_session.data()->setResponse(m_dialog.data()->password());
+        qDebug() << "Dialog accepted";
+        m_deepinAuthFramework->SetUser(m_selectedUser.toString().remove("unix-user:"));
+        m_deepinAuthFramework->setPassword(m_dialog->password());
+        m_deepinAuthFramework->Authenticate();
     }
 }
 
@@ -246,6 +294,7 @@ void PolicyKitListener::dialogCanceled()
     m_wasCancelled = true;
     if (!m_session.isNull()) {
         m_session.data()->cancel();
+        m_deepinAuthFramework->Clear();
     }
 
     finishObtainPrivilege();

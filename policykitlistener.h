@@ -23,14 +23,22 @@
 #include <QPointer>
 #include <QHash>
 
-#include <PolkitQt1/Agent/Listener>
+#include <polkit-qt5-1/PolkitQt1/Agent/Listener>
+
+#include <com_deepin_daemon_fprintd.h>
+#include <com_deepin_daemon_fprintd_device.h>
+
+#include "libdde-auth/interface/deepinauthinterface.h"
 
 class PluginManager;
 class AuthDialog;
+class DeepinAuthFramework;
 
 using namespace PolkitQt1::Agent;
+using FPrintd = com::deepin::daemon::Fprintd;
+using FPrintdDevice = com::deepin::daemon::fprintd::Device;
 
-class PolicyKitListener : public Listener
+class PolicyKitListener : public Listener, public DeepinAuthInterface
 {
     Q_OBJECT
     Q_CLASSINFO("D-Bus Interface", "com.deepin.Polkit1AuthAgent")
@@ -45,9 +53,9 @@ public slots:
                                 const PolkitQt1::Details &details,
                                 const QString &cookie,
                                 const PolkitQt1::Identity::List &identities,
-                                PolkitQt1::Agent::AsyncResult* result);
-    bool initiateAuthenticationFinish();
-    void cancelAuthentication();
+                                PolkitQt1::Agent::AsyncResult* result) override;
+    bool initiateAuthenticationFinish() override;
+    void cancelAuthentication() override;
 
     void tryAgain();
     void finishObtainPrivilege();
@@ -58,19 +66,30 @@ public slots:
 
     void setWIdForAction(const QString &action, qulonglong wID);
 
+    void onDisplayErrorMsg(const QString &msg) override;
+    void onDisplayTextInfo(const QString &msg) override;
+    void onPasswordResult(const QString &msg) override;
+
 private:
     QPointer<AuthDialog> m_dialog;
     QPointer<PluginManager> m_pluginManager;
     QPointer<Session> m_session;
-    bool m_inProgress;
-    bool m_gainedAuthorization;
-    bool m_wasCancelled;
-    int m_numTries;
+    QPointer<FPrintd> m_fprintdInter;
+    DeepinAuthFramework *m_deepinAuthFramework;
+
     PolkitQt1::Identity::List m_identities;
     PolkitQt1::Agent::AsyncResult* m_result;
     QString m_cookie;
+    QString m_password;
     PolkitQt1::Identity m_selectedUser;
     QHash< QString, qulonglong > m_actionsToWID;
+
+    bool m_inProgress;
+    bool m_gainedAuthorization;
+    bool m_wasCancelled;
+    bool m_usePassword;
+    int m_numTries;
+    int m_numFPrint;
 
 private slots:
     void dialogAccepted();

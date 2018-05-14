@@ -50,7 +50,9 @@ AuthDialog::AuthDialog(const QString &actionId,
       m_iconLabel(new QLabel(this)),
       m_adminsCombo(new QComboBox(this)),
       m_passwordInput(new DPasswordEdit(this)),
-      m_tooltip(new ErrorTooltip(""))
+      m_tooltip(new ErrorTooltip("")),
+      m_fprintTip(new DLineEdit(this)),
+      m_currentAuthMode(AuthMode::FingerPrint)
 {
     Q_UNUSED(details)
     Q_UNUSED(parent)
@@ -108,10 +110,46 @@ void AuthDialog::setRequest(const QString &request, bool requiresAdmin)
     // missing last character ' '. so the translated message not load currectly.
     // This really is a bug.
     QString text = request;
-    if (request.startsWith("Password:"))
+    if (request.startsWith("Password:")) {
         text = "Password: ";
+        setAuthMode(AuthMode::Password);
+    }
 
     m_passwordInput->setPlaceholderText(QString(dgettext("Linux-PAM", text.toStdString().c_str())));
+}
+
+AuthDialog::AuthMode AuthDialog::authMode()
+{
+    return m_currentAuthMode;
+}
+
+void AuthDialog::setAuthMode(AuthDialog::AuthMode mode)
+{
+    switch (mode) {
+    case AuthMode::FingerPrint: {
+        m_fprintTip->show();
+        m_passwordInput->hide();
+        m_currentAuthMode = AuthMode::FingerPrint;
+        setButtonText(1, tr("Use Password"));
+        getButton(1)->setAccessibleName("UsePassword");
+
+        break;
+    }
+    case AuthMode::Password: {
+        m_fprintTip->hide();
+        m_passwordInput->show();
+        m_passwordInput->setFocus();
+        m_currentAuthMode = AuthMode::Password;
+        setButtonText(1, tr("Confirm"));
+        getButton(1)->setAccessibleName("Confirm");
+
+        Q_EMIT usePassword();
+
+        break;
+    }
+    default:
+        break;
+    }
 }
 
 void AuthDialog::addOptions(QButtonGroup *bg)
@@ -160,7 +198,12 @@ void AuthDialog::createUserCB(const PolkitQt1::Identity::List &identities)
 
 void AuthDialog::showErrorTip()
 {
-    QPoint globalStart = mapToGlobal(m_passwordInput->pos());
+    QPoint globalStart;
+    if (m_currentAuthMode == AuthMode::FingerPrint) {
+        globalStart = mapToGlobal(m_fprintTip->pos());
+    } else if (m_currentAuthMode == AuthMode::Password) {
+        globalStart = mapToGlobal(m_passwordInput->pos());
+    }
     m_tooltip->show(globalStart.x(),
                     globalStart.y() + m_passwordInput->height());
 }
@@ -234,25 +277,31 @@ void AuthDialog::setupUI()
     setMaximumWidth(380);
 
     int cancelId = addButton(tr("Cancel"));
-    int confirmId = addButton(tr("Confirm"));
+    int confirmId = addButton(tr("Use Password"), true, ButtonType::ButtonRecommend);
 
     setOnButtonClickedClose(false);
     setDefaultButton(1);
 
     getButton(cancelId)->setAccessibleName("Cancel");
-    getButton(confirmId)->setAccessibleName("Confirm");
+    getButton(confirmId)->setAccessibleName("UsePassword");
 
     m_passwordInput->setAccessibleName("PasswordInput");
     m_adminsCombo->setAccessibleName("AdminUsers");
+    m_fprintTip->setAccessibleName("FingerPrintInput");
 
     connect(this, &AuthDialog::buttonClicked, [this](int index, QString) {
         switch (index) {
             case 0:
                 emit rejected();
                 break;
-            case 1:
-                emit okClicked();
+            case 1: {
+                if (m_currentAuthMode == AuthMode::FingerPrint) {
+                    setAuthMode(AuthMode::Password);
+                } else if (m_currentAuthMode == AuthMode::Password) {
+                    emit okClicked();
+                }
                 break;
+            }
             default:;
         }
     });
@@ -279,14 +328,19 @@ void AuthDialog::setupUI()
     m_adminsCombo->setFixedHeight(24);
     m_adminsCombo->hide();
     m_passwordInput->setFixedHeight(24);
-    m_passwordInput->setFocus();
     m_passwordInput->setEchoMode(QLineEdit::Password);
+    m_passwordInput->hide();
     m_tooltip->hide();
+    m_fprintTip->setFixedHeight(24);
+    m_fprintTip->setPlaceholderText(QString("scan fingerprints or enter passwords to allow this operation!"));
+    m_fprintTip->setPlaceholderText(QString("扫描指纹或输入密码以允许此操作!"));
+    m_fprintTip->setEnabled(false);
 
     addSpacing(10);
     addContent(m_adminsCombo);
     addSpacing(6);
     addContent(m_passwordInput);
+    addContent(m_fprintTip);
 }
 
 AuthDetails::AuthDetails(const PolkitQt1::Details &details,
