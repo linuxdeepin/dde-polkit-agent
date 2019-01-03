@@ -21,8 +21,9 @@
 #define AUTHDIALOG_H
 
 #include <QWindow>
+#include <QComboBox>
+
 #include <ddialog.h>
-#include <dcombobox.h>
 #include <dpasswordedit.h>
 
 #include <PolkitQt1/Identity>
