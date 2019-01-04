@@ -1,3 +1,13 @@
+<a name="0.2.2"></a>
+## 0.2.2 (2019-01-04)
+
+
+#### Bug Fixes
+
+*   failed on build ([8667450a](https://github.com/linuxdeepin/dde-polkit-agent/commit/8667450a19f1fabb5b836150f8754b529df7a5cd))
+
+
+
 <a name="0.2.1"></a>
 ### 0.2.1 (2018-03-28)
 
