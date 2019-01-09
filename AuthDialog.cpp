@@ -79,6 +79,8 @@ AuthDialog::AuthDialog(const QString &actionId,
         m_adminsCombo->addItem("", identities[0].toString());
         m_adminsCombo->setCurrentIndex(0);
     }
+
+    connect(this, &AuthDialog::aboutToClose, this, &AuthDialog::rejected);
 }
 
 AuthDialog::~AuthDialog()
