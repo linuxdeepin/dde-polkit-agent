@@ -1,3 +1,13 @@
+<a name="0.2.3"></a>
+### 0.2.3 (2019-01-14)
+
+
+#### Bug Fixes
+
+*   still auth after dialog window closed ([76efc52f](https://github.com/linuxdeepin/dde-polkit-agent/commit/76efc52f4bce562aadbfb7adcc58acc922349d8e))
+
+
+
 <a name="0.2.2"></a>
 ## 0.2.2 (2019-01-04)
 
