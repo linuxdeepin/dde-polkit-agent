@@ -40,11 +40,15 @@ PolicyKitListener::PolicyKitListener(QObject *parent)
 {
     (void) new Polkit1AuthAgentAdaptor(this);
 
-    if (!QDBusConnection::sessionBus().registerObject("/com/deepin/Polkit1AuthAgent", this,
-                                                     QDBusConnection::ExportScriptableSlots |
-                                                     QDBusConnection::ExportScriptableProperties |
-                                                     QDBusConnection::ExportAdaptors)) {
-        qWarning() << "Could not initiate DBus helper!";
+    QDBusConnection sessionBus = QDBusConnection::sessionBus();
+    if (!sessionBus.registerService("com.deepin.Polkit1AuthAgent")) {
+        qWarning() << "Register auth agent service failed!";
+    }
+    if (!sessionBus.registerObject("/com/deepin/Polkit1AuthAgent", this,
+                                   QDBusConnection::ExportScriptableSlots |
+                                   QDBusConnection::ExportScriptableProperties |
+                                   QDBusConnection::ExportAdaptors)) {
+        qWarning() << "Register auth agent path failed!";
     }
 
     qDebug() << "Listener online";
