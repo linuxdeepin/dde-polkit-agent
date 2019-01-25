@@ -1,3 +1,13 @@
+<a name="0.2.4"></a>
+## 0.2.4 (2019-01-25)
+
+
+#### Features
+
+*   provide dbus service ([6383e78e](https://github.com/linuxdeepin/dde-polkit-agent/commit/6383e78e1a7da38cdfccb6c09223b2ed52bac521))
+
+
+
 <a name="0.2.3"></a>
 ### 0.2.3 (2019-01-14)
 
