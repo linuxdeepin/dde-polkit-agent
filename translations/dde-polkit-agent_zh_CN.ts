@@ -1,27 +1,20 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="zh_CN">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="zh_CN" version="2.1">
 <context>
     <name>AuthDialog</name>
     <message>
-        <location filename="../AuthDialog.cpp" line="89"/>
-        <source>Failed to match fingerprint</source>
-        <translation>指纹识别失败</translation>
-    </message>
-    <message>
-        <location filename="../AuthDialog.cpp" line="236"/>
+        <location filename="../AuthDialog.cpp" line="26"/>
         <source>Wrong password</source>
         <translation>密码错误</translation>
     </message>
     <message>
-        <location filename="../AuthDialog.cpp" line="245"/>
+        <location filename="../AuthDialog.cpp" line="186"/>
         <source>Cancel</source>
         <translation>取消</translation>
     </message>
     <message>
-        <location filename="../AuthDialog.cpp" line="246"/>
+        <location filename="../AuthDialog.cpp" line="186"/>
         <source>Confirm</source>
-        <translation>授权</translation>
+        <translation>认证</translation>
     </message>
 </context>
 </TS>
