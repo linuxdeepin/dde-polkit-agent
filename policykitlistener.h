@@ -75,6 +75,7 @@ private:
     QPointer<PluginManager> m_pluginManager;
     QPointer<Session> m_session;
     QPointer<FPrintd> m_fprintdInter;
+    QPointer<FPrintdDevice> m_fprintdDeviceInter;
     DeepinAuthFramework *m_deepinAuthFramework;
 
     PolkitQt1::Identity::List m_identities;

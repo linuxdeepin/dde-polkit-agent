@@ -62,6 +62,14 @@ PolicyKitListener::PolicyKitListener(QObject *parent)
     qDebug() << "Listener online";
 
     m_pluginManager = new PluginManager(this);
+
+    QDBusObjectPath default_fprintd_device_path = m_fprintdInter->GetDefaultDevice();
+
+    if (!default_fprintd_device_path.path().isEmpty()) {
+        m_fprintdDeviceInter = new FPrintdDevice("com.deepin.daemon.Fprintd.Device",
+                                                 "/com/deepin/daemon/Fprintd/Device",
+                                                 QDBusConnection::sessionBus(), this);
+    }
 }
 
 PolicyKitListener::~PolicyKitListener()
@@ -132,7 +140,6 @@ void PolicyKitListener::initiateAuthentication(const QString &actionId,
     m_pluginManager.data()->setActionID(actionId);
 
     m_dialog = new AuthDialog(actionId, message, iconName, details, identities, parentId);
-    m_dialog.data()->setAuthMode(m_fprintdInter->GetDevices().value().isEmpty() ? AuthDialog::Password : AuthDialog::FingerPrint);
 
     connect(m_dialog.data(), SIGNAL(okClicked()), SLOT(dialogAccepted()));
     connect(m_dialog.data(), SIGNAL(rejected()), SLOT(dialogCanceled()));
@@ -176,8 +183,16 @@ void PolicyKitListener::tryAgain()
         connect(m_session.data(), SIGNAL(completed(bool)), this, SLOT(completed(bool)));
         connect(m_session.data(), SIGNAL(showError(QString)), this, SLOT(showError(QString)));
 
+        const QString username { m_selectedUser.toString().replace("unix-user:", "") };
+
+        m_dialog->setAuthMode(
+            (m_fprintdDeviceInter &&
+             !m_fprintdDeviceInter->ListEnrolledFingers(username).value().isEmpty())
+                ? AuthDialog::FingerPrint
+                : AuthDialog::Password);
+
         m_deepinAuthFramework->Clear();
-        m_deepinAuthFramework->SetUser(m_selectedUser.toString().replace("unix-user:", ""));
+        m_deepinAuthFramework->SetUser(username);
         m_deepinAuthFramework->Authenticate();
     }
 }
