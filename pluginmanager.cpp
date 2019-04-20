@@ -34,13 +34,19 @@ QList<QButtonGroup*> PluginManager::reduceGetOptions(const QString &actionID)
 void PluginManager::load()
 {
 
-    QDir dir("/usr/lib/polkit-1-dde/plugins/");
-    QFileInfoList pluginFiles = dir.entryInfoList((QStringList("*.so")));
+    QStringList pluginsDirs = QProcessEnvironment::systemEnvironment().value("DDE_POLKIT_AGENT_PLUGINS_DIRS").split(QDir::listSeparator(), QString::SkipEmptyParts);
+    pluginsDirs.append("/usr/lib/polkit-1-dde/plugins/");
 
-    for (const QFileInfo &pluginFile : pluginFiles) {
-       AgentExtension *plugin = loadFile(pluginFile.absoluteFilePath());
-       if (plugin)
-           m_plugins << plugin;
+    for (const QString &dirName : pluginsDirs) {
+        QDir dir(dirName);
+
+        QFileInfoList pluginFiles = dir.entryInfoList((QStringList("*.so")));
+
+        for (const QFileInfo &pluginFile : pluginFiles) {
+            AgentExtension *plugin = loadFile(pluginFile.absoluteFilePath());
+            if (plugin)
+                m_plugins << plugin;
+        }
     }
 }
 
