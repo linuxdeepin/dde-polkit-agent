@@ -84,23 +84,21 @@ void PolicyKitListener::setWIdForAction(const QString& action, qulonglong wID)
 
 void PolicyKitListener::onDisplayErrorMsg(const QString &msg)
 {
-    qDebug() << msg;
-
-    if (msg == "Verification timed out") {
-        if (!m_dialog.isNull()) {
-            m_dialog->setAuthMode(AuthDialog::AuthMode::Password);
-        }
+    if (!m_dialog.isNull()) {
+        m_dialog->setError(msg);
     }
 }
 
 void PolicyKitListener::onDisplayTextInfo(const QString &msg)
 {
-    qDebug() << msg;
+    if (!m_dialog.isNull()) {
+        m_dialog->setRequest(msg, true);
+    }
 }
 
 void PolicyKitListener::onPasswordResult(const QString &msg)
 {
-    qDebug() << msg;
+    if (msg.isEmpty()) return;
 
     m_password = msg;
     m_session->initiate();
@@ -264,7 +262,7 @@ void PolicyKitListener::cancelAuthentication()
 void PolicyKitListener::request(const QString &request, bool echo)
 {
     Q_UNUSED(echo);
-    qDebug() << ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" << "Request: " << request;
+    qDebug() << "Request: " << request;
 
     if (!m_dialog.isNull()) {
         m_dialog.data()->setRequest(request, m_selectedUser.isValid() &&
@@ -296,6 +294,7 @@ void PolicyKitListener::dialogAccepted()
 {
     if (!m_dialog.isNull()) {
         qDebug() << "Dialog accepted";
+        m_deepinAuthFramework->Clear();
         m_deepinAuthFramework->SetUser(m_selectedUser.toString().remove("unix-user:"));
         m_deepinAuthFramework->setPassword(m_dialog->password());
         m_deepinAuthFramework->Authenticate();

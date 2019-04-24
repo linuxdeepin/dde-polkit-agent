@@ -94,10 +94,8 @@ AuthDialog::~AuthDialog()
 
 void AuthDialog::setError(const QString &error)
 {
-    if (error == "Failed to match fingerprint") {
-        m_tooltip->setMessage(tr("Failed to match fingerprint"));
-        showErrorTip();
-    }
+    m_tooltip->setMessage(error);
+    showErrorTip();
 }
 
 void AuthDialog::setRequest(const QString &request, bool requiresAdmin)
@@ -333,7 +331,6 @@ void AuthDialog::setupUI()
     m_tooltip->hide();
     m_fprintTip->setFixedHeight(24);
     m_fprintTip->setPlaceholderText(QString("scan fingerprints or enter passwords to allow this operation!"));
-    m_fprintTip->setPlaceholderText(QString("扫描指纹或输入密码以允许此操作!"));
     m_fprintTip->setEnabled(false);
 
     addSpacing(10);
