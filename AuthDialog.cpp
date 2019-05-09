@@ -128,8 +128,6 @@ void AuthDialog::setAuthMode(AuthDialog::AuthMode mode)
         m_fprintTip->show();
         m_passwordInput->hide();
         m_currentAuthMode = AuthMode::FingerPrint;
-        setButtonText(1, tr("Use Password"));
-        getButton(1)->setAccessibleName("UsePassword");
 
         break;
     }
@@ -138,8 +136,6 @@ void AuthDialog::setAuthMode(AuthDialog::AuthMode mode)
         m_passwordInput->show();
         m_passwordInput->setFocus();
         m_currentAuthMode = AuthMode::Password;
-        setButtonText(1, tr("Confirm"));
-        getButton(1)->setAccessibleName("Confirm");
 
         Q_EMIT usePassword();
 
@@ -148,6 +144,9 @@ void AuthDialog::setAuthMode(AuthDialog::AuthMode mode)
     default:
         break;
     }
+
+    setButtonText(1, tr("Confirm"));
+    getButton(1)->setAccessibleName("Confirm");
 }
 
 void AuthDialog::addOptions(QButtonGroup *bg)
@@ -254,7 +253,9 @@ void AuthDialog::focusInEvent(QFocusEvent *event)
 
 QString AuthDialog::password() const
 {
-    return m_passwordInput->text();
+    return m_passwordInput->isVisible()
+               ? m_passwordInput->text()
+               : m_fprintTip->text();
 }
 
 void AuthDialog::authenticationFailure()
@@ -275,13 +276,13 @@ void AuthDialog::setupUI()
     setMaximumWidth(380);
 
     int cancelId = addButton(tr("Cancel"));
-    int confirmId = addButton(tr("Use Password"), true, ButtonType::ButtonRecommend);
+    int confirmId = addButton(tr("Confirm"), true, ButtonType::ButtonRecommend);
 
     setOnButtonClickedClose(false);
     setDefaultButton(1);
 
     getButton(cancelId)->setAccessibleName("Cancel");
-    getButton(confirmId)->setAccessibleName("UsePassword");
+    getButton(confirmId)->setAccessibleName("Confirm");
 
     m_passwordInput->setAccessibleName("PasswordInput");
     m_adminsCombo->setAccessibleName("AdminUsers");
@@ -293,11 +294,7 @@ void AuthDialog::setupUI()
                 emit rejected();
                 break;
             case 1: {
-                if (m_currentAuthMode == AuthMode::FingerPrint) {
-                    setAuthMode(AuthMode::Password);
-                } else if (m_currentAuthMode == AuthMode::Password) {
-                    emit okClicked();
-                }
+                emit okClicked();
                 break;
             }
             default:;
@@ -330,8 +327,8 @@ void AuthDialog::setupUI()
     m_passwordInput->hide();
     m_tooltip->hide();
     m_fprintTip->setFixedHeight(24);
-    m_fprintTip->setPlaceholderText(QString("scan fingerprints or enter passwords to allow this operation!"));
-    m_fprintTip->setEnabled(false);
+    m_fprintTip->setPlaceholderText(QString(tr("Please verify your fingerprint or enter the password")));
+    m_fprintTip->setEnabled(true);
 
     addSpacing(10);
     addContent(m_adminsCombo);
