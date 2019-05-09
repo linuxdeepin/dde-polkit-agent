@@ -128,7 +128,7 @@ void AuthDialog::setAuthMode(AuthDialog::AuthMode mode)
         m_fprintTip->show();
         m_passwordInput->hide();
         m_currentAuthMode = AuthMode::FingerPrint;
-
+        m_fprintTip->setPlaceholderText(QString(tr("Verify your fingerprint or password")));
         break;
     }
     case AuthMode::Password: {
@@ -327,7 +327,6 @@ void AuthDialog::setupUI()
     m_passwordInput->hide();
     m_tooltip->hide();
     m_fprintTip->setFixedHeight(24);
-    m_fprintTip->setPlaceholderText(QString(tr("Please verify your fingerprint or enter the password")));
     m_fprintTip->setEnabled(true);
 
     addSpacing(10);
