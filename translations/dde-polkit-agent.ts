@@ -4,22 +4,23 @@
 <context>
     <name>AuthDialog</name>
     <message>
-        <location filename="../AuthDialog.cpp" line="89"/>
-        <source>Failed to match fingerprint</source>
+        <location filename="../AuthDialog.cpp" line="131"/>
+        <location filename="../AuthDialog.cpp" line="278"/>
+        <source>Use Password</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../AuthDialog.cpp" line="236"/>
+        <location filename="../AuthDialog.cpp" line="268"/>
         <source>Wrong password</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../AuthDialog.cpp" line="245"/>
+        <location filename="../AuthDialog.cpp" line="277"/>
         <source>Cancel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../AuthDialog.cpp" line="246"/>
+        <location filename="../AuthDialog.cpp" line="141"/>
         <source>Confirm</source>
         <translation type="unfinished"></translation>
     </message>
