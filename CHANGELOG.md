@@ -1,3 +1,13 @@
+<a name="0.2.7"></a>
+### 0.2.7 (2019-05-27)
+
+
+#### Features
+
+*   show deepin-auth pam message ([f83eff25](https://github.com/linuxdeepin/dde-polkit-agent/commit/f83eff258e201ab080c71bddea98b2df93321288))
+
+
+
 <a name="0.2.6"></a>
 ## 0.2.6 (2019-04-10)
 
