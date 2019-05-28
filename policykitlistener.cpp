@@ -183,6 +183,7 @@ void PolicyKitListener::tryAgain()
 
         const QString username { m_selectedUser.toString().replace("unix-user:", "") };
 
+#ifdef ENABLE_DEEPIN_AUTH
         m_dialog->setAuthMode(
             (m_fprintdDeviceInter &&
              !m_fprintdDeviceInter->ListEnrolledFingers(username).value().isEmpty())
@@ -192,6 +193,9 @@ void PolicyKitListener::tryAgain()
         m_deepinAuthFramework->Clear();
         m_deepinAuthFramework->SetUser(username);
         m_deepinAuthFramework->Authenticate();
+#else
+        m_dialog->setAuthMode(AuthDialog::Password);
+#endif
     }
 }
 
@@ -294,10 +298,16 @@ void PolicyKitListener::dialogAccepted()
 {
     if (!m_dialog.isNull()) {
         qDebug() << "Dialog accepted";
+#ifdef ENABLE_DEEPIN_AUTH
         m_deepinAuthFramework->Clear();
         m_deepinAuthFramework->SetUser(m_selectedUser.toString().remove("unix-user:"));
         m_deepinAuthFramework->setPassword(m_dialog->password());
         m_deepinAuthFramework->Authenticate();
+#else
+        m_password = m_dialog->password();
+        m_session->initiate();
+        m_session->setResponse(m_password);
+#endif
     }
 }
 

@@ -10,7 +10,8 @@ Build-Depends: debhelper (>=9),
 	libdtkwidget-dev,
 	qt5-qmake, 
 	qttools5-dev-tools, 
-	libdframeworkdbus-dev
+	libdframeworkdbus-dev,
+	libdtkcore-bin
 Standards-Version: 3.9.8
 Homepage: http://www.deepin.org/
 
