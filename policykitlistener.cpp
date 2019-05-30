@@ -98,7 +98,9 @@ void PolicyKitListener::onDisplayTextInfo(const QString &msg)
 
 void PolicyKitListener::onPasswordResult(const QString &msg)
 {
-    if (msg.isEmpty()) return;
+    if (msg.isEmpty()) {
+        return completed(false);
+    }
 
     m_password = msg;
     m_session->initiate();
