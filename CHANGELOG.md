@@ -1,3 +1,13 @@
+<a name="0.2.9"></a>
+### 0.2.9 (2019-06-01)
+
+
+#### Bug Fixes
+
+*   auth failed without prompt ([8342ad2b](https://github.com/linuxdeepin/dde-polkit-agent/commit/8342ad2bf476ef933dc76079e41b72e639be2d17))
+
+
+
 <a name="0.2.8"></a>
 ### 0.2.8 (2019-05-28)
 
