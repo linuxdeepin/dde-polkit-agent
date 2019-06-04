@@ -266,8 +266,9 @@ void AuthDialog::authenticationFailure()
     m_passwordInput->clear();
     m_passwordInput->setFocus();
 
-    m_tooltip->setMessage(tr("Wrong password"));
-    showErrorTip();
+    setError(tr("Wrong password"));
+
+    activateWindow();
 }
 
 void AuthDialog::setupUI()
