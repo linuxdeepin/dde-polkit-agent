@@ -1,3 +1,13 @@
+<a name="0.2.10"></a>
+### 0.2.10 (2019-06-04)
+
+
+#### Bug Fixes
+
+*   auth faild cannot set focus again ([4301d672](https://github.com/linuxdeepin/dde-polkit-agent/commit/4301d672388590a717a0556483073fc552df2967))
+
+
+
 <a name="0.2.9"></a>
 ### 0.2.9 (2019-06-01)
 
