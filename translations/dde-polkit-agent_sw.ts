@@ -1,26 +1,26 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="bn" version="2.1">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="sw" version="2.1">
 <context>
     <name>AuthDialog</name>
     <message>
         <location filename="../AuthDialog.cpp" line="131"/>
         <source>Verify your fingerprint or password</source>
-        <translation>একটি আঙ্গুলের ছাপ অথবা পাসওয়ার্ড যাচাই করুন</translation>
+        <translation>Hakikisha nywila yako ama alama cha kidole</translation>
     </message>
     <message>
         <location filename="../AuthDialog.cpp" line="269"/>
         <source>Wrong password</source>
-        <translation>ভুল পাসওয়ার্ড</translation>
+        <translation>Nywila si sahihi</translation>
     </message>
     <message>
         <location filename="../AuthDialog.cpp" line="278"/>
         <source>Cancel</source>
-        <translation>বাতিল</translation>
+        <translation>Katisha</translation>
     </message>
     <message>
         <location filename="../AuthDialog.cpp" line="148"/>
         <location filename="../AuthDialog.cpp" line="279"/>
         <source>Confirm</source>
-        <translation>নিশ্চিত করুন</translation>
+        <translation>Hakikisha</translation>
     </message>
 </context>
 </TS>

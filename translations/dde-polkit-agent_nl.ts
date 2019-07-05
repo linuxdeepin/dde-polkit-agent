@@ -4,7 +4,7 @@
     <message>
         <location filename="../AuthDialog.cpp" line="131"/>
         <source>Verify your fingerprint or password</source>
-        <translation type="unfinished"/>
+        <translation>Verifieer uw vingerafdruk of wachtwoord</translation>
     </message>
     <message>
         <location filename="../AuthDialog.cpp" line="269"/>
