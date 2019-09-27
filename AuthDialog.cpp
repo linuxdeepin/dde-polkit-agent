@@ -113,7 +113,7 @@ void AuthDialog::setRequest(const QString &request, bool requiresAdmin)
         setAuthMode(AuthMode::Password);
     }
 
-    m_passwordInput->setPlaceholderText(QString(dgettext("Linux-PAM", text.toStdString().c_str())));
+    m_passwordInput->lineEdit()->setPlaceholderText(QString(dgettext("Linux-PAM", text.toStdString().c_str())));
 }
 
 AuthDialog::AuthMode AuthDialog::authMode()
@@ -128,7 +128,7 @@ void AuthDialog::setAuthMode(AuthDialog::AuthMode mode)
         m_fprintTip->show();
         m_passwordInput->hide();
         m_currentAuthMode = AuthMode::FingerPrint;
-        m_fprintTip->setPlaceholderText(QString(tr("Verify your fingerprint or password")));
+        m_fprintTip->lineEdit()->setPlaceholderText(QString(tr("Verify your fingerprint or password")));
         break;
     }
     case AuthMode::Password: {
