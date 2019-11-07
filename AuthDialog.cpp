@@ -134,7 +134,7 @@ void AuthDialog::setAuthMode(AuthDialog::AuthMode mode)
     case AuthMode::Password: {
         m_fprintTip->hide();
         m_passwordInput->show();
-        m_passwordInput->setFocus();
+        m_passwordInput->lineEdit()->setFocus();
         m_currentAuthMode = AuthMode::Password;
 
         Q_EMIT usePassword();
@@ -229,7 +229,7 @@ void AuthDialog::on_userCB_currentIndexChanged(int /*index*/)
         // We need this to restart the auth with the new user
         emit adminUserSelected(identity);
         // git password label focus
-        m_passwordInput->setFocus();
+        m_passwordInput->lineEdit()->setFocus();
     }
 }
 
@@ -264,7 +264,7 @@ void AuthDialog::authenticationFailure()
     m_passwordInput->setEnabled(true);
     m_passwordInput->setAlert(true);
     m_passwordInput->clear();
-    m_passwordInput->setFocus();
+    m_passwordInput->lineEdit()->setFocus();
 
     setError(tr("Wrong password"));
 
@@ -278,6 +278,7 @@ void AuthDialog::setupUI()
 
     int cancelId = addButton(tr("Cancel"));
     int confirmId = addButton(tr("Confirm"), true, ButtonType::ButtonRecommend);
+    getButton(confirmId)->setEnabled(false);
 
     setOnButtonClickedClose(false);
     setDefaultButton(1);
@@ -302,8 +303,9 @@ void AuthDialog::setupUI()
         }
     });
 
-    connect(m_passwordInput, &DPasswordEdit::textChanged, [this] {
-        if (m_passwordInput->text().length() == 0) return;
+    connect(m_passwordInput, &DPasswordEdit::textChanged, [ = ](const QString & text) {
+        getButton(confirmId)->setEnabled(text.length() > 0);
+        if (text.length() == 0) return;
 
         m_tooltip->hide();
         m_passwordInput->setAlert(false);
@@ -322,6 +324,7 @@ void AuthDialog::setupUI()
     setIconPixmap(icon);
 
     m_adminsCombo->setFixedHeight(24);
+    m_adminsCombo->setMaximumWidth(maximumWidth());
     m_adminsCombo->hide();
     m_passwordInput->setFixedHeight(24);
     m_passwordInput->setEchoMode(QLineEdit::Password);
