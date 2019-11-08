@@ -323,14 +323,10 @@ void AuthDialog::setupUI()
     icon.setDevicePixelRatio(dpr);
     setIconPixmap(icon);
 
-    m_adminsCombo->setFixedHeight(24);
-    m_adminsCombo->setMaximumWidth(maximumWidth());
     m_adminsCombo->hide();
-    m_passwordInput->setFixedHeight(24);
     m_passwordInput->setEchoMode(QLineEdit::Password);
     m_passwordInput->hide();
     m_tooltip->hide();
-    m_fprintTip->setFixedHeight(24);
     m_fprintTip->setEnabled(true);
 
     addSpacing(10);

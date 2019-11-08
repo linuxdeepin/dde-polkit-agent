@@ -40,6 +40,7 @@ int main(int argc, char *argv[])
 {
     DApplication::loadDXcbPlugin();
     DApplication a(argc, argv);
+    DApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
     a.setOrganizationName("deepin");
     a.setApplicationName(APP_NAME);
     a.setApplicationDisplayName(APP_DISPLAY_NAME);
@@ -77,7 +78,6 @@ int main(int argc, char *argv[])
         PID.close();
     }
 
-    a.setTheme("light");
     a.loadTranslator();
 
     return a.exec();
