@@ -82,6 +82,9 @@ AuthDialog::AuthDialog(const QString &actionId,
         m_adminsCombo->setCurrentIndex(0);
     }
 
+    QString text = "Password: ";
+    m_passwordInput->lineEdit()->setPlaceholderText(QString(dgettext("Linux-PAM", text.toStdString().c_str())));
+
     connect(this, &AuthDialog::aboutToClose, this, &AuthDialog::rejected);
 }
 
@@ -107,13 +110,9 @@ void AuthDialog::setRequest(const QString &request, bool requiresAdmin)
     // in current environment, Don't know why but request text "Password: "
     // missing last character ' '. so the translated message not load currectly.
     // This really is a bug.
-    QString text = request;
     if (request.startsWith("Password:")) {
-        text = "Password: ";
         setAuthMode(AuthMode::Password);
     }
-
-    m_passwordInput->lineEdit()->setPlaceholderText(QString(dgettext("Linux-PAM", text.toStdString().c_str())));
 }
 
 AuthDialog::AuthMode AuthDialog::authMode()
