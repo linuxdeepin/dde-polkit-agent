@@ -70,11 +70,11 @@ const QString DeepinAuthFramework::RequestEchoOn(const QString &msg)
     return msg;
 }
 
-void DeepinAuthFramework::DisplayErrorMsg(AuthAgent::Type type, const QString &msg)
+void DeepinAuthFramework::DisplayErrorMsg(AuthAgent::Type type, const QString &errtype, const QString &msg)
 {
     Q_UNUSED(type);
 
-    m_interface->onDisplayErrorMsg(msg);
+    m_interface->onDisplayErrorMsg(errtype, msg);
 }
 
 void DeepinAuthFramework::DisplayTextInfo(AuthAgent::Type type, const QString &msg)

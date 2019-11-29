@@ -76,17 +76,16 @@ PolicyKitListener::~PolicyKitListener()
 {
 }
 
-void PolicyKitListener::setWIdForAction(const QString& action, qulonglong wID)
+void PolicyKitListener::setWIdForAction(const QString &action, qulonglong wID)
 {
     qDebug() << "On to the handshake";
     m_actionsToWID[action] = wID;
 }
 
-void PolicyKitListener::onDisplayErrorMsg(const QString &msg)
+void PolicyKitListener::onDisplayErrorMsg(const QString &errtype, const QString &msg)
 {
-    if (!m_dialog.isNull()) {
-        m_dialog->setError(msg);
-    }
+    if (!m_dialog.isNull() && errtype != "verify-timed-out")
+        emit m_dialog->setError(msg);
 }
 
 void PolicyKitListener::onDisplayTextInfo(const QString &msg)

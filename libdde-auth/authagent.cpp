@@ -70,9 +70,9 @@ const QString AuthAgent::RequestEchoOn(const QString &msg)
     return parent()->RequestEchoOn(msg);
 }
 
-void AuthAgent::DisplayErrorMsg(const QString &msg)
+void AuthAgent::DisplayErrorMsg(const QString &errtype, const QString &msg)
 {
-    parent()->DisplayErrorMsg(m_type, msg);
+    parent()->DisplayErrorMsg(m_type, errtype, msg);
 }
 
 void AuthAgent::DisplayTextInfo(const QString &msg)

@@ -8,6 +8,7 @@
     <arg name="message" type="s" direction="out"/>
   </method>
   <method name="DisplayErrorMsg">
+    <arg name="errtype" type="s" direction="in"/>
     <arg name="message" type="s" direction="in"/>
   </method>
   <method name="DisplayTextInfo">
