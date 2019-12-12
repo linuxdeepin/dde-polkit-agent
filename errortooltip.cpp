@@ -40,3 +40,9 @@ void ErrorTooltip::setMessage(QString message) {
     m_label->adjustSize();
     resizeWithContent();
 }
+
+// 返回错误信息
+QString ErrorTooltip::message() const
+{
+    return m_label->text();
+}

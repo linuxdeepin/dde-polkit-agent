@@ -37,6 +37,8 @@ public:
 
     void setMessage(QString message);
 
+    QString message() const;
+
 private:
     QLabel *m_label;
 };

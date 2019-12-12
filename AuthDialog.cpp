@@ -222,14 +222,44 @@ void AuthDialog::on_userCB_currentIndexChanged(int /*index*/)
     PolkitQt1::Identity identity = adminUserSelected();
     // itemData is Null when "Select user" is selected
     if (!identity.isValid()) {
+        // 清理警告信息
+        m_tooltip->hide();
         m_passwordInput->setEnabled(false);
     } else {
-        m_passwordInput->setEnabled(true);
-        // We need this to restart the auth with the new user
-        emit adminUserSelected(identity);
-        // git password label focus
-        m_passwordInput->lineEdit()->setFocus();
+        // 判断用户密码是否在有效期内
+        QDBusInterface accounts("com.deepin.daemon.Accounts", "/com/deepin/daemon/Accounts", QString(), QDBusConnection::systemBus());
+        const QString &path = accounts.call("FindUserById", QString::number(identity.toUnixUserIdentity().uid())).arguments().value(0).toString();
+        bool passwordIsExpired = false;
+
+        if (!path.isEmpty()) {
+            QDBusInterface accounts_user("com.deepin.daemon.Accounts", path, "com.deepin.daemon.Accounts.User", QDBusConnection::systemBus());
+            passwordIsExpired = accounts_user.call("IsPasswordExpired").arguments().value(0).toBool();
+        }
+
+        // 如果密码以过期
+        if (passwordIsExpired) {
+            m_passwordInput->setEnabled(false);
+            setError(tr("You are required to change your password immediately (password expired)"));
+        } else {
+            // 清理警告信息
+            m_tooltip->hide();
+            m_passwordInput->setEnabled(true);
+            // We need this to restart the auth with the new user
+            emit adminUserSelected(identity);
+            // git password label focus
+            m_passwordInput->lineEdit()->setFocus();
+        }
     }
+}
+
+void AuthDialog::showEvent(QShowEvent *event)
+{
+    if (!m_tooltip->message().isEmpty()) {
+        // 确保错误信息能正常显示
+        QTimer::singleShot(500, this, &AuthDialog::showErrorTip);
+    }
+
+    return DDialog::showEvent(event);
 }
 
 void AuthDialog::moveEvent(QMoveEvent *event)

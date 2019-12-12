@@ -83,6 +83,7 @@ private slots:
     void on_userCB_currentIndexChanged(int index);
 
 protected:
+    void showEvent(QShowEvent *event) override;
     void moveEvent(QMoveEvent *event) Q_DECL_OVERRIDE;
     void focusInEvent(QFocusEvent *event) Q_DECL_OVERRIDE;
 
