@@ -46,7 +46,7 @@ PolicyKitListener::PolicyKitListener(QObject *parent)
 
     m_deepinAuthFramework = new DeepinAuthFramework(this, this);
     m_fprintdInter = new FPrintd("com.deepin.daemon.Fprintd", "/com/deepin/daemon/Fprintd",
-                                 QDBusConnection::sessionBus(), this);
+                                 QDBusConnection::systemBus(), this);
 
     QDBusConnection sessionBus = QDBusConnection::sessionBus();
     if (!sessionBus.registerService("com.deepin.Polkit1AuthAgent")) {
@@ -63,8 +63,17 @@ PolicyKitListener::PolicyKitListener(QObject *parent)
 
     m_pluginManager = new PluginManager(this);
 
-    QDBusObjectPath default_fprintd_device_path = m_fprintdInter->GetDefaultDevice();
+    connect(m_fprintdInter, &FPrintd::DevicesChanged, this, &PolicyKitListener::fprintdDeviceChanged);
+}
 
+void PolicyKitListener::fprintdDeviceChanged()
+{
+    if (m_fprintdDeviceInter) {
+        m_fprintdDeviceInter->deleteLater();
+        m_fprintdDeviceInter = nullptr;
+    }
+
+    QDBusObjectPath default_fprintd_device_path = m_fprintdInter->GetDefaultDevice();
     if (!default_fprintd_device_path.path().isEmpty()) {
         m_fprintdDeviceInter = new FPrintdDevice("com.deepin.daemon.Fprintd.Device",
                                                  "/com/deepin/daemon/Fprintd/Device",

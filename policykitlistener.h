@@ -96,6 +96,7 @@ private slots:
     void dialogAccepted();
     void dialogCanceled();
     void userSelected(const PolkitQt1::Identity &identity);
+    void fprintdDeviceChanged();
 };
 
 #endif
