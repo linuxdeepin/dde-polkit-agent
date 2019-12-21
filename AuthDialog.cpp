@@ -227,7 +227,7 @@ void AuthDialog::on_userCB_currentIndexChanged(int /*index*/)
         m_passwordInput->setEnabled(false);
     } else {
         // 判断用户密码是否在有效期内
-        QDBusInterface accounts("com.deepin.daemon.Accounts", "/com/deepin/daemon/Accounts", QString(), QDBusConnection::systemBus());
+        QDBusInterface accounts("com.deepin.daemon.Accounts", "/com/deepin/daemon/Accounts","com.deepin.daemon.Accounts", QDBusConnection::systemBus());
         const QString &path = accounts.call("FindUserById", QString::number(identity.toUnixUserIdentity().uid())).arguments().value(0).toString();
         bool passwordIsExpired = false;
 
