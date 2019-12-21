@@ -96,7 +96,6 @@ private:
     QComboBox * m_adminsCombo;
     DPasswordEdit * m_passwordInput;
     ErrorTooltip *m_tooltip;
-    DLineEdit *m_fprintTip;
 
     AuthMode m_currentAuthMode;
 

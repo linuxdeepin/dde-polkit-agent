@@ -37,6 +37,7 @@
 #include <libintl.h>
 
 #include "usersmanager.h"
+DWIDGET_USE_NAMESPACE
 
 AuthDialog::AuthDialog(const QString &actionId,
                        const QString &message,
@@ -51,7 +52,6 @@ AuthDialog::AuthDialog(const QString &actionId,
       m_adminsCombo(new QComboBox(this)),
       m_passwordInput(new DPasswordEdit(this)),
       m_tooltip(new ErrorTooltip("")),
-      m_fprintTip(new DLineEdit(this)),
       m_currentAuthMode(AuthMode::FingerPrint)
 {
     Q_UNUSED(details)
@@ -81,9 +81,6 @@ AuthDialog::AuthDialog(const QString &actionId,
         m_adminsCombo->addItem("", identities[0].toString());
         m_adminsCombo->setCurrentIndex(0);
     }
-
-    QString text = "Password: ";
-    m_passwordInput->lineEdit()->setPlaceholderText(QString(dgettext("Linux-PAM", text.toStdString().c_str())));
 
     connect(this, &AuthDialog::aboutToClose, this, &AuthDialog::rejected);
 }
@@ -124,17 +121,15 @@ void AuthDialog::setAuthMode(AuthDialog::AuthMode mode)
 {
     switch (mode) {
     case AuthMode::FingerPrint: {
-        m_fprintTip->show();
-        m_passwordInput->hide();
         m_currentAuthMode = AuthMode::FingerPrint;
-        m_fprintTip->lineEdit()->setPlaceholderText(QString(tr("Verify your fingerprint or password")));
+        m_passwordInput->lineEdit()->setPlaceholderText(QString(tr("Verify your fingerprint or password")));
         break;
     }
     case AuthMode::Password: {
-        m_fprintTip->hide();
-        m_passwordInput->show();
-        m_passwordInput->lineEdit()->setFocus();
         m_currentAuthMode = AuthMode::Password;
+        QString text = "Password: ";
+        m_passwordInput->lineEdit()->setPlaceholderText(QString(dgettext("Linux-PAM", text.toStdString().c_str())));
+        m_passwordInput->lineEdit()->setFocus();
 
         Q_EMIT usePassword();
 
@@ -194,12 +189,7 @@ void AuthDialog::createUserCB(const PolkitQt1::Identity::List &identities)
 
 void AuthDialog::showErrorTip()
 {
-    QPoint globalStart;
-    if (m_currentAuthMode == AuthMode::FingerPrint) {
-        globalStart = mapToGlobal(m_fprintTip->pos());
-    } else if (m_currentAuthMode == AuthMode::Password) {
-        globalStart = mapToGlobal(m_passwordInput->pos());
-    }
+    QPoint globalStart = mapToGlobal(m_passwordInput->pos());
     m_tooltip->show(globalStart.x(),
                     globalStart.y() + m_passwordInput->height());
 }
@@ -220,6 +210,10 @@ PolkitQt1::Identity AuthDialog::adminUserSelected() const
 void AuthDialog::on_userCB_currentIndexChanged(int /*index*/)
 {
     PolkitQt1::Identity identity = adminUserSelected();
+    // 清除上一个用户已经输入的密码
+    m_passwordInput->clear();
+    m_passwordInput->setAlert(false);
+
     // itemData is Null when "Select user" is selected
     if (!identity.isValid()) {
         // 清理警告信息
@@ -227,7 +221,7 @@ void AuthDialog::on_userCB_currentIndexChanged(int /*index*/)
         m_passwordInput->setEnabled(false);
     } else {
         // 判断用户密码是否在有效期内
-        QDBusInterface accounts("com.deepin.daemon.Accounts", "/com/deepin/daemon/Accounts","com.deepin.daemon.Accounts", QDBusConnection::systemBus());
+        QDBusInterface accounts("com.deepin.daemon.Accounts", "/com/deepin/daemon/Accounts", "com.deepin.daemon.Accounts", QDBusConnection::systemBus());
         const QString &path = accounts.call("FindUserById", QString::number(identity.toUnixUserIdentity().uid())).arguments().value(0).toString();
         bool passwordIsExpired = false;
 
@@ -282,9 +276,7 @@ void AuthDialog::focusInEvent(QFocusEvent *event)
 
 QString AuthDialog::password() const
 {
-    return m_passwordInput->isVisible()
-               ? m_passwordInput->text()
-               : m_fprintTip->text();
+    return m_passwordInput->text();
 }
 
 void AuthDialog::authenticationFailure()
@@ -317,7 +309,6 @@ void AuthDialog::setupUI()
 
     m_passwordInput->setAccessibleName("PasswordInput");
     m_adminsCombo->setAccessibleName("AdminUsers");
-    m_fprintTip->setAccessibleName("FingerPrintInput");
 
     connect(this, &AuthDialog::buttonClicked, [this](int index, QString) {
         switch (index) {
@@ -350,20 +341,17 @@ void AuthDialog::setupUI()
     }
 
     icon.setDevicePixelRatio(dpr);
-    setIconPixmap(icon);
+    setIcon(icon);
 
     m_adminsCombo->setMaximumWidth(maximumWidth());
     m_adminsCombo->hide();
     m_passwordInput->setEchoMode(QLineEdit::Password);
-    m_passwordInput->hide();
     m_tooltip->hide();
-    m_fprintTip->setEnabled(true);
 
     addSpacing(10);
     addContent(m_adminsCombo);
     addSpacing(6);
     addContent(m_passwordInput);
-    addContent(m_fprintTip);
 }
 
 AuthDetails::AuthDetails(const PolkitQt1::Details &details,

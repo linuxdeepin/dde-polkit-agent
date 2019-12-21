@@ -64,6 +64,7 @@ PolicyKitListener::PolicyKitListener(QObject *parent)
     m_pluginManager = new PluginManager(this);
 
     connect(m_fprintdInter, &FPrintd::DevicesChanged, this, &PolicyKitListener::fprintdDeviceChanged);
+    fprintdDeviceChanged();
 }
 
 void PolicyKitListener::fprintdDeviceChanged()
@@ -75,10 +76,12 @@ void PolicyKitListener::fprintdDeviceChanged()
 
     QDBusObjectPath default_fprintd_device_path = m_fprintdInter->GetDefaultDevice();
     if (!default_fprintd_device_path.path().isEmpty()) {
-        m_fprintdDeviceInter = new FPrintdDevice("com.deepin.daemon.Fprintd.Device",
-                                                 "/com/deepin/daemon/Fprintd/Device",
-                                                 QDBusConnection::sessionBus(), this);
+        m_fprintdDeviceInter = new FPrintdDevice("com.deepin.daemon.Fprintd",
+                                                 default_fprintd_device_path.path(),
+                                                 QDBusConnection::systemBus(), this);
     }
+
+    tryAgain();
 }
 
 PolicyKitListener::~PolicyKitListener()
@@ -147,6 +150,11 @@ void PolicyKitListener::initiateAuthentication(const QString &actionId,
 
     m_pluginManager.data()->setActionID(actionId);
 
+    if (!m_dialog.isNull()) {
+        m_dialog->deleteLater();
+        m_dialog = nullptr;
+    }
+
     m_dialog = new AuthDialog(actionId, message, iconName, details, identities, parentId);
 
     connect(m_dialog.data(), SIGNAL(okClicked()), SLOT(dialogAccepted()));
@@ -194,11 +202,15 @@ void PolicyKitListener::tryAgain()
         const QString username { m_selectedUser.toString().replace("unix-user:", "") };
 
 #ifdef ENABLE_DEEPIN_AUTH
-        m_dialog->setAuthMode(
-            (m_fprintdDeviceInter &&
-             !m_fprintdDeviceInter->ListEnrolledFingers(username).value().isEmpty())
-                ? AuthDialog::FingerPrint
-                : AuthDialog::Password);
+        bool hasFingers = false;
+        if (m_fprintdDeviceInter) {
+            QDBusPendingReply<QStringList> rep = m_fprintdDeviceInter->ListEnrolledFingers(username);
+            rep.waitForFinished();
+            if (rep.isValid() && !rep.value().isEmpty())
+                hasFingers = true;
+        }
+
+        m_dialog->setAuthMode(hasFingers ? AuthDialog::FingerPrint : AuthDialog::Password);
 
         m_deepinAuthFramework->Clear();
         m_deepinAuthFramework->SetUser(username);
