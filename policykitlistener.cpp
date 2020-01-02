@@ -96,8 +96,13 @@ void PolicyKitListener::setWIdForAction(const QString &action, qulonglong wID)
 
 void PolicyKitListener::onDisplayErrorMsg(const QString &errtype, const QString &msg)
 {
-    if (!m_dialog.isNull() && errtype != "verify-timed-out")
-        emit m_dialog->setError(msg);
+    if (!m_dialog.isNull()) {
+        if (errtype == "verify-timed-out") {
+            m_dialog->setAuthMode(AuthDialog::AuthMode::Password);
+        } else {
+            m_dialog->setError(msg);
+        }
+    }
 }
 
 void PolicyKitListener::onDisplayTextInfo(const QString &msg)
@@ -124,7 +129,7 @@ void PolicyKitListener::initiateAuthentication(const QString &actionId,
         const PolkitQt1::Details &details,
         const QString &cookie,
         const PolkitQt1::Identity::List &identities,
-        PolkitQt1::Agent::AsyncResult* result)
+        PolkitQt1::Agent::AsyncResult *result)
 {
     qDebug() << "Initiating authentication";
 
@@ -163,7 +168,7 @@ void PolicyKitListener::initiateAuthentication(const QString &actionId,
 
     // TODO(hualet): show extended action information.
 
-    QList<QButtonGroup*> optionsList = m_pluginManager.data()->reduceGetOptions(actionId);
+    QList<QButtonGroup *> optionsList = m_pluginManager.data()->reduceGetOptions(actionId);
     for (QButtonGroup *bg : optionsList) {
         m_dialog.data()->addOptions(bg);
     }
@@ -232,7 +237,7 @@ void PolicyKitListener::finishObtainPrivilege()
 
     if (!m_gainedAuthorization && !m_wasCancelled && !m_dialog.isNull()) {
         m_dialog.data()->authenticationFailure();
-        
+
         if (m_numTries < 3) {
             m_session.data()->deleteLater();
 
