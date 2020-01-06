@@ -71,16 +71,11 @@ AuthDialog::AuthDialog(const QString &actionId,
         }
     }
 
-    // If there is more than 1 identity we will show the combobox for user selection
-    if (identities.size() > 1) {
-        connect(m_adminsCombo, SIGNAL(currentIndexChanged(int)),
-                this, SLOT(on_userCB_currentIndexChanged(int)));
+    // 始终显示用户名 (bug:9145,降低用户理解成本)
+    connect(m_adminsCombo, SIGNAL(currentIndexChanged(int)),
+            this, SLOT(on_userCB_currentIndexChanged(int)));
 
-        createUserCB(identities);
-    } else {
-        m_adminsCombo->addItem("", identities[0].toString());
-        m_adminsCombo->setCurrentIndex(0);
-    }
+    createUserCB(identities);
 
     connect(this, &AuthDialog::aboutToClose, this, &AuthDialog::rejected);
 }
