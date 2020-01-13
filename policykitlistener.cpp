@@ -97,12 +97,9 @@ void PolicyKitListener::setWIdForAction(const QString &action, qulonglong wID)
 void PolicyKitListener::onDisplayErrorMsg(const QString &errtype, const QString &msg)
 {
     if (!m_dialog.isNull()) {
-        if(errtype == "verify-timed-out"){
+        if (errtype == "verify-timed-out")
             m_dialog->setAuthMode(AuthDialog::AuthMode::Password);
-            m_dialog->setError(msg);
-        }else {
-            m_dialog->setError(msg);
-        }
+        m_dialog->setError(msg);
     }
 }
 
