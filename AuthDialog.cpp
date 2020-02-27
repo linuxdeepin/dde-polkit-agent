@@ -102,9 +102,9 @@ void AuthDialog::setRequest(const QString &request, bool requiresAdmin)
     // in current environment, Don't know why but request text "Password: "
     // missing last character ' '. so the translated message not load currectly.
     // This really is a bug.
-    if (request.startsWith("Password:")) {
-        setAuthMode(AuthMode::Password);
-    }
+//    if (request.startsWith("Password:")) {
+//        setAuthMode(AuthMode::Password);
+//    }
 }
 
 AuthDialog::AuthMode AuthDialog::authMode()
