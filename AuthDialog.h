@@ -68,11 +68,13 @@ public:
     void addOptions(QButtonGroup *bg);
 
     QString password() const;
-    void authenticationFailure();
+    void authenticationFailure(int numTries = 0);
 
     PolkitQt1::Identity adminUserSelected() const;
 
     PolkitQt1::ActionDescription m_actionDescription;
+
+    void setBlock(bool block);
 
 signals:
     void adminUserSelected(PolkitQt1::Identity);
@@ -86,6 +88,7 @@ protected:
     void showEvent(QShowEvent *event) override;
     void moveEvent(QMoveEvent *event) Q_DECL_OVERRIDE;
     void focusInEvent(QFocusEvent *event) Q_DECL_OVERRIDE;
+    bool eventFilter(QObject *obj,QEvent *e) Q_DECL_OVERRIDE;
 
 private:
     QString m_appname;
@@ -96,6 +99,7 @@ private:
     QComboBox * m_adminsCombo;
     DPasswordEdit * m_passwordInput;
     ErrorTooltip *m_tooltip;
+    bool m_block;
 
     AuthMode m_currentAuthMode;
 

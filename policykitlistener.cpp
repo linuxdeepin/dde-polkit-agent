@@ -36,11 +36,11 @@
 //#include "libdde-auth/deepinauthframework.h"
 
 PolicyKitListener::PolicyKitListener(QObject *parent)
-        : Listener(parent)
-        , m_selectedUser(0)
-        , m_inProgress(false)
-        , m_usePassword(false)
-        , m_numFPrint(0)
+    : Listener(parent)
+    , m_selectedUser(0)
+    , m_inProgress(false)
+    , m_usePassword(false)
+    , m_numFPrint(0)
 {
     (void) new Polkit1AuthAgentAdaptor(this);
 
@@ -122,12 +122,12 @@ void PolicyKitListener::onPasswordResult(const QString &msg)
 }
 
 void PolicyKitListener::initiateAuthentication(const QString &actionId,
-        const QString &message,
-        const QString &iconName,
-        const PolkitQt1::Details &details,
-        const QString &cookie,
-        const PolkitQt1::Identity::List &identities,
-        PolkitQt1::Agent::AsyncResult *result)
+                                               const QString &message,
+                                               const QString &iconName,
+                                               const PolkitQt1::Details &details,
+                                               const QString &cookie,
+                                               const PolkitQt1::Identity::List &identities,
+                                               PolkitQt1::Agent::AsyncResult *result)
 {
     qDebug() << "Initiating authentication";
 
@@ -235,7 +235,7 @@ void PolicyKitListener::finishObtainPrivilege()
     }
 
     if (!m_gainedAuthorization && !m_wasCancelled && !m_dialog.isNull()) {
-        m_dialog.data()->authenticationFailure();
+        m_dialog.data()->authenticationFailure(m_numTries);
 
         if (m_numTries < 3) {
             m_session.data()->deleteLater();
@@ -257,12 +257,23 @@ void PolicyKitListener::finishObtainPrivilege()
     m_session.data()->deleteLater();
 
     if (!m_dialog.isNull()) {
-        m_dialog.data()->hide();
+        if(m_numTries >= 3)
+        {
+            m_dialog.data()->setBlock(true);
+            QTimer::singleShot(3000,this,[=]{
+                m_dialog.data()->setBlock(false);
+                m_dialog.data()->hide();
 
-        // FIXME(hualet): don't know why deleteLater doesn't do its job,
-        // combined invokeMethod with Qt::QueuedConnection works well.
-        // m_dialog.data()->deleteLater();
-        QMetaObject::invokeMethod(m_dialog.data(), "deleteLater", Qt::QueuedConnection);
+                // FIXME(hualet): don't know why deleteLater doesn't do its job,
+                // combined invokeMethod with Qt::QueuedConnection works well.
+                // m_dialog.data()->deleteLater();
+                QMetaObject::invokeMethod(m_dialog.data(), "deleteLater", Qt::QueuedConnection);
+            });
+        }
+        else {
+            m_dialog.data()->hide();
+            QMetaObject::invokeMethod(m_dialog.data(), "deleteLater", Qt::QueuedConnection);
+        }
     }
 
     m_inProgress = false;
@@ -293,6 +304,7 @@ void PolicyKitListener::request(const QString &request, bool echo)
 {
     Q_UNUSED(echo);
     qDebug() << "Request: " << request;
+<<<<<<< HEAD
 //    while(m_password.isEmpty()) {
 //        sleep(10);
 //    }
@@ -305,6 +317,17 @@ void PolicyKitListener::request(const QString &request, bool echo)
 //            m_session.data()->setResponse(m_password);
 //        }
 //    }
+=======
+
+    if (!m_dialog.isNull()) {
+        m_dialog.data()->setRequest(request, m_selectedUser.isValid() &&
+                                    m_selectedUser.toString() == "unix-user:root");
+
+        if (request.simplified().remove(":") == "Password") {
+            m_session.data()->setResponse(m_password);
+        }
+    }
+>>>>>>> feat:update ts
 }
 
 void PolicyKitListener::completed(bool gainedAuthorization)
