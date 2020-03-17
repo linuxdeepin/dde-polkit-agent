@@ -22,6 +22,7 @@
 
 #include <QPointer>
 #include <QHash>
+#include <QGSettings>
 
 #include <polkit-qt5-1/PolkitQt1/Agent/Listener>
 
@@ -77,6 +78,7 @@ private:
     QPointer<FPrintd> m_fprintdInter;
     QPointer<FPrintdDevice> m_fprintdDeviceInter;
     DeepinAuthFramework *m_deepinAuthFramework;
+    QGSettings* m_gsettings = nullptr;
 
     PolkitQt1::Identity::List m_identities;
     PolkitQt1::Agent::AsyncResult* m_result;
@@ -93,6 +95,7 @@ private:
     int m_numFPrint;
 
 private slots:
+    bool isDeepin();
     void dialogAccepted();
     void dialogCanceled();
     void userSelected(const PolkitQt1::Identity &identity);
