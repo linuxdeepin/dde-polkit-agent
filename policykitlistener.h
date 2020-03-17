@@ -22,6 +22,7 @@
 
 #include <QPointer>
 #include <QHash>
+#include <QGSettings>
 
 #include <polkit-qt5-1/PolkitQt1/Agent/Listener>
 
@@ -73,9 +74,16 @@ private:
     QPointer<AuthDialog> m_dialog;
     QPointer<PluginManager> m_pluginManager;
     QPointer<Session> m_session;
+<<<<<<< HEAD
 //    QPointer<FPrintd> m_fprintdInter;
 //    QPointer<FPrintdDevice> m_fprintdDeviceInter;
 //    DeepinAuthFramework *m_deepinAuthFramework;
+=======
+    QPointer<FPrintd> m_fprintdInter;
+    QPointer<FPrintdDevice> m_fprintdDeviceInter;
+    DeepinAuthFramework *m_deepinAuthFramework;
+    QGSettings* m_gsettings = nullptr;
+>>>>>>> add: use qgsetting to get whether deep authentication is enabled
 
     PolkitQt1::Identity::List m_identities;
     PolkitQt1::Agent::AsyncResult* m_result;
@@ -92,6 +100,7 @@ private:
     int m_numFPrint;
 
 private slots:
+    bool isDeepin();
     void dialogAccepted();
     void dialogCanceled();
     void userSelected(const PolkitQt1::Identity &identity);

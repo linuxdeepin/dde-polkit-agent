@@ -35,18 +35,30 @@
 
 //#include "libdde-auth/deepinauthframework.h"
 
+#define USE_DEEPIN_AUTH "useDeepinAuth"
+
 PolicyKitListener::PolicyKitListener(QObject *parent)
     : Listener(parent)
-    , m_selectedUser(0)
+    , m_selectedUser(nullptr)
     , m_inProgress(false)
     , m_usePassword(false)
     , m_numFPrint(0)
 {
     (void) new Polkit1AuthAgentAdaptor(this);
 
+<<<<<<< HEAD
 //    m_deepinAuthFramework = new DeepinAuthFramework(this, this);
 //    m_fprintdInter = new FPrintd("com.deepin.daemon.Fprintd", "/com/deepin/daemon/Fprintd",
 //                                 QDBusConnection::systemBus(), this);
+=======
+    if (QGSettings::isSchemaInstalled("com.deepin.dde.auth.control")) {
+         m_gsettings = new QGSettings("com.deepin.dde.auth.control", "/com/deepin/dde/auth/control/", this);
+    }
+
+    m_deepinAuthFramework = new DeepinAuthFramework(this, this);
+    m_fprintdInter = new FPrintd("com.deepin.daemon.Fprintd", "/com/deepin/daemon/Fprintd",
+                                 QDBusConnection::systemBus(), this);
+>>>>>>> add: use qgsetting to get whether deep authentication is enabled
 
     QDBusConnection sessionBus = QDBusConnection::sessionBus();
     if (!sessionBus.registerService("com.deepin.Polkit1AuthAgent")) {
@@ -204,6 +216,7 @@ void PolicyKitListener::tryAgain()
 
         const QString username { m_selectedUser.toString().replace("unix-user:", "") };
 
+<<<<<<< HEAD
         m_session->initiate();
 #ifdef ENABLE_DEEPIN_AUTH
         bool hasFingers = false;
@@ -212,16 +225,25 @@ void PolicyKitListener::tryAgain()
             rep.waitForFinished();
             if (rep.isValid() && !rep.value().isEmpty())
                 hasFingers = true;
+=======
+        if (isDeepin()) {
+            bool hasFingers = false;
+            if (m_fprintdDeviceInter) {
+                QDBusPendingReply<QStringList> rep = m_fprintdDeviceInter->ListEnrolledFingers(username);
+                rep.waitForFinished();
+                if (rep.isValid() && !rep.value().isEmpty())
+                    hasFingers = true;
+            }
+
+            m_dialog->setAuthMode(hasFingers ? AuthDialog::FingerPrint : AuthDialog::Password);
+
+            m_deepinAuthFramework->Clear();
+            m_deepinAuthFramework->SetUser(username);
+            m_deepinAuthFramework->Authenticate();
+        } else {
+            m_dialog->setAuthMode(AuthDialog::Password);
+>>>>>>> add: use qgsetting to get whether deep authentication is enabled
         }
-
-        m_dialog->setAuthMode(hasFingers ? AuthDialog::FingerPrint : AuthDialog::Password);
-
-        m_deepinAuthFramework->Clear();
-        m_deepinAuthFramework->SetUser(username);
-        m_deepinAuthFramework->Authenticate();
-#else
-        m_dialog->setAuthMode(AuthDialog::Password);
-#endif
     }
 }
 
@@ -346,10 +368,20 @@ void PolicyKitListener::showError(const QString &text)
     m_dialog.data()->setError(text);
 }
 
+bool PolicyKitListener::isDeepin()
+{
+    bool is_deepin = true;
+    if (m_gsettings != nullptr && m_gsettings->keys().contains(USE_DEEPIN_AUTH)) {
+        is_deepin = m_gsettings->get(USE_DEEPIN_AUTH).toBool();
+    }
+    return is_deepin;
+}
+
 void PolicyKitListener::dialogAccepted()
 {
     if (!m_dialog.isNull()) {
         qDebug() << "Dialog accepted";
+<<<<<<< HEAD
 #ifdef ENABLE_DEEPIN_AUTH
         m_deepinAuthFramework->Clear();
         m_deepinAuthFramework->SetUser(m_selectedUser.toString().remove("unix-user:"));
@@ -359,6 +391,19 @@ void PolicyKitListener::dialogAccepted()
         m_password = m_dialog->password();
         m_session->setResponse(m_password);
 #endif
+=======
+
+        if (isDeepin()) {
+            m_deepinAuthFramework->Clear();
+            m_deepinAuthFramework->SetUser(m_selectedUser.toString().remove("unix-user:"));
+            m_deepinAuthFramework->setPassword(m_dialog->password());
+            m_deepinAuthFramework->Authenticate();
+        } else {
+            m_password = m_dialog->password();
+            m_session->initiate();
+            m_session->setResponse(m_password);
+        }
+>>>>>>> add: use qgsetting to get whether deep authentication is enabled
     }
 }
 
