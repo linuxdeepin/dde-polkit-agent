@@ -52,7 +52,6 @@ AuthDialog::AuthDialog(const QString &actionId,
       m_adminsCombo(new QComboBox(this)),
       m_passwordInput(new DPasswordEdit(this)),
       m_tooltip(new ErrorTooltip("")),
-      m_block(false),
       m_currentAuthMode(AuthMode::FingerPrint)
 {
     Q_UNUSED(details)
@@ -64,7 +63,7 @@ AuthDialog::AuthDialog(const QString &actionId,
     setlocale(LC_ALL, "");
 
     // find action description for actionId
-    foreach(const PolkitQt1::ActionDescription &desc, PolkitQt1::Authority::instance()->enumerateActionsSync()) {
+    foreach (const PolkitQt1::ActionDescription &desc, PolkitQt1::Authority::instance()->enumerateActionsSync()) {
         if (actionId == desc.actionId()) {
             m_actionDescription = desc;
             qDebug() << "Action description has been found" ;
@@ -79,15 +78,13 @@ AuthDialog::AuthDialog(const QString &actionId,
     createUserCB(identities);
 
     connect(this, &AuthDialog::aboutToClose, this, &AuthDialog::rejected);
-
-    installEventFilter(this);
 }
 
 AuthDialog::~AuthDialog()
 {
     qDebug() << "~AuthDialog";
     m_tooltip->hide();
-    m_tooltip->deleteLater();
+    delete m_tooltip;
 }
 
 void AuthDialog::setError(const QString &error)
@@ -143,7 +140,7 @@ void AuthDialog::setAuthMode(AuthDialog::AuthMode mode)
 
 void AuthDialog::addOptions(QButtonGroup *bg)
 {
-    QList<QAbstractButton*> btns = bg->buttons();
+    QList<QAbstractButton *> btns = bg->buttons();
 
     if (btns.length() > 0) {
         addSpacing(10);
@@ -161,7 +158,7 @@ void AuthDialog::createUserCB(const PolkitQt1::Identity::List &identities)
     m_adminsCombo->clear();
 
     // For each user
-    foreach(const PolkitQt1::Identity &identity, identities) {
+    foreach (const PolkitQt1::Identity &identity, identities) {
         if (!identity.isValid()) {
             continue;
         }
@@ -203,11 +200,6 @@ PolkitQt1::Identity AuthDialog::adminUserSelected() const
     if (id.isEmpty())
         return PolkitQt1::Identity();
     return PolkitQt1::Identity::fromString(id);
-}
-
-void AuthDialog::setBlock(bool block)
-{
-    m_block = block;
 }
 
 void AuthDialog::on_userCB_currentIndexChanged(int /*index*/)
@@ -259,6 +251,12 @@ void AuthDialog::showEvent(QShowEvent *event)
     return DDialog::showEvent(event);
 }
 
+void AuthDialog::hideEvent(QHideEvent *event)
+{
+    m_tooltip->hide();
+    DDialog::hideEvent(event);
+}
+
 void AuthDialog::moveEvent(QMoveEvent *event)
 {
     DDialog::moveEvent(event);
@@ -275,18 +273,6 @@ void AuthDialog::focusInEvent(QFocusEvent *event)
     if (m_tooltip->isVisible()) {
         m_tooltip->hide();
     }
-}
-
-bool AuthDialog::eventFilter(QObject *obj, QEvent *e)
-{
-    Q_UNUSED(obj);
-    Q_UNUSED(e);
-
-    if(m_block) {
-        return true;
-    }
-
-    return false;
 }
 
 QString AuthDialog::password() const
@@ -310,9 +296,11 @@ void AuthDialog::authenticationFailure(int numTries)
         setError(tr("Wrong password, two chances left"));
         break;
     case 0:
-    default:
+    default: {
         setError(tr("Wrong password"));
-        break;
+        setEnabled(false);
+    }
+    break;
     }
 
     activateWindow();
@@ -434,7 +422,7 @@ AuthDetails::AuthDetails(const PolkitQt1::Details &details,
      */
 }
 
-void AuthDetails::openUrl(const QString& url)
+void AuthDetails::openUrl(const QString &url)
 {
     QDesktopServices::openUrl(QUrl(url));
 }

@@ -32,8 +32,8 @@ class ErrorTooltip : public DArrowRectangle
 {
     Q_OBJECT
 public:
-    ErrorTooltip(QString errorMessage);
-    ~ErrorTooltip(){}
+    ErrorTooltip(QString errorMessage, QWidget *parent = nullptr);
+    ~ErrorTooltip() {delete m_label;}
 
     void setMessage(QString message);
 

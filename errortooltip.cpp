@@ -23,8 +23,8 @@
 
 #include "errortooltip.h"
 
-ErrorTooltip::ErrorTooltip(QString errorMessage) :
-    DArrowRectangle(DArrowRectangle::ArrowTop),
+ErrorTooltip::ErrorTooltip(QString errorMessage, QWidget *parent) :
+    DArrowRectangle(DArrowRectangle::ArrowTop, parent),
     m_label(new QLabel)
 {
     setWindowFlags(Qt::ToolTip);
@@ -35,7 +35,8 @@ ErrorTooltip::ErrorTooltip(QString errorMessage) :
     setMessage(errorMessage);
 }
 
-void ErrorTooltip::setMessage(QString message) {
+void ErrorTooltip::setMessage(QString message)
+{
     m_label->setText(message);
     m_label->adjustSize();
     resizeWithContent();
