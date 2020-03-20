@@ -78,7 +78,7 @@ private:
     QPointer<FPrintd> m_fprintdInter;
     QPointer<FPrintdDevice> m_fprintdDeviceInter;
     DeepinAuthFramework *m_deepinAuthFramework;
-    QGSettings* m_gsettings = nullptr;
+    QGSettings *m_gsettings = nullptr;
 
     PolkitQt1::Identity::List m_identities;
     PolkitQt1::Agent::AsyncResult *m_result;

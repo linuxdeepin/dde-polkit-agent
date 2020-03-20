@@ -52,7 +52,6 @@ AuthDialog::AuthDialog(const QString &actionId,
       m_adminsCombo(new QComboBox(this)),
       m_passwordInput(new DPasswordEdit(this)),
       m_tooltip(new ErrorTooltip("")),
-      m_block(false),
       m_currentAuthMode(AuthMode::FingerPrint)
 {
     Q_UNUSED(details)
@@ -79,15 +78,13 @@ AuthDialog::AuthDialog(const QString &actionId,
     createUserCB(identities);
 
     connect(this, &AuthDialog::aboutToClose, this, &AuthDialog::rejected);
-
-    installEventFilter(this);
 }
 
 AuthDialog::~AuthDialog()
 {
     qDebug() << "~AuthDialog";
     m_tooltip->hide();
-    m_tooltip->deleteLater();
+    delete m_tooltip;
 }
 
 void AuthDialog::setError(const QString &error)
@@ -205,11 +202,6 @@ PolkitQt1::Identity AuthDialog::adminUserSelected() const
     return PolkitQt1::Identity::fromString(id);
 }
 
-void AuthDialog::setBlock(bool block)
-{
-    m_block = block;
-}
-
 void AuthDialog::on_userCB_currentIndexChanged(int /*index*/)
 {
     PolkitQt1::Identity identity = adminUserSelected();
@@ -283,18 +275,6 @@ void AuthDialog::focusInEvent(QFocusEvent *event)
     }
 }
 
-bool AuthDialog::eventFilter(QObject *obj, QEvent *e)
-{
-    Q_UNUSED(obj);
-    Q_UNUSED(e);
-
-    if (m_block) {
-        return true;
-    }
-
-    return false;
-}
-
 QString AuthDialog::password() const
 {
     return m_passwordInput->text();
@@ -316,9 +296,11 @@ void AuthDialog::authenticationFailure(int numTries)
         setError(tr("Wrong password, two chances left"));
         break;
     case 0:
-    default:
+    default: {
         setError(tr("Wrong password"));
-        break;
+        setEnabled(false);
+    }
+    break;
     }
 
     activateWindow();

@@ -74,7 +74,6 @@ PolicyKitListener::PolicyKitListener(QObject *parent)
     m_delayRemoveTimer.setInterval(3000);
     m_delayRemoveTimer.setSingleShot(true);
     connect(&m_delayRemoveTimer, &QTimer::timeout, this, [ = ] {
-        m_dialog.data()->setBlock(false);
         m_dialog.data()->hide();
         // FIXME(hualet): don't know why deleteLater doesn't do its job,
         // combined invokeMethod with Qt::QueuedConnection works well.
@@ -161,6 +160,7 @@ void PolicyKitListener::initiateAuthentication(const QString &actionId,
     m_password.clear();
 
     m_inProgress = true;
+    m_delayRemoveTimer.stop();
 
     WId parentId = 0;
     if (m_actionsToWID.contains(actionId)) {
@@ -272,8 +272,6 @@ void PolicyKitListener::finishObtainPrivilege()
     m_session.data()->deleteLater();
     if (!m_dialog.isNull()) {
         if (m_numTries >= 3) {
-            m_dialog.data()->setCloseButtonVisible(false);
-            m_dialog.data()->setBlock(true);
             m_delayRemoveTimer.start();
         } else {
             m_dialog.data()->hide();

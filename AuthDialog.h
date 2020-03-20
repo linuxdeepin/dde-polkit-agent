@@ -73,8 +73,6 @@ public:
 
     PolkitQt1::ActionDescription m_actionDescription;
 
-    void setBlock(bool block);
-
 signals:
     void adminUserSelected(PolkitQt1::Identity);
     void okClicked();
@@ -88,7 +86,6 @@ protected:
     void hideEvent(QHideEvent *event) Q_DECL_OVERRIDE;
     void moveEvent(QMoveEvent *event) Q_DECL_OVERRIDE;
     void focusInEvent(QFocusEvent *event) Q_DECL_OVERRIDE;
-    bool eventFilter(QObject *obj, QEvent *e) Q_DECL_OVERRIDE;
 
 private:
     QString m_appname;
@@ -99,7 +96,6 @@ private:
     QComboBox *m_adminsCombo;
     DPasswordEdit *m_passwordInput;
     ErrorTooltip *m_tooltip;
-    bool m_block;
 
     AuthMode m_currentAuthMode;
 
