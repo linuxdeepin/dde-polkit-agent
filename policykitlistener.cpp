@@ -47,7 +47,7 @@ PolicyKitListener::PolicyKitListener(QObject *parent)
     (void) new Polkit1AuthAgentAdaptor(this);
 
     if (QGSettings::isSchemaInstalled("com.deepin.dde.auth.control")) {
-         m_gsettings = new QGSettings("com.deepin.dde.auth.control", "/com/deepin/dde/auth/control/", this);
+        m_gsettings = new QGSettings("com.deepin.dde.auth.control", "/com/deepin/dde/auth/control/", this);
     }
 
     m_deepinAuthFramework = new DeepinAuthFramework(this, this);
@@ -71,6 +71,16 @@ PolicyKitListener::PolicyKitListener(QObject *parent)
 
     connect(m_fprintdInter, &FPrintd::DevicesChanged, this, &PolicyKitListener::fprintdDeviceChanged);
     fprintdDeviceChanged();
+    m_delayRemoveTimer.setInterval(3000);
+    m_delayRemoveTimer.setSingleShot(true);
+    connect(&m_delayRemoveTimer, &QTimer::timeout, this, [ = ] {
+        m_dialog.data()->setBlock(false);
+        m_dialog.data()->hide();
+        // FIXME(hualet): don't know why deleteLater doesn't do its job,
+        // combined invokeMethod with Qt::QueuedConnection works well.
+        // m_dialog.data()->deleteLater();
+        QMetaObject::invokeMethod(m_dialog.data(), "deleteLater", Qt::QueuedConnection);
+    });
 }
 
 void PolicyKitListener::fprintdDeviceChanged()
@@ -260,27 +270,16 @@ void PolicyKitListener::finishObtainPrivilege()
         m_result->setCompleted();
     }
     m_session.data()->deleteLater();
-
     if (!m_dialog.isNull()) {
-        if(m_numTries >= 3)
-        {
+        if (m_numTries >= 3) {
+            m_dialog.data()->setCloseButtonVisible(false);
             m_dialog.data()->setBlock(true);
-            QTimer::singleShot(3000,this,[=]{
-                m_dialog.data()->setBlock(false);
-                m_dialog.data()->hide();
-
-                // FIXME(hualet): don't know why deleteLater doesn't do its job,
-                // combined invokeMethod with Qt::QueuedConnection works well.
-                // m_dialog.data()->deleteLater();
-                QMetaObject::invokeMethod(m_dialog.data(), "deleteLater", Qt::QueuedConnection);
-            });
-        }
-        else {
+            m_delayRemoveTimer.start();
+        } else {
             m_dialog.data()->hide();
             QMetaObject::invokeMethod(m_dialog.data(), "deleteLater", Qt::QueuedConnection);
         }
     }
-
     m_inProgress = false;
 
     m_numFPrint = 0;
@@ -347,9 +346,9 @@ bool PolicyKitListener::isDeepin()
 
 void PolicyKitListener::dialogAccepted()
 {
+    m_delayRemoveTimer.stop();
     if (!m_dialog.isNull()) {
         qDebug() << "Dialog accepted";
-
         if (isDeepin()) {
             m_deepinAuthFramework->Clear();
             m_deepinAuthFramework->SetUser(m_selectedUser.toString().remove("unix-user:"));
@@ -367,6 +366,8 @@ void PolicyKitListener::dialogCanceled()
 {
     qDebug() << "Dialog cancelled";
 
+    m_inProgress = false;
+    m_delayRemoveTimer.stop();
     m_wasCancelled = true;
     if (!m_session.isNull()) {
         m_session.data()->cancel();

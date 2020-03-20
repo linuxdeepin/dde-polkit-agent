@@ -54,7 +54,7 @@ public slots:
                                 const PolkitQt1::Details &details,
                                 const QString &cookie,
                                 const PolkitQt1::Identity::List &identities,
-                                PolkitQt1::Agent::AsyncResult* result) override;
+                                PolkitQt1::Agent::AsyncResult *result) override;
     bool initiateAuthenticationFinish() override;
     void cancelAuthentication() override;
 
@@ -81,11 +81,12 @@ private:
     QGSettings* m_gsettings = nullptr;
 
     PolkitQt1::Identity::List m_identities;
-    PolkitQt1::Agent::AsyncResult* m_result;
+    PolkitQt1::Agent::AsyncResult *m_result;
     QString m_cookie;
     QString m_password;
     PolkitQt1::Identity m_selectedUser;
     QHash< QString, qulonglong > m_actionsToWID;
+    QTimer m_delayRemoveTimer;
 
     bool m_inProgress;
     bool m_gainedAuthorization;

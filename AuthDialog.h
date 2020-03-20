@@ -31,8 +31,7 @@
 
 #include "errortooltip.h"
 
-namespace PolkitQt1
-{
+namespace PolkitQt1 {
 class Details;
 }
 
@@ -85,19 +84,20 @@ private slots:
     void on_userCB_currentIndexChanged(int index);
 
 protected:
-    void showEvent(QShowEvent *event) override;
+    void showEvent(QShowEvent *event) Q_DECL_OVERRIDE;
+    void hideEvent(QHideEvent *event) Q_DECL_OVERRIDE;
     void moveEvent(QMoveEvent *event) Q_DECL_OVERRIDE;
     void focusInEvent(QFocusEvent *event) Q_DECL_OVERRIDE;
-    bool eventFilter(QObject *obj,QEvent *e) Q_DECL_OVERRIDE;
+    bool eventFilter(QObject *obj, QEvent *e) Q_DECL_OVERRIDE;
 
 private:
     QString m_appname;
     QString m_message;
     QString m_iconName;
 
-    QLabel * m_iconLabel;
-    QComboBox * m_adminsCombo;
-    DPasswordEdit * m_passwordInput;
+    QLabel *m_iconLabel;
+    QComboBox *m_adminsCombo;
+    DPasswordEdit *m_passwordInput;
     ErrorTooltip *m_tooltip;
     bool m_block;
 
@@ -118,8 +118,8 @@ public:
                 QWidget *parent);
 
 private slots:
-    void openUrl(const QString&);
-    void openAction(const QString&);
+    void openUrl(const QString &);
+    void openAction(const QString &);
 };
 
 #endif // AUTHDIALOG_H
