@@ -53,7 +53,7 @@ public slots:
                                 const PolkitQt1::Details &details,
                                 const QString &cookie,
                                 const PolkitQt1::Identity::List &identities,
-                                PolkitQt1::Agent::AsyncResult* result) override;
+                                PolkitQt1::Agent::AsyncResult *result) override;
     bool initiateAuthenticationFinish() override;
     void cancelAuthentication() override;
 
@@ -74,23 +74,15 @@ private:
     QPointer<AuthDialog> m_dialog;
     QPointer<PluginManager> m_pluginManager;
     QPointer<Session> m_session;
-<<<<<<< HEAD
-//    QPointer<FPrintd> m_fprintdInter;
-//    QPointer<FPrintdDevice> m_fprintdDeviceInter;
-//    DeepinAuthFramework *m_deepinAuthFramework;
-=======
-    QPointer<FPrintd> m_fprintdInter;
-    QPointer<FPrintdDevice> m_fprintdDeviceInter;
-    DeepinAuthFramework *m_deepinAuthFramework;
-    QGSettings* m_gsettings = nullptr;
->>>>>>> add: use qgsetting to get whether deep authentication is enabled
 
     PolkitQt1::Identity::List m_identities;
-    PolkitQt1::Agent::AsyncResult* m_result;
+    PolkitQt1::Agent::AsyncResult *m_result;
     QString m_cookie;
     QString m_password{""};
     PolkitQt1::Identity m_selectedUser;
     QHash< QString, qulonglong > m_actionsToWID;
+    QTimer m_delayRemoveTimer;
+    QGSettings *m_gsettings;
 
     bool m_inProgress;
     bool m_gainedAuthorization;
@@ -104,7 +96,6 @@ private slots:
     void dialogAccepted();
     void dialogCanceled();
     void userSelected(const PolkitQt1::Identity &identity);
-//    void fprintdDeviceChanged();
 };
 
 #endif

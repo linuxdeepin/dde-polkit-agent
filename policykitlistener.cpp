@@ -46,19 +46,13 @@ PolicyKitListener::PolicyKitListener(QObject *parent)
 {
     (void) new Polkit1AuthAgentAdaptor(this);
 
-<<<<<<< HEAD
-//    m_deepinAuthFramework = new DeepinAuthFramework(this, this);
-//    m_fprintdInter = new FPrintd("com.deepin.daemon.Fprintd", "/com/deepin/daemon/Fprintd",
-//                                 QDBusConnection::systemBus(), this);
-=======
     if (QGSettings::isSchemaInstalled("com.deepin.dde.auth.control")) {
-         m_gsettings = new QGSettings("com.deepin.dde.auth.control", "/com/deepin/dde/auth/control/", this);
+        m_gsettings = new QGSettings("com.deepin.dde.auth.control", "/com/deepin/dde/auth/control/", this);
     }
 
-    m_deepinAuthFramework = new DeepinAuthFramework(this, this);
-    m_fprintdInter = new FPrintd("com.deepin.daemon.Fprintd", "/com/deepin/daemon/Fprintd",
-                                 QDBusConnection::systemBus(), this);
->>>>>>> add: use qgsetting to get whether deep authentication is enabled
+    //    m_deepinAuthFramework = new DeepinAuthFramework(this, this);
+    //    m_fprintdInter = new FPrintd("com.deepin.daemon.Fprintd", "/com/deepin/daemon/Fprintd",
+    //                                 QDBusConnection::systemBus(), this);
 
     QDBusConnection sessionBus = QDBusConnection::sessionBus();
     if (!sessionBus.registerService("com.deepin.Polkit1AuthAgent")) {
@@ -75,26 +69,16 @@ PolicyKitListener::PolicyKitListener(QObject *parent)
 
     m_pluginManager = new PluginManager(this);
 
-//    connect(m_fprintdInter, &FPrintd::DevicesChanged, this, &PolicyKitListener::fprintdDeviceChanged);
-//    fprintdDeviceChanged();
+    m_delayRemoveTimer.setInterval(3000);
+    m_delayRemoveTimer.setSingleShot(true);
+    connect(&m_delayRemoveTimer, &QTimer::timeout, this, [ = ] {
+        m_dialog.data()->hide();
+        // FIXME(hualet): don't know why deleteLater doesn't do its job,
+        // combined invokeMethod with Qt::QueuedConnection works well.
+        // m_dialog.data()->deleteLater();
+        QMetaObject::invokeMethod(m_dialog.data(), "deleteLater", Qt::QueuedConnection);
+    });
 }
-
-//void PolicyKitListener::fprintdDeviceChanged()
-//{
-//    if (m_fprintdDeviceInter) {
-//        m_fprintdDeviceInter->deleteLater();
-//        m_fprintdDeviceInter = nullptr;
-//    }
-
-//    QDBusObjectPath default_fprintd_device_path = m_fprintdInter->GetDefaultDevice();
-//    if (!default_fprintd_device_path.path().isEmpty()) {
-//        m_fprintdDeviceInter = new FPrintdDevice("com.deepin.daemon.Fprintd",
-//                                                 default_fprintd_device_path.path(),
-//                                                 QDBusConnection::systemBus(), this);
-//    }
-
-//    tryAgain();
-//}
 
 PolicyKitListener::~PolicyKitListener()
 {
@@ -157,6 +141,7 @@ void PolicyKitListener::initiateAuthentication(const QString &actionId,
     m_password.clear();
 
     m_inProgress = true;
+    m_delayRemoveTimer.stop();
 
     WId parentId = 0;
     if (m_actionsToWID.contains(actionId)) {
@@ -216,34 +201,7 @@ void PolicyKitListener::tryAgain()
 
         const QString username { m_selectedUser.toString().replace("unix-user:", "") };
 
-<<<<<<< HEAD
         m_session->initiate();
-#ifdef ENABLE_DEEPIN_AUTH
-        bool hasFingers = false;
-        if (m_fprintdDeviceInter) {
-            QDBusPendingReply<QStringList> rep = m_fprintdDeviceInter->ListEnrolledFingers(username);
-            rep.waitForFinished();
-            if (rep.isValid() && !rep.value().isEmpty())
-                hasFingers = true;
-=======
-        if (isDeepin()) {
-            bool hasFingers = false;
-            if (m_fprintdDeviceInter) {
-                QDBusPendingReply<QStringList> rep = m_fprintdDeviceInter->ListEnrolledFingers(username);
-                rep.waitForFinished();
-                if (rep.isValid() && !rep.value().isEmpty())
-                    hasFingers = true;
-            }
-
-            m_dialog->setAuthMode(hasFingers ? AuthDialog::FingerPrint : AuthDialog::Password);
-
-            m_deepinAuthFramework->Clear();
-            m_deepinAuthFramework->SetUser(username);
-            m_deepinAuthFramework->Authenticate();
-        } else {
-            m_dialog->setAuthMode(AuthDialog::Password);
->>>>>>> add: use qgsetting to get whether deep authentication is enabled
-        }
     }
 }
 
@@ -277,33 +235,20 @@ void PolicyKitListener::finishObtainPrivilege()
         m_result->setCompleted();
     }
     m_session.data()->deleteLater();
-
     if (!m_dialog.isNull()) {
-        if(m_numTries >= 3)
-        {
-            m_dialog.data()->setBlock(true);
-            QTimer::singleShot(3000,this,[=]{
-                m_dialog.data()->setBlock(false);
-                m_dialog.data()->hide();
-
-                // FIXME(hualet): don't know why deleteLater doesn't do its job,
-                // combined invokeMethod with Qt::QueuedConnection works well.
-                // m_dialog.data()->deleteLater();
-                QMetaObject::invokeMethod(m_dialog.data(), "deleteLater", Qt::QueuedConnection);
-            });
-        }
-        else {
+        if (m_numTries >= 3) {
+            m_delayRemoveTimer.start();
+        } else {
             m_dialog.data()->hide();
             QMetaObject::invokeMethod(m_dialog.data(), "deleteLater", Qt::QueuedConnection);
         }
     }
-
     m_inProgress = false;
 
     m_numFPrint = 0;
     m_usePassword = false;
 
-//    m_deepinAuthFramework->Clear();
+    //    m_deepinAuthFramework->Clear();
 
     qDebug() << "Finish obtain authorization:" << m_gainedAuthorization;
 }
@@ -326,30 +271,6 @@ void PolicyKitListener::request(const QString &request, bool echo)
 {
     Q_UNUSED(echo);
     qDebug() << "Request: " << request;
-<<<<<<< HEAD
-//    while(m_password.isEmpty()) {
-//        sleep(10);
-//    }
-
-//    if (!m_dialog.isNull()) {
-//        m_dialog.data()->setRequest(request, m_selectedUser.isValid() &&
-//                m_selectedUser.toString() == "unix-user:root");
-
-//        if (request.simplified().remove(":") == "Password") {
-//            m_session.data()->setResponse(m_password);
-//        }
-//    }
-=======
-
-    if (!m_dialog.isNull()) {
-        m_dialog.data()->setRequest(request, m_selectedUser.isValid() &&
-                                    m_selectedUser.toString() == "unix-user:root");
-
-        if (request.simplified().remove(":") == "Password") {
-            m_session.data()->setResponse(m_password);
-        }
-    }
->>>>>>> feat:update ts
 }
 
 void PolicyKitListener::completed(bool gainedAuthorization)
@@ -379,31 +300,11 @@ bool PolicyKitListener::isDeepin()
 
 void PolicyKitListener::dialogAccepted()
 {
+    m_delayRemoveTimer.stop();
     if (!m_dialog.isNull()) {
         qDebug() << "Dialog accepted";
-<<<<<<< HEAD
-#ifdef ENABLE_DEEPIN_AUTH
-        m_deepinAuthFramework->Clear();
-        m_deepinAuthFramework->SetUser(m_selectedUser.toString().remove("unix-user:"));
-        m_deepinAuthFramework->setPassword(m_dialog->password());
-        m_deepinAuthFramework->Authenticate();
-#else
         m_password = m_dialog->password();
         m_session->setResponse(m_password);
-#endif
-=======
-
-        if (isDeepin()) {
-            m_deepinAuthFramework->Clear();
-            m_deepinAuthFramework->SetUser(m_selectedUser.toString().remove("unix-user:"));
-            m_deepinAuthFramework->setPassword(m_dialog->password());
-            m_deepinAuthFramework->Authenticate();
-        } else {
-            m_password = m_dialog->password();
-            m_session->initiate();
-            m_session->setResponse(m_password);
-        }
->>>>>>> add: use qgsetting to get whether deep authentication is enabled
     }
 }
 
@@ -411,10 +312,12 @@ void PolicyKitListener::dialogCanceled()
 {
     qDebug() << "Dialog cancelled";
 
+    m_inProgress = false;
+    m_delayRemoveTimer.stop();
     m_wasCancelled = true;
     if (!m_session.isNull()) {
         m_session.data()->cancel();
-//        m_deepinAuthFramework->Clear();
+        //        m_deepinAuthFramework->Clear();
     }
 
     finishObtainPrivilege();
