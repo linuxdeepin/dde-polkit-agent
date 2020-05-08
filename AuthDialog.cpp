@@ -48,7 +48,6 @@ AuthDialog::AuthDialog(const QString &actionId,
     : DDialog(message, "", nullptr),
       m_message(message),
       m_iconName(iconName),
-      m_iconLabel(new QLabel(this)),
       m_adminsCombo(new QComboBox(this)),
       m_passwordInput(new DPasswordEdit(this)),
       m_tooltip(new ErrorTooltip("")),
@@ -243,7 +242,7 @@ void AuthDialog::on_userCB_currentIndexChanged(int /*index*/)
 
 void AuthDialog::showEvent(QShowEvent *event)
 {
-    if (!m_tooltip->message().isEmpty()) {
+    if (!m_tooltip->text().isEmpty()) {
         // 确保错误信息能正常显示
         QTimer::singleShot(500, this, &AuthDialog::showErrorTip);
     }
@@ -310,6 +309,9 @@ void AuthDialog::setupUI()
 {
     setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint);
     setMaximumWidth(380);
+
+    m_adminsCombo->setAccessibleName("selectuser");
+    m_passwordInput->setAccessibleName("passwordinput");
 
     int cancelId = addButton(tr("Cancel"));
     int confirmId = addButton(tr("Confirm"), true, ButtonType::ButtonRecommend);

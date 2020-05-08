@@ -35,9 +35,9 @@ public:
     ErrorTooltip(QString errorMessage, QWidget *parent = nullptr);
     ~ErrorTooltip() {delete m_label;}
 
-    void setMessage(QString message);
+    void setMessage(QString text);
 
-    QString message() const;
+    QString text() const;
 
 private:
     QLabel *m_label;

@@ -92,7 +92,6 @@ private:
     QString m_message;
     QString m_iconName;
 
-    QLabel *m_iconLabel;
     QComboBox *m_adminsCombo;
     DPasswordEdit *m_passwordInput;
     ErrorTooltip *m_tooltip;

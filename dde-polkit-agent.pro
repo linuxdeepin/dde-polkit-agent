@@ -21,7 +21,9 @@ HEADERS += policykitlistener.h \
     usersmanager.h \
     pluginmanager.h \
     agent-extension.h \
-    agent-extension-proxy.h
+    agent-extension-proxy.h \
+    accessibledefine.h \
+    accessible.h
 
 include(libdde-auth/libdde-auth.pri)
 

@@ -31,6 +31,7 @@ ErrorTooltip::ErrorTooltip(QString errorMessage, QWidget *parent) :
     setBackgroundColor(DBlurEffectWidget::LightColor);
 
     m_label->setStyleSheet("padding: 5px 10px; color: #f9704f");
+    m_label->setAccessibleName("content");
     setContent(m_label);
     setMessage(errorMessage);
 }
@@ -43,7 +44,8 @@ void ErrorTooltip::setMessage(QString message)
 }
 
 // 返回错误信息
-QString ErrorTooltip::message() const
+QString ErrorTooltip::text() const
 {
     return m_label->text();
 }
+

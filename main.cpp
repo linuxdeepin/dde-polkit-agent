@@ -23,6 +23,7 @@
 #include <PolkitQt1/Subject>
 
 #include "policykitlistener.h"
+#include "accessible.h"
 
 #include <QDebug>
 #include <QDir>
@@ -46,6 +47,8 @@ int main(int argc, char *argv[])
     a.setApplicationDisplayName(APP_DISPLAY_NAME);
     a.setApplicationVersion("0.1");
     a.setQuitOnLastWindowClosed(false);
+
+    QAccessible::installFactory(accessibleFactory);
 
     DLogManager::registerConsoleAppender();
     DLogManager::registerFileAppender();
