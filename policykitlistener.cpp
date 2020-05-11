@@ -335,7 +335,7 @@ void PolicyKitListener::showError(const QString &text)
 
 bool PolicyKitListener::isDeepin()
 {
-    bool is_deepin = true;
+    bool is_deepin = false;
     if (m_gsettings != nullptr && m_gsettings->keys().contains(USE_DEEPIN_AUTH)) {
         is_deepin = m_gsettings->get(USE_DEEPIN_AUTH).toBool();
     }
