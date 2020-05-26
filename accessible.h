@@ -30,7 +30,7 @@ DWIDGET_USE_NAMESPACE
 SET_WIDGET_ACCESSIBLE(AuthDialog, QAccessible::Dialog,"authdialog")
 SET_WIDGET_ACCESSIBLE(ErrorTooltip,QAccessible::StaticText, "errortip")
 SET_WIDGET_ACCESSIBLE(QWidget, QAccessible::Form, "widget")
-SET_WIDGET_ACCESSIBLE(QLabel,QAccessible::StaticText, "label")
+SET_LABEL_ACCESSIBLE(QLabel, "label")
 SET_WIDGET_ACCESSIBLE(QComboBox, QAccessible::ComboBox, "combobox")
 SET_WIDGET_ACCESSIBLE(QPushButton, QAccessible::Button, "btn")
 SET_WIDGET_ACCESSIBLE(QLineEdit, QAccessible::EditableText, "lineedit")
@@ -45,14 +45,13 @@ SET_BUTTON_ACCESSIBLE(DWindowCloseButton, "WindowCloseButton")
 SET_BUTTON_ACCESSIBLE(DWindowMaxButton, "WindowMaxButton")
 SET_BUTTON_ACCESSIBLE(DIconButton, "IconButton")
 SET_WIDGET_ACCESSIBLE(DPasswordEdit, QAccessible::EditableText, "PasswordEdit")
-SET_WIDGET_ACCESSIBLE(DLabel, QAccessible::StaticText, "Label")
+SET_LABEL_ACCESSIBLE(DLabel, "imagebutton")
 SET_BUTTON_ACCESSIBLE(DSuggestButton, "showpassword")
 SET_WIDGET_ACCESSIBLE(DLineEdit, QAccessible::EditableText, "LineEdit")
 
 QAccessibleInterface *accessibleFactory(const QString &classname, QObject *object)
 {
     QAccessibleInterface *interface = nullptr;
-
     USE_ACCESSIBLE(classname, AuthDialog);
     USE_ACCESSIBLE(classname, ErrorTooltip);
     USE_ACCESSIBLE(classname, QWidget);

@@ -52,6 +52,8 @@
 * SET_SLIDER_ACCESSIBLE:slider类型,用于滑块控件
 * SET_SEPARATOR_ACCESSIBLE:separator类型,用于分隔符控件
 */
+#include "accessiblemap.h"
+
 #include <QAccessible>
 #include <QAccessibleWidget>
 #include <QEvent>
@@ -73,8 +75,9 @@ inline QString getAccessibleName(QWidget *w, QAccessible::Role r, const QString 
     if (!objnameMap[w].isEmpty())
         return objnameMap[w];
 
-    static QMap< QAccessible::Role, QList< QString > > accessibleMap;
     QString oldAccessName = w->accessibleName().toLower();
+    if(oldAccessName.isEmpty())
+        oldAccessName = w->objectName().toLower();
     oldAccessName.replace(SEPARATOR, "");
 
     // 按照类型添加固定前缀
@@ -89,8 +92,9 @@ inline QString getAccessibleName(QWidget *w, QAccessible::Role r, const QString 
     // 再加上标识
     QString accessibleName = QString::fromLatin1(prefix) + SEPARATOR;
     accessibleName += oldAccessName.isEmpty() ? lowerFallback : oldAccessName;
+
     // 检查名称是否唯一
-    if (accessibleMap[r].contains(accessibleName)) {
+    if (AccessibleMap::instance()->accessibleMap()[r].contains(accessibleName)) {
         if (!objnameMap.key(accessibleName)) {
             objnameMap.remove(objnameMap.key(accessibleName));
             objnameMap.insert(w, accessibleName);
@@ -104,14 +108,13 @@ inline QString getAccessibleName(QWidget *w, QAccessible::Role r, const QString 
         do {
             // 一直找到一个不重复的名字
             newAccessibleName = accessibleName + SEPARATOR + QString::number(++id);
-        } while (accessibleMap[r].contains(newAccessibleName));
-
-        accessibleMap[r].append(newAccessibleName);
+        } while (AccessibleMap::instance()->accessibleMap()[r].contains(newAccessibleName));
+        AccessibleMap::instance()->accessibleMapAppend(r,newAccessibleName);
         objnameMap.insert(w, newAccessibleName);
 
         return newAccessibleName;
     } else {
-        accessibleMap[r].append(accessibleName);
+        AccessibleMap::instance()->accessibleMapAppend(r,accessibleName);
         objnameMap.insert(w, accessibleName);
 
         return accessibleName;
@@ -123,9 +126,7 @@ inline QString getAccessibleName(QWidget *w, QAccessible::Role r, const QString 
         , m_w(w)\
         , m_description(accessdescription)\
     {}\
-    private:\
-    classname *m_w;\
-    QString m_description;\
+
 
 #define FUNC_PRESS(classobj)     QStringList actionNames() const override{\
         if(!classobj->isEnabled())\
@@ -198,6 +199,15 @@ inline QString getAccessibleName(QWidget *w, QAccessible::Role r, const QString 
         }\
     }\
 
+    // Label控件特有功能
+#define FUNC_TEXT_(classname) QString Accessible##classname::text(int startOffset, int endOffset) const{\
+        Q_UNUSED(startOffset)\
+        Q_UNUSED(endOffset)\
+        return m_w->text();\
+    }\
+
+
+
 #define FUNC_TEXT_BY_LABEL(classname,accessiblename) QString Accessible##classname::text(QAccessible::Text t) const{\
         switch (t) {\
         case QAccessible::Name:\
@@ -226,7 +236,10 @@ inline QString getAccessibleName(QWidget *w, QAccessible::Role r, const QString 
     public:\
         FUNC_CREATE(classname,aaccessibletype,accessdescription)\
         QString text(QAccessible::Text t) const override;\
-        FUNC_PRESS_SHOWMENU(m_w)\
+    private:\
+    classname *m_w;\
+    QString m_description;\
+    FUNC_PRESS_SHOWMENU(m_w)\
     };\
 
 #define SET_ACCESSIBLE_WITH_DESCRIPTION(classname,aaccessibletype,accessdescription)  class Accessible##classname : public QAccessibleWidget\
@@ -234,8 +247,55 @@ inline QString getAccessibleName(QWidget *w, QAccessible::Role r, const QString 
     public:\
         FUNC_CREATE(classname,aaccessibletype,accessdescription)\
         QString text(QAccessible::Text t) const override;\
-        FUNC_RECT(m_w)\
+    private:\
+    classname *m_w;\
+    QString m_description;\
+    FUNC_RECT(m_w)\
     };\
+
+#define SET_LABEL_ACCESSIBLE_WITH_DESCRIPTION(classname,accessiblename,accessdescription)  class Accessible##classname : public QAccessibleWidget, public QAccessibleTextInterface\
+    {\
+    public:\
+        FUNC_CREATE(classname,QAccessible::StaticText,accessdescription)\
+        QString text(QAccessible::Text t) const override;\
+        void *interface_cast(QAccessible::InterfaceType t) override{\
+                switch (t) {\
+                case QAccessible::ActionInterface:\
+                    return static_cast<QAccessibleActionInterface*>(this);\
+                case QAccessible::TextInterface:\
+                    return static_cast<QAccessibleTextInterface*>(this);\
+                default:\
+                    return nullptr;\
+                }\
+            }\
+        QString text(int startOffset, int endOffset) const override;\
+        void selection(int selectionIndex, int *startOffset, int *endOffset) const override \
+        {Q_UNUSED(selectionIndex) Q_UNUSED(startOffset) Q_UNUSED(endOffset)}\
+        int selectionCount() const override { return 0; }\
+        void addSelection(int startOffset, int endOffset) override \
+        {Q_UNUSED(startOffset) Q_UNUSED(endOffset)}\
+        void removeSelection(int selectionIndex) override \
+        {Q_UNUSED(selectionIndex)}\
+        void setSelection(int selectionIndex, int startOffset, int endOffset) override \
+        {Q_UNUSED(selectionIndex) Q_UNUSED(startOffset) Q_UNUSED(endOffset)}\
+        int cursorPosition() const override { return 0; }\
+        void setCursorPosition(int position) override \
+        {Q_UNUSED(position)}\
+        int characterCount() const override { return 0; }\
+        QRect characterRect(int offset) const override \
+        { Q_UNUSED(offset) return QRect(); }\
+        int offsetAtPoint(const QPoint &point) const override \
+        { Q_UNUSED(point) return 0; }\
+        void scrollToSubstring(int startIndex, int endIndex) override \
+        {Q_UNUSED(startIndex) Q_UNUSED(endIndex)}\
+        QString attributes(int offset, int *startOffset, int *endOffset) const override \
+        { Q_UNUSED(offset) Q_UNUSED(startOffset)  Q_UNUSED(endOffset) return QString(); }\
+    private:\
+    classname *m_w;\
+    QString m_description;\
+    };\
+    FUNC_TEXT(classname,accessiblename)\
+    FUNC_TEXT_(classname)\
 
 /*******************************************简化使用*******************************************/
 #define SET_BUTTON_ACCESSIBLE(classname,accessiblename)                         SET_ACCESSIBLE_WITH_PRESS_SHOWMENU_DESCRIPTION(classname,QAccessible::Button,"")\
@@ -244,11 +304,11 @@ inline QString getAccessibleName(QWidget *w, QAccessible::Role r, const QString 
 #define SET_MENU_ACCESSIBLE(classname,accessiblename)                           SET_ACCESSIBLE_WITH_PRESS_SHOWMENU_DESCRIPTION(classname,QAccessible::PopupMenu,"")\
     FUNC_TEXT(classname,accessiblename)
 
-#define SET_LABEL_ACCESSIBLE(classname,accessiblename)                          SET_ACCESSIBLE_WITH_DESCRIPTION(classname,QAccessible::StaticText,"")\
-    FUNC_TEXT_BY_LABEL(classname,accessiblename)
+#define SET_LABEL_ACCESSIBLE(classname,accessiblename)                          SET_LABEL_ACCESSIBLE_WITH_DESCRIPTION(classname,accessiblename,"")
 
 #define SET_WIDGET_ACCESSIBLE(classname,aaccessibletype,accessiblename)         SET_ACCESSIBLE_WITH_DESCRIPTION(classname,aaccessibletype,"");\
     FUNC_TEXT(classname,accessiblename)
+
 /************************************************************************************************/
 
 #endif // ACCESSIBLEDEFINE_H

@@ -77,6 +77,7 @@ signals:
     void adminUserSelected(PolkitQt1::Identity);
     void okClicked();
     void usePassword();
+    void clearAccessibleMap();
 
 private slots:
     void on_userCB_currentIndexChanged(int index);

@@ -13,7 +13,8 @@ SOURCES += policykitlistener.cpp \
     main.cpp \
     errortooltip.cpp \
     usersmanager.cpp \
-    pluginmanager.cpp
+    pluginmanager.cpp \
+    accessiblemap.cpp
 
 HEADERS += policykitlistener.h \
     AuthDialog.h \
@@ -23,7 +24,8 @@ HEADERS += policykitlistener.h \
     agent-extension.h \
     agent-extension-proxy.h \
     accessibledefine.h \
-    accessible.h
+    accessible.h \
+    accessiblemap.h
 
 include(libdde-auth/libdde-auth.pri)
 
