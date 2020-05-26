@@ -138,6 +138,7 @@ void AuthDialog::setAuthMode(AuthDialog::AuthMode mode)
 
     setButtonText(1, tr("Confirm"));
     getButton(1)->setAccessibleName("Confirm");
+    update();
 }
 
 void AuthDialog::addOptions(QButtonGroup *bg)
