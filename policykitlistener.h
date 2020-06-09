@@ -29,17 +29,14 @@
 #include <com_deepin_daemon_fprintd.h>
 #include <com_deepin_daemon_fprintd_device.h>
 
-#include "libdde-auth/interface/deepinauthinterface.h"
-
 class PluginManager;
 class AuthDialog;
-class DeepinAuthFramework;
 
 using namespace PolkitQt1::Agent;
 using FPrintd = com::deepin::daemon::Fprintd;
 using FPrintdDevice = com::deepin::daemon::fprintd::Device;
 
-class PolicyKitListener : public Listener, public DeepinAuthInterface
+class PolicyKitListener : public Listener
 {
     Q_OBJECT
     Q_CLASSINFO("D-Bus Interface", "com.deepin.Polkit1AuthAgent")
@@ -67,23 +64,20 @@ public slots:
 
     void setWIdForAction(const QString &action, qulonglong wID);
 
-    void onDisplayErrorMsg(const QString &errtype, const QString &msg) override;
-    void onDisplayTextInfo(const QString &msg) override;
-    void onPasswordResult(const QString &msg) override;
+    void onDisplayErrorMsg(const QString &errtype, const QString &msg);
+    void onDisplayTextInfo(const QString &msg);
+    void onPasswordResult(const QString &msg);
 
 private:
     QPointer<AuthDialog> m_dialog;
     QPointer<PluginManager> m_pluginManager;
     QPointer<Session> m_session;
-    QPointer<FPrintd> m_fprintdInter;
-    QPointer<FPrintdDevice> m_fprintdDeviceInter;
-    DeepinAuthFramework *m_deepinAuthFramework;
     QGSettings *m_gsettings = nullptr;
 
     PolkitQt1::Identity::List m_identities;
     PolkitQt1::Agent::AsyncResult *m_result;
     QString m_cookie;
-    QString m_password;
+    QString m_password{""};
     PolkitQt1::Identity m_selectedUser;
     QHash< QString, qulonglong > m_actionsToWID;
     QTimer m_delayRemoveTimer;
@@ -100,7 +94,6 @@ private slots:
     void dialogAccepted();
     void dialogCanceled();
     void userSelected(const PolkitQt1::Identity &identity);
-    void fprintdDeviceChanged();
 };
 
 #endif

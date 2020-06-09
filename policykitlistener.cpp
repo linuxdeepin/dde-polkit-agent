@@ -33,8 +33,6 @@
 
 #include "pluginmanager.h"
 
-#include "libdde-auth/deepinauthframework.h"
-
 #define USE_DEEPIN_AUTH "useDeepinAuth"
 
 PolicyKitListener::PolicyKitListener(QObject *parent)
@@ -49,10 +47,6 @@ PolicyKitListener::PolicyKitListener(QObject *parent)
     if (QGSettings::isSchemaInstalled("com.deepin.dde.auth.control")) {
         m_gsettings = new QGSettings("com.deepin.dde.auth.control", "/com/deepin/dde/auth/control/", this);
     }
-
-    m_deepinAuthFramework = new DeepinAuthFramework(this, this);
-    m_fprintdInter = new FPrintd("com.deepin.daemon.Fprintd", "/com/deepin/daemon/Fprintd",
-                                 QDBusConnection::systemBus(), this);
 
     QDBusConnection sessionBus = QDBusConnection::sessionBus();
     if (!sessionBus.registerService("com.deepin.Polkit1AuthAgent")) {
@@ -69,8 +63,6 @@ PolicyKitListener::PolicyKitListener(QObject *parent)
 
     m_pluginManager = new PluginManager(this);
 
-    connect(m_fprintdInter, &FPrintd::DevicesChanged, this, &PolicyKitListener::fprintdDeviceChanged);
-    fprintdDeviceChanged();
     m_delayRemoveTimer.setInterval(3000);
     m_delayRemoveTimer.setSingleShot(true);
     connect(&m_delayRemoveTimer, &QTimer::timeout, this, [ = ] {
@@ -80,23 +72,6 @@ PolicyKitListener::PolicyKitListener(QObject *parent)
         // m_dialog.data()->deleteLater();
         QMetaObject::invokeMethod(m_dialog.data(), "deleteLater", Qt::QueuedConnection);
     });
-}
-
-void PolicyKitListener::fprintdDeviceChanged()
-{
-    if (m_fprintdDeviceInter) {
-        m_fprintdDeviceInter->deleteLater();
-        m_fprintdDeviceInter = nullptr;
-    }
-
-    QDBusObjectPath default_fprintd_device_path = m_fprintdInter->GetDefaultDevice();
-    if (!default_fprintd_device_path.path().isEmpty()) {
-        m_fprintdDeviceInter = new FPrintdDevice("com.deepin.daemon.Fprintd",
-                                                 default_fprintd_device_path.path(),
-                                                 QDBusConnection::systemBus(), this);
-    }
-
-    tryAgain();
 }
 
 PolicyKitListener::~PolicyKitListener()
@@ -220,7 +195,8 @@ void PolicyKitListener::tryAgain()
 
         const QString username { m_selectedUser.toString().replace("unix-user:", "") };
 
-        if (isDeepin()) {
+        m_session->initiate();
+        #ifdef ENABLE_DEEPIN_AUTH
             bool hasFingers = false;
             if (m_fprintdDeviceInter) {
                 QDBusPendingReply<QStringList> rep = m_fprintdDeviceInter->ListEnrolledFingers(username);
@@ -234,9 +210,9 @@ void PolicyKitListener::tryAgain()
             m_deepinAuthFramework->Clear();
             m_deepinAuthFramework->SetUser(username);
             m_deepinAuthFramework->Authenticate();
-        } else {
+        #else
             m_dialog->setAuthMode(AuthDialog::Password);
-        }
+        #endif
     }
 }
 
@@ -283,8 +259,6 @@ void PolicyKitListener::finishObtainPrivilege()
     m_numFPrint = 0;
     m_usePassword = false;
 
-    m_deepinAuthFramework->Clear();
-
     qDebug() << "Finish obtain authorization:" << m_gainedAuthorization;
 }
 
@@ -306,15 +280,6 @@ void PolicyKitListener::request(const QString &request, bool echo)
 {
     Q_UNUSED(echo);
     qDebug() << "Request: " << request;
-
-    if (!m_dialog.isNull()) {
-        m_dialog.data()->setRequest(request, m_selectedUser.isValid() &&
-                                    m_selectedUser.toString() == "unix-user:root");
-
-        if (request.simplified().remove(":") == "Password") {
-            m_session.data()->setResponse(m_password);
-        }
-    }
 }
 
 void PolicyKitListener::completed(bool gainedAuthorization)
@@ -347,16 +312,16 @@ void PolicyKitListener::dialogAccepted()
     m_delayRemoveTimer.stop();
     if (!m_dialog.isNull()) {
         qDebug() << "Dialog accepted";
-        if (isDeepin()) {
+
+    #ifdef ENABLE_DEEPIN_AUTH
             m_deepinAuthFramework->Clear();
             m_deepinAuthFramework->SetUser(m_selectedUser.toString().remove("unix-user:"));
             m_deepinAuthFramework->setPassword(m_dialog->password());
             m_deepinAuthFramework->Authenticate();
-        } else {
+    #else
             m_password = m_dialog->password();
-            m_session->initiate();
             m_session->setResponse(m_password);
-        }
+    #endif
     }
 }
 
@@ -369,7 +334,6 @@ void PolicyKitListener::dialogCanceled()
     m_wasCancelled = true;
     if (!m_session.isNull()) {
         m_session.data()->cancel();
-        m_deepinAuthFramework->Clear();
     }
 
     finishObtainPrivilege();
