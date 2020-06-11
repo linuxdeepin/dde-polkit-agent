@@ -48,6 +48,9 @@ PolicyKitListener::PolicyKitListener(QObject *parent)
         m_gsettings = new QGSettings("com.deepin.dde.auth.control", "/com/deepin/dde/auth/control/", this);
     }
 
+    m_fprintdInter = new FPrintd("com.deepin.daemon.Fprintd", "/com/deepin/daemon/Fprintd",
+                                  QDBusConnection::systemBus(), this);
+
     QDBusConnection sessionBus = QDBusConnection::sessionBus();
     if (!sessionBus.registerService("com.deepin.Polkit1AuthAgent")) {
         qWarning() << "Register auth agent service failed!";
@@ -63,6 +66,8 @@ PolicyKitListener::PolicyKitListener(QObject *parent)
 
     m_pluginManager = new PluginManager(this);
 
+    connect(m_fprintdInter, &FPrintd::DevicesChanged, this, &PolicyKitListener::fprintdDeviceChanged);
+    fprintdDeviceChanged();
     m_delayRemoveTimer.setInterval(3000);
     m_delayRemoveTimer.setSingleShot(true);
     connect(&m_delayRemoveTimer, &QTimer::timeout, this, [ = ] {
@@ -72,6 +77,21 @@ PolicyKitListener::PolicyKitListener(QObject *parent)
         // m_dialog.data()->deleteLater();
         QMetaObject::invokeMethod(m_dialog.data(), "deleteLater", Qt::QueuedConnection);
     });
+}
+
+void PolicyKitListener::fprintdDeviceChanged()
+{
+    if (m_fprintdDeviceInter) {
+        m_fprintdDeviceInter->deleteLater();
+        m_fprintdDeviceInter = nullptr;
+    }
+
+    QDBusObjectPath default_fprintd_device_path = m_fprintdInter->GetDefaultDevice();
+    if (!default_fprintd_device_path.path().isEmpty()) {
+        m_fprintdDeviceInter = new FPrintdDevice("com.deepin.daemon.Fprintd",
+                                                 default_fprintd_device_path.path(),
+                                                 QDBusConnection::systemBus(), this);
+    }
 }
 
 PolicyKitListener::~PolicyKitListener()
@@ -211,6 +231,18 @@ void PolicyKitListener::tryAgain()
             m_deepinAuthFramework->SetUser(username);
             m_deepinAuthFramework->Authenticate();
         #else
+        if(isDeepin())
+        {
+            bool hasFingers = false;
+            if (m_fprintdDeviceInter) {
+                QDBusPendingReply<QStringList> rep = m_fprintdDeviceInter->ListEnrolledFingers(username);
+                rep.waitForFinished();
+                if (rep.isValid() && !rep.value().isEmpty())
+                hasFingers = true;
+            }
+            m_dialog->setAuthMode(hasFingers ? AuthDialog::FingerPrint : AuthDialog::Password);
+        }
+        else
             m_dialog->setAuthMode(AuthDialog::Password);
         #endif
     }

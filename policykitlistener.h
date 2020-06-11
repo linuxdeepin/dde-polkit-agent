@@ -72,6 +72,8 @@ private:
     QPointer<AuthDialog> m_dialog;
     QPointer<PluginManager> m_pluginManager;
     QPointer<Session> m_session;
+    QPointer<FPrintd> m_fprintdInter;
+    QPointer<FPrintdDevice> m_fprintdDeviceInter;
     QGSettings *m_gsettings = nullptr;
 
     PolkitQt1::Identity::List m_identities;
@@ -94,6 +96,8 @@ private slots:
     void dialogAccepted();
     void dialogCanceled();
     void userSelected(const PolkitQt1::Identity &identity);
+    void fprintdDeviceChanged();
+
 };
 
 #endif
