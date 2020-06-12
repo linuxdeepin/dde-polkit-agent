@@ -279,7 +279,7 @@ void PolicyKitListener::finishObtainPrivilege()
     }
     m_session.data()->deleteLater();
     if (!m_dialog.isNull()) {
-        if (m_numTries >= 3) {
+        if (m_numTries >= 3 && !m_gainedAuthorization && !m_wasCancelled) {
             m_delayRemoveTimer.start();
         } else {
             m_dialog.data()->hide();
