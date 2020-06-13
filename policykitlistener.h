@@ -64,10 +64,6 @@ public slots:
 
     void setWIdForAction(const QString &action, qulonglong wID);
 
-    void onDisplayErrorMsg(const QString &errtype, const QString &msg);
-    void onDisplayTextInfo(const QString &msg);
-    void onPasswordResult(const QString &msg);
-
 private:
     QPointer<AuthDialog> m_dialog;
     QPointer<PluginManager> m_pluginManager;

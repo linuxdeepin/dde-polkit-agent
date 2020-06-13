@@ -104,33 +104,6 @@ void PolicyKitListener::setWIdForAction(const QString &action, qulonglong wID)
     m_actionsToWID[action] = wID;
 }
 
-void PolicyKitListener::onDisplayErrorMsg(const QString &errtype, const QString &msg)
-{
-    if (!m_dialog.isNull()) {
-        if (errtype == "verify-timed-out")
-            m_dialog->setAuthMode(AuthDialog::AuthMode::Password);
-        m_dialog->setError(msg);
-    }
-}
-
-void PolicyKitListener::onDisplayTextInfo(const QString &msg)
-{
-    if (!m_dialog.isNull()) {
-        m_dialog->setRequest(msg, true);
-    }
-}
-
-void PolicyKitListener::onPasswordResult(const QString &msg)
-{
-    if (msg.isEmpty()) {
-        return completed(false);
-    }
-
-    m_password = msg;
-    m_session->initiate();
-    m_session->setResponse(m_password);
-}
-
 void PolicyKitListener::initiateAuthentication(const QString &actionId,
                                                const QString &message,
                                                const QString &iconName,
@@ -216,35 +189,15 @@ void PolicyKitListener::tryAgain()
         const QString username { m_selectedUser.toString().replace("unix-user:", "") };
 
         m_session->initiate();
-        #ifdef ENABLE_DEEPIN_AUTH
-            bool hasFingers = false;
-            if (m_fprintdDeviceInter) {
-                QDBusPendingReply<QStringList> rep = m_fprintdDeviceInter->ListEnrolledFingers(username);
-                rep.waitForFinished();
-                if (rep.isValid() && !rep.value().isEmpty())
-                    hasFingers = true;
-            }
+        bool hasFingers = false;
+        if (m_fprintdDeviceInter) {
+            QDBusPendingReply<QStringList> rep = m_fprintdDeviceInter->ListEnrolledFingers(username);
+            rep.waitForFinished();
+            if (rep.isValid() && !rep.value().isEmpty())
+            hasFingers = true;
+         }
+         m_dialog->setAuthMode(hasFingers ? AuthDialog::FingerPrint : AuthDialog::Password);
 
-            m_dialog->setAuthMode(hasFingers ? AuthDialog::FingerPrint : AuthDialog::Password);
-
-            m_deepinAuthFramework->Clear();
-            m_deepinAuthFramework->SetUser(username);
-            m_deepinAuthFramework->Authenticate();
-        #else
-        if(isDeepin())
-        {
-            bool hasFingers = false;
-            if (m_fprintdDeviceInter) {
-                QDBusPendingReply<QStringList> rep = m_fprintdDeviceInter->ListEnrolledFingers(username);
-                rep.waitForFinished();
-                if (rep.isValid() && !rep.value().isEmpty())
-                hasFingers = true;
-            }
-            m_dialog->setAuthMode(hasFingers ? AuthDialog::FingerPrint : AuthDialog::Password);
-        }
-        else
-            m_dialog->setAuthMode(AuthDialog::Password);
-        #endif
     }
 }
 
@@ -279,7 +232,7 @@ void PolicyKitListener::finishObtainPrivilege()
     }
     m_session.data()->deleteLater();
     if (!m_dialog.isNull()) {
-        if (m_numTries >= 3) {
+        if (m_numTries >= 3 && !m_gainedAuthorization && !m_wasCancelled) {
             m_delayRemoveTimer.start();
         } else {
             m_dialog.data()->hide();
@@ -345,15 +298,8 @@ void PolicyKitListener::dialogAccepted()
     if (!m_dialog.isNull()) {
         qDebug() << "Dialog accepted";
 
-    #ifdef ENABLE_DEEPIN_AUTH
-            m_deepinAuthFramework->Clear();
-            m_deepinAuthFramework->SetUser(m_selectedUser.toString().remove("unix-user:"));
-            m_deepinAuthFramework->setPassword(m_dialog->password());
-            m_deepinAuthFramework->Authenticate();
-    #else
-            m_password = m_dialog->password();
-            m_session->setResponse(m_password);
-    #endif
+        m_password = m_dialog->password();
+        m_session->setResponse(m_password);
     }
 }
 
