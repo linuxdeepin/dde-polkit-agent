@@ -202,12 +202,18 @@ void AuthDialog::on_userCB_currentIndexChanged(int /*index*/)
     // 清除上一个用户已经输入的密码
     m_passwordInput->clear();
     m_passwordInput->setAlert(false);
+    QString username = identity.toString().remove("unix-user:").trimmed();
 
     // itemData is Null when "Select user" is selected
     if (!identity.isValid()) {
         // 清理警告信息
         m_tooltip->hide();
         m_passwordInput->setEnabled(false);
+    } else if (!UsersManager::instance()->isUserName(username)) {
+        m_tooltip->hide();
+        m_passwordInput->setEnabled(true);
+        emit adminUserSelected(identity);
+        m_passwordInput->lineEdit()->setFocus();
     } else {
         // 判断用户密码是否在有效期内
         QDBusInterface accounts("com.deepin.daemon.Accounts", "/com/deepin/daemon/Accounts", "com.deepin.daemon.Accounts", QDBusConnection::systemBus());

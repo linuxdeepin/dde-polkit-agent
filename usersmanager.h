@@ -37,6 +37,7 @@ public:
     static UsersManager *instance();
 
     QString getFullName(const QString &name);
+    bool isUserName(const QString &name);
 
 private slots:
     void userAdded(const QString &userPath);

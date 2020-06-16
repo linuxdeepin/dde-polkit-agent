@@ -45,6 +45,11 @@ UsersManager *UsersManager::instance()
     return userManagerInstance;
 }
 
+ bool UsersManager::isUserName(const QString &name)
+ {
+     return m_fullNameMap.contains(name);
+ }
+
 QString UsersManager::getFullName(const QString &name)
 {
     return m_fullNameMap.value(name);
