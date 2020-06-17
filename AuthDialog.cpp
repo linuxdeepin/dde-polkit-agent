@@ -51,8 +51,7 @@ AuthDialog::AuthDialog(const QString &actionId,
       m_iconName(iconName),
       m_adminsCombo(new QComboBox(this)),
       m_passwordInput(new DPasswordEdit(this)),
-      m_tooltip(new ErrorTooltip("")),
-      m_currentAuthMode(AuthMode::FingerPrint)
+      m_tooltip(new ErrorTooltip(""))
 {
     Q_UNUSED(details)
     Q_UNUSED(parent)
@@ -91,8 +90,7 @@ AuthDialog::~AuthDialog()
 
 void AuthDialog::setError(const QString &error)
 {
-    m_tooltip->setMessage(error);
-    showErrorTip();
+    m_passwordInput->showAlertMessage(QString(dgettext("deepin-authentication", error.toUtf8())));
 }
 
 void AuthDialog::setRequest(const QString &request, bool requiresAdmin)
@@ -100,32 +98,12 @@ void AuthDialog::setRequest(const QString &request, bool requiresAdmin)
     Q_UNUSED(requiresAdmin)
 }
 
-AuthDialog::AuthMode AuthDialog::authMode()
+void AuthDialog::setAuthInfo(const QString &info)
 {
-    return m_currentAuthMode;
-}
-
-void AuthDialog::setAuthMode(AuthDialog::AuthMode mode)
-{
-    switch (mode) {
-    case AuthMode::FingerPrint: {
-        m_currentAuthMode = AuthMode::FingerPrint;
-        m_passwordInput->lineEdit()->setPlaceholderText(QString(tr("Verify your fingerprint or password")));
-        break;
-    }
-    case AuthMode::Password: {
-        m_currentAuthMode = AuthMode::Password;
-        QString text = "Password: ";
-        m_passwordInput->lineEdit()->setPlaceholderText(QString(dgettext("Linux-PAM", text.toStdString().c_str())));
+    if ("Password" == info)
         m_passwordInput->lineEdit()->setFocus();
 
-        Q_EMIT usePassword();
-
-        break;
-    }
-    default:
-        break;
-    }
+    m_passwordInput->lineEdit()->setPlaceholderText(QString(dgettext("deepin-authentication", info.toStdString().c_str())));
 
     setButtonText(1, tr("Confirm"));
     getButton(1)->setAccessibleName("Confirm");
@@ -274,8 +252,11 @@ QString AuthDialog::password() const
     return m_passwordInput->text();
 }
 
-void AuthDialog::authenticationFailure(int numTries)
+void AuthDialog::authenticationFailure(int numTries, bool usePassword)
 {
+    if (!usePassword)
+        return;
+
     // TODO: show error messages.
     m_passwordInput->setEnabled(true);
     m_passwordInput->setAlert(true);

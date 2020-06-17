@@ -61,13 +61,12 @@ public:
     void setError(const QString &error);
     void setRequest(const QString &request, bool requiresAdmin);
 
-    AuthMode authMode();
-    void setAuthMode(AuthMode mode);
+    void setAuthInfo(const QString &info);
 
     void addOptions(QButtonGroup *bg);
 
     QString password() const;
-    void authenticationFailure(int numTries = 0);
+    void authenticationFailure(int numTries = 0, bool usePassword = true);
 
     PolkitQt1::Identity adminUserSelected() const;
 
@@ -76,7 +75,6 @@ public:
 signals:
     void adminUserSelected(PolkitQt1::Identity);
     void okClicked();
-    void usePassword();
     void clearAccessibleMap();
 
 private slots:
@@ -96,8 +94,6 @@ private:
     QComboBox *m_adminsCombo;
     DPasswordEdit *m_passwordInput;
     ErrorTooltip *m_tooltip;
-
-    AuthMode m_currentAuthMode;
 
     void setupUI();
     void createUserCB(const PolkitQt1::Identity::List &identities);

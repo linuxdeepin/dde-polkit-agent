@@ -25,6 +25,7 @@
 #include <polkit-qt5-1/PolkitQt1/Subject>
 #include <polkit-qt5-1/PolkitQt1/Identity>
 #include <polkit-qt5-1/PolkitQt1/Details>
+#include <libintl.h>
 
 #include "policykitlistener.h"
 #include "AuthDialog.h"
@@ -48,9 +49,6 @@ PolicyKitListener::PolicyKitListener(QObject *parent)
         m_gsettings = new QGSettings("com.deepin.dde.auth.control", "/com/deepin/dde/auth/control/", this);
     }
 
-    m_fprintdInter = new FPrintd("com.deepin.daemon.Fprintd", "/com/deepin/daemon/Fprintd",
-                                  QDBusConnection::systemBus(), this);
-
     QDBusConnection sessionBus = QDBusConnection::sessionBus();
     if (!sessionBus.registerService("com.deepin.Polkit1AuthAgent")) {
         qWarning() << "Register auth agent service failed!";
@@ -66,8 +64,6 @@ PolicyKitListener::PolicyKitListener(QObject *parent)
 
     m_pluginManager = new PluginManager(this);
 
-    connect(m_fprintdInter, &FPrintd::DevicesChanged, this, &PolicyKitListener::fprintdDeviceChanged);
-    fprintdDeviceChanged();
     m_delayRemoveTimer.setInterval(3000);
     m_delayRemoveTimer.setSingleShot(true);
     connect(&m_delayRemoveTimer, &QTimer::timeout, this, [ = ] {
@@ -77,21 +73,6 @@ PolicyKitListener::PolicyKitListener(QObject *parent)
         // m_dialog.data()->deleteLater();
         QMetaObject::invokeMethod(m_dialog.data(), "deleteLater", Qt::QueuedConnection);
     });
-}
-
-void PolicyKitListener::fprintdDeviceChanged()
-{
-    if (m_fprintdDeviceInter) {
-        m_fprintdDeviceInter->deleteLater();
-        m_fprintdDeviceInter = nullptr;
-    }
-
-    QDBusObjectPath default_fprintd_device_path = m_fprintdInter->GetDefaultDevice();
-    if (!default_fprintd_device_path.path().isEmpty()) {
-        m_fprintdDeviceInter = new FPrintdDevice("com.deepin.daemon.Fprintd",
-                                                 default_fprintd_device_path.path(),
-                                                 QDBusConnection::systemBus(), this);
-    }
 }
 
 PolicyKitListener::~PolicyKitListener()
@@ -181,22 +162,16 @@ void PolicyKitListener::tryAgain()
     // We will create new session only when some user is selected
     if (m_selectedUser.isValid()) {
         m_session = new Session(m_selectedUser, m_cookie, m_result);
+        m_usePassword = false;
 
         connect(m_session.data(), &Session::request, this, &PolicyKitListener::request);
-        connect(m_session.data(), SIGNAL(completed(bool)), this, SLOT(completed(bool)));
-        connect(m_session.data(), SIGNAL(showError(QString)), this, SLOT(showError(QString)));
+        connect(m_session.data(), &Session::completed, this, &PolicyKitListener::completed);
+        connect(m_session.data(), &Session::showError, this, &PolicyKitListener::showError);
+        connect(m_session.data(), &Session::showInfo, this, &PolicyKitListener::showInfo);
 
         const QString username { m_selectedUser.toString().replace("unix-user:", "") };
 
         m_session->initiate();
-        bool hasFingers = false;
-        if (m_fprintdDeviceInter) {
-            QDBusPendingReply<QStringList> rep = m_fprintdDeviceInter->ListEnrolledFingers(username);
-            rep.waitForFinished();
-            if (rep.isValid() && !rep.value().isEmpty())
-            hasFingers = true;
-         }
-         m_dialog->setAuthMode(hasFingers ? AuthDialog::FingerPrint : AuthDialog::Password);
 
     }
 }
@@ -206,12 +181,12 @@ void PolicyKitListener::finishObtainPrivilege()
     qDebug() << "Finishing obtaining privileges";
 
     // Number of tries increase only when some user is selected
-    if (m_selectedUser.isValid()) {
+    if (m_selectedUser.isValid() && m_usePassword) {
         m_numTries++;
     }
 
     if (!m_gainedAuthorization && !m_wasCancelled && !m_dialog.isNull()) {
-        m_dialog.data()->authenticationFailure(m_numTries);
+        m_dialog.data()->authenticationFailure(m_numTries, m_usePassword);
 
         if (m_numTries < 3) {
             m_session.data()->deleteLater();
@@ -278,9 +253,18 @@ void PolicyKitListener::completed(bool gainedAuthorization)
 
 void PolicyKitListener::showError(const QString &text)
 {
-    qDebug() << "Error: " << text;
+   qDebug() << "Error: " << text;
 
-    m_dialog.data()->setError(text);
+   if (m_dialog && !text.isEmpty())
+       m_dialog.data()->setError(text);
+}
+
+void PolicyKitListener::showInfo(const QString &info)
+{
+    qDebug() << "Info: " << info;
+
+    if (m_dialog && !info.isEmpty())
+        m_dialog.data()->setAuthInfo(info);
 }
 
 bool PolicyKitListener::isDeepin()
@@ -298,6 +282,7 @@ void PolicyKitListener::dialogAccepted()
     if (!m_dialog.isNull()) {
         qDebug() << "Dialog accepted";
 
+        m_usePassword = true;
         m_password = m_dialog->password();
         m_session->setResponse(m_password);
     }
