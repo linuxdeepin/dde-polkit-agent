@@ -2,38 +2,43 @@
 <context>
     <name>AuthDialog</name>
     <message>
-        <location filename="../AuthDialog.cpp" line="123"/>
-        <source>Verify your fingerprint or password</source>
-        <translation>Verifica l&apos;impronta o la password</translation>
+        <location filename="../AuthDialog.cpp" line="95"/>
+        <source>Finger moved too fast, please do not lift until prompted</source>
+        <translation>Il dito è stato mosso troppo rapidamente, non spostarlo sino a quando non riceverai ulteriori istruzioni</translation>
     </message>
     <message>
-        <location filename="../AuthDialog.cpp" line="140"/>
-        <location filename="../AuthDialog.cpp" line="327"/>
+        <location filename="../AuthDialog.cpp" line="97"/>
+        <source>Verification failed, two chances left</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../AuthDialog.cpp" line="116"/>
+        <location filename="../AuthDialog.cpp" line="301"/>
         <source>Confirm</source>
         <translation>Conferma</translation>
     </message>
     <message>
-        <location filename="../AuthDialog.cpp" line="239"/>
+        <location filename="../AuthDialog.cpp" line="211"/>
         <source>You are required to change your password immediately (password expired)</source>
         <translation>Occorre cambiare immediatamente la password (password scaduta)</translation>
     </message>
     <message>
-        <location filename="../AuthDialog.cpp" line="307"/>
+        <location filename="../AuthDialog.cpp" line="276"/>
         <source>Wrong password, only one chance left</source>
         <translation>Password errata, ultimo tentativo disponibile</translation>
     </message>
     <message>
-        <location filename="../AuthDialog.cpp" line="310"/>
+        <location filename="../AuthDialog.cpp" line="279"/>
         <source>Wrong password, two chances left</source>
         <translation>Password errata, due tentativi ancora disponibili</translation>
     </message>
     <message>
-        <location filename="../AuthDialog.cpp" line="314"/>
+        <location filename="../AuthDialog.cpp" line="283"/>
         <source>Wrong password</source>
         <translation>Password errata</translation>
     </message>
     <message>
-        <location filename="../AuthDialog.cpp" line="326"/>
+        <location filename="../AuthDialog.cpp" line="300"/>
         <source>Cancel</source>
         <translation>Annulla</translation>
     </message>

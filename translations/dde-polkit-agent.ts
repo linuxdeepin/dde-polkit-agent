@@ -2,38 +2,43 @@
 <context>
     <name>AuthDialog</name>
     <message>
-        <location filename="../AuthDialog.cpp" line="123"/>
-        <source>Verify your fingerprint or password</source>
-        <translation>Verify your fingerprint or password</translation>
+        <location filename="../AuthDialog.cpp" line="95"/>
+        <source>Finger moved too fast, please do not lift until prompted</source>
+        <translation>Finger moved too fast, please do not lift until prompted</translation>
     </message>
     <message>
-        <location filename="../AuthDialog.cpp" line="140"/>
-        <location filename="../AuthDialog.cpp" line="327"/>
+        <location filename="../AuthDialog.cpp" line="97"/>
+        <source>Verification failed, two chances left</source>
+        <translation>Verification failed, two chances left</translation>
+    </message>
+    <message>
+        <location filename="../AuthDialog.cpp" line="116"/>
+        <location filename="../AuthDialog.cpp" line="301"/>
         <source>Confirm</source>
         <translation>Confirm</translation>
     </message>
     <message>
-        <location filename="../AuthDialog.cpp" line="239"/>
+        <location filename="../AuthDialog.cpp" line="211"/>
         <source>You are required to change your password immediately (password expired)</source>
         <translation>You are required to change your password immediately (password expired)</translation>
     </message>
     <message>
-        <location filename="../AuthDialog.cpp" line="307"/>
+        <location filename="../AuthDialog.cpp" line="276"/>
         <source>Wrong password, only one chance left</source>
         <translation>Wrong password, only one chance left</translation>
     </message>
     <message>
-        <location filename="../AuthDialog.cpp" line="310"/>
+        <location filename="../AuthDialog.cpp" line="279"/>
         <source>Wrong password, two chances left</source>
         <translation>Wrong password, two chances left</translation>
     </message>
     <message>
-        <location filename="../AuthDialog.cpp" line="314"/>
+        <location filename="../AuthDialog.cpp" line="283"/>
         <source>Wrong password</source>
         <translation>Wrong password</translation>
     </message>
     <message>
-        <location filename="../AuthDialog.cpp" line="326"/>
+        <location filename="../AuthDialog.cpp" line="300"/>
         <source>Cancel</source>
         <translation>Cancel</translation>
     </message>

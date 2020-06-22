@@ -2,38 +2,43 @@
 <context>
     <name>AuthDialog</name>
     <message>
-        <location filename="../AuthDialog.cpp" line="123"/>
-        <source>Verify your fingerprint or password</source>
-        <translation>请验证指纹或输入密码</translation>
+        <location filename="../AuthDialog.cpp" line="95"/>
+        <source>Finger moved too fast, please do not lift until prompted</source>
+        <translation>接触时间短，验证时请勿移动手指</translation>
     </message>
     <message>
-        <location filename="../AuthDialog.cpp" line="140"/>
-        <location filename="../AuthDialog.cpp" line="327"/>
+        <location filename="../AuthDialog.cpp" line="97"/>
+        <source>Verification failed, two chances left</source>
+        <translation>验证失败，您还可以尝试2次</translation>
+    </message>
+    <message>
+        <location filename="../AuthDialog.cpp" line="116"/>
+        <location filename="../AuthDialog.cpp" line="301"/>
         <source>Confirm</source>
-        <translation>认证</translation>
+        <translation>确定</translation>
     </message>
     <message>
-        <location filename="../AuthDialog.cpp" line="239"/>
+        <location filename="../AuthDialog.cpp" line="211"/>
         <source>You are required to change your password immediately (password expired)</source>
         <translation>您的密码已过期，请更改</translation>
     </message>
     <message>
-        <location filename="../AuthDialog.cpp" line="307"/>
+        <location filename="../AuthDialog.cpp" line="276"/>
         <source>Wrong password, only one chance left</source>
         <translation>密码错误，只剩1次机会</translation>
     </message>
     <message>
-        <location filename="../AuthDialog.cpp" line="310"/>
+        <location filename="../AuthDialog.cpp" line="279"/>
         <source>Wrong password, two chances left</source>
         <translation>密码错误，还有2次机会</translation>
     </message>
     <message>
-        <location filename="../AuthDialog.cpp" line="314"/>
+        <location filename="../AuthDialog.cpp" line="283"/>
         <source>Wrong password</source>
         <translation>密码错误</translation>
     </message>
     <message>
-        <location filename="../AuthDialog.cpp" line="326"/>
+        <location filename="../AuthDialog.cpp" line="300"/>
         <source>Cancel</source>
         <translation>取消</translation>
     </message>

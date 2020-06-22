@@ -90,7 +90,16 @@ AuthDialog::~AuthDialog()
 
 void AuthDialog::setError(const QString &error)
 {
-    m_passwordInput->showAlertMessage(QString(dgettext("deepin-authentication", error.toUtf8())));
+    //由于无法获取到dgetText的临时方案
+    QString dgetText = "";
+    if ("Finger moved too fast, please do not lift until prompted" == error) {
+        dgetText = tr("Finger moved too fast, please do not lift until prompted");
+    } else if ("Verification failed, 2 chances left" == error) {
+        dgetText = tr("Verification failed, two chances left");
+    } else {
+        dgetText = QString(dgettext("deepin-authentication", error.toUtf8()));
+    }
+    m_passwordInput->showAlertMessage(dgetText);
 }
 
 void AuthDialog::setRequest(const QString &request, bool requiresAdmin)
