@@ -344,7 +344,7 @@ void AuthDialog::setupUI()
     icon.setDevicePixelRatio(dpr);
     setIcon(icon);
 
-    m_adminsCombo->setMaximumWidth(maximumWidth());
+    m_adminsCombo->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     m_adminsCombo->hide();
     m_passwordInput->setEchoMode(QLineEdit::Password);
     m_tooltip->hide();
