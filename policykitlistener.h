@@ -85,6 +85,7 @@ private:
     bool m_usePassword;
     int m_numTries;
     int m_numFPrint;
+    bool m_showInfoSuccess;
 
 private slots:
     bool isDeepin();

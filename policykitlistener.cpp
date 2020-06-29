@@ -42,6 +42,7 @@ PolicyKitListener::PolicyKitListener(QObject *parent)
     , m_inProgress(false)
     , m_usePassword(false)
     , m_numFPrint(0)
+    , m_showInfoSuccess(false)
 {
     (void) new Polkit1AuthAgentAdaptor(this);
 
@@ -247,6 +248,9 @@ void PolicyKitListener::completed(bool gainedAuthorization)
     qDebug() << "Completed: " << gainedAuthorization;
 
     m_gainedAuthorization = gainedAuthorization;
+    if (m_showInfoSuccess)
+        m_gainedAuthorization = true;
+    m_showInfoSuccess = false;
 
     finishObtainPrivilege();
 }
@@ -265,6 +269,11 @@ void PolicyKitListener::showInfo(const QString &info)
 
     if (m_dialog && !info.isEmpty())
         m_dialog.data()->setAuthInfo(info);
+
+    if ("Verification successful" == info)
+        m_showInfoSuccess = true;
+    else
+        m_showInfoSuccess = false;
 }
 
 bool PolicyKitListener::isDeepin()
