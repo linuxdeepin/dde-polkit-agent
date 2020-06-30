@@ -54,7 +54,7 @@ int main(int argc, char *argv[])
     DLogManager::registerFileAppender();
 
     if (!a.setSingleInstance(APP_NAME, DApplication::UserScope)) {
-        qWarning() << "polkit is running!";
+        qDebug() << "failed to run polkit, polkit is running!";
         return 0;
     }
 
@@ -62,7 +62,7 @@ int main(int argc, char *argv[])
     PolicyKitListener listener;
 
     if (!listener.registerListener(session, AUTH_DBUS_PATH)) {
-        qWarning() << "register listener failed!";
+        qDebug() << "register listener failed!";
         return -1;
     }
 

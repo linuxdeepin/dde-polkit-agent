@@ -71,7 +71,7 @@ AgentExtension *PluginManager::loadFile(const QString &filePath)
 
         return ret;
     } else {
-        qWarning() << "failed to load plugin file: " << loader->errorString();
+        qDebug() << "failed to load plugin file: " << loader->errorString();
         loader->unload();
         loader->deleteLater();
     }
