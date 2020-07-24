@@ -104,6 +104,7 @@ void AuthDialog::setError(const QString &error)
 
 void AuthDialog::setRequest(const QString &request, bool requiresAdmin)
 {
+    Q_UNUSED(request)
     Q_UNUSED(requiresAdmin)
 }
 
@@ -336,7 +337,7 @@ void AuthDialog::setupUI()
 
     const qreal dpr = devicePixelRatioF();
     if (!m_iconName.isEmpty() && QIcon::hasThemeIcon(m_iconName)) {
-        icon = QIcon::fromTheme(m_iconName).pixmap(48 * dpr, 48 * dpr);
+        icon = QIcon::fromTheme(m_iconName).pixmap(static_cast<int>(48 * dpr), static_cast<int>(48 * dpr));
     } else {
         icon = DHiDPIHelper::loadNxPixmap(":/images/default.svg");
     }
