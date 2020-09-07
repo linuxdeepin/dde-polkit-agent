@@ -1,8 +1,8 @@
 TARGET = dde-polkit-agent
 TEMPLATE = app
-QT = core gui widgets dbus dtkwidget
+QT += core gui widgets dbus
 CONFIG += link_pkgconfig c++11
-PKGCONFIG += polkit-qt5-1 dframeworkdbus gsettings-qt
+PKGCONFIG += polkit-qt5-1 dframeworkdbus gsettings-qt dtkwidget
 
 load(dtk_qmake)
 

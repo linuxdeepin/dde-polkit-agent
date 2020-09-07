@@ -39,7 +39,6 @@ DCORE_USE_NAMESPACE
 
 int main(int argc, char *argv[])
 {
-    DApplication::loadDXcbPlugin();
     DApplication a(argc, argv);
     DApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
     a.setOrganizationName("deepin");
