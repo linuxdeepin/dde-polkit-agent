@@ -329,8 +329,8 @@ void AuthDialog::setupUI()
         if (text.length() == 0) return;
 
         m_tooltip->hide();
+        m_passwordInput->setAlert(false);
     });
-
 
     QPixmap icon;
 
