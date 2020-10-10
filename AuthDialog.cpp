@@ -293,7 +293,7 @@ void AuthDialog::authenticationFailure(int numTries, bool usePassword)
 
 void AuthDialog::setupUI()
 {
-    setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint);
+    setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint | Qt::Tool);
     setMinimumWidth(380);
 
     m_adminsCombo->setAccessibleName("selectuser");
