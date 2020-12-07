@@ -1,25 +1,34 @@
 %global repo dde-polkit-agent
 
-Name:           dde-polkit-agent
-Version:        5.0.10
-Release:        1
+%if 0%{?fedora}
+Name:           deepin-polkit-agent
+%else
+Name:           %{repo}
+%endif
+Version:        5.3.0.3
+Release:        1%{?fedora:%dist}
 Summary:        Deepin Polkit Agent
 License:        GPLv3
 URL:            https://github.com/linuxdeepin/dde-polkit-agent
+%if 0%{?fedora}
+Source0:        %{url}/archive/%{version}/%{repo}-%{version}.tar.gz
+%else
 Source0:        %{name}_%{version}.orig.tar.xz
+%endif
 
 BuildRequires:  gcc-c++
 BuildRequires:  dtkwidget-devel >= 5.1.1
-#BuildRequires:  pkgconfig(dframeworkdbus) >= 2.0
-BuildRequires:  dde-qt-dbus-factory-devel
-BuildRequires:  dde-qt-dbus-factory
+BuildRequires:  pkgconfig(dframeworkdbus)
 BuildRequires:  pkgconfig(polkit-qt5-1)
-BuildRequires:  qt5-devel
+BuildRequires:  pkgconfig(Qt5)
+BuildRequires:  pkgconfig(Qt5DBus)
+BuildRequires:  pkgconfig(Qt5Gui)
+BuildRequires:  pkgconfig(gsettings-qt)
+BuildRequires:  pkgconfig(Qt5Multimedia)
+BuildRequires:  pkgconfig(Qt5Multimedia)
+BuildRequires:  pkgconfig(Qt5MultimediaWidgets)
+BuildRequires:  pkgconfig(Qt5X11Extras)
 BuildRequires:  qt5-linguist
-BuildRequires:  gsettings-qt-devel
-BuildRequires:  qt5-qtmultimedia-devel 
-BuildRequires:  qt5-qtx11extras-devel
-#BuildRequires:  libdframeworkdbus-dev
 
 %description
 DDE Polkit Agent is the polkit agent used in Deepin Desktop Environment.
@@ -32,12 +41,13 @@ Requires:       %{name}%{?_isa} = %{version}-%{release}
 Header files and libraries for %{name}.
 
 %prep
-%setup -q -n %{repo}-%{version}
-sed -i 's|lrelease|lrelease-qt5|' translate_generation.sh
-sed -i 's|/usr/lib|/usr/libexec|' dde-polkit-agent.pro polkit-dde-authentication-agent-1.desktop \
+%autosetup -p1 -n %{repo}-%{version}
+sed -i 's|/usr/lib|%{_libexecdir}|' dde-polkit-agent.pro polkit-dde-authentication-agent-1.desktop \
     pluginmanager.cpp
 
 %build
+# help find (and prefer) qt5 utilities, e.g. qmake, lrelease
+export PATH=%{_qt5_bindir}:$PATH
 %qmake_qt5 PREFIX=%{_prefix}
 %make_build
 
@@ -47,12 +57,11 @@ sed -i 's|/usr/lib|/usr/libexec|' dde-polkit-agent.pro polkit-dde-authentication
 %files
 %doc README.md
 %license LICENSE
-/usr/libexec/polkit-1-dde/dde-polkit-agent
+%{_libexecdir}/polkit-1-dde/
 %{_datadir}/%{repo}/
 
 %files devel
-%{_includedir}/dpa/agent-extension-proxy.h
-%{_includedir}/dpa/agent-extension.h
+%{_includedir}/dpa/
 
 %changelog
 * Wed Jun 10 2020 uoser <uoser@uniontech.com> - 5.0.9
