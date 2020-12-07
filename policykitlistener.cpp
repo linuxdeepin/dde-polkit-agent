@@ -201,11 +201,9 @@ void PolicyKitListener::finishObtainPrivilege()
         m_pluginManager.data()->reduce(m_selectedUser.toString().remove("unix-user:"),
                                        m_dialog.data()->password());
 
-    if (!m_session.isNull()) {
-        m_session.data()->result()->setCompleted();
-    } else {
-        m_result->setCompleted();
-    }
+    // fill complete according to authentication result
+    // to get cancel state, polkit-qt need be updated
+    fillResult();
     m_session.data()->deleteLater();
     if (!m_dialog.isNull()) {
         if (m_numTries >= 3 && !m_gainedAuthorization && !m_wasCancelled) {
@@ -257,10 +255,10 @@ void PolicyKitListener::completed(bool gainedAuthorization)
 
 void PolicyKitListener::showError(const QString &text)
 {
-   qDebug() << "Error: " << text;
+    qDebug() << "Error: " << text;
 
-   if (m_dialog && !text.isEmpty())
-       m_dialog.data()->setError(text);
+    if (m_dialog && !text.isEmpty())
+        m_dialog.data()->setError(text);
 }
 
 void PolicyKitListener::showInfo(const QString &info)
@@ -319,4 +317,23 @@ void PolicyKitListener::userSelected(const PolkitQt1::Identity &identity)
         m_session.data()->deleteLater();
     }
     tryAgain();
+}
+
+void PolicyKitListener::fillResult()
+{
+    if (!m_session.isNull()) {
+        if (m_wasCancelled) {
+            m_session.data()->result()->setCancel("aciton cancel");
+        } else if (!m_gainedAuthorization) {
+            m_session.data()->result()->setError("password error");
+        }
+        m_session.data()->result()->setCompleted();
+    } else {
+        if (m_wasCancelled) {
+            m_result->setCancel("action cancel");
+        } else if (!m_gainedAuthorization) {
+            m_result->setError("password error");
+        }
+        m_result->setCompleted();
+    }
 }

@@ -63,6 +63,7 @@ public slots:
     void showError(const QString &text);
     void showInfo(const QString &info);
 
+    void fillResult();
     void setWIdForAction(const QString &action, qulonglong wID);
 
 private:
