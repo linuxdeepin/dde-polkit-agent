@@ -9,7 +9,7 @@
     <message>
         <location filename="../AuthDialog.cpp" line="97"/>
         <source>Verification failed, two chances left</source>
-        <translation type="unfinished"/>
+        <translation>Ověření se nezdařilo – zbývají dvě šance</translation>
     </message>
     <message>
         <location filename="../AuthDialog.cpp" line="116"/>
@@ -40,7 +40,7 @@
     <message>
         <location filename="../AuthDialog.cpp" line="300"/>
         <source>Cancel</source>
-        <translation>Storno</translation>
+        <translation>Zrušit</translation>
     </message>
 </context>
 </TS>

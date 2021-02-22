@@ -9,7 +9,7 @@
     <message>
         <location filename="../AuthDialog.cpp" line="97"/>
         <source>Verification failed, two chances left</source>
-        <translation type="unfinished"/>
+        <translation>확인 실패, 두 번의 기회가 남았습니다</translation>
     </message>
     <message>
         <location filename="../AuthDialog.cpp" line="116"/>
