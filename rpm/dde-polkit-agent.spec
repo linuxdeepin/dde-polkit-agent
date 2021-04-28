@@ -9,12 +9,12 @@
 %endif
 
 Name:           dde-polkit-agent
-Version:        5.4.3
+Version:        5.4.5
 Release:        %{specrelease}
 Summary:        Deepin Polkit Agent
 License:        GPLv3
 URL:            https://github.com/linuxdeepin/dde-polkit-agent
-Source0:        %{name}_%{version}.orig.tar.xz
+Source0:        %{name}-%{version}.orig.tar.xz
 
 BuildRequires:  gcc-c++
 BuildRequires:  dtkwidget-devel >= 5.1.1
@@ -61,5 +61,5 @@ sed -i 's|lrelease|lrelease-qt5|' translate_generation.sh
 %{_includedir}/dpa/agent-extension.h
 
 %changelog
-* Thu Mar 11 2021 uniontech <uoser@uniontech.com> - 5.4.3-1
-- Update to 5.4.3
+* Thu Apr 26 2021 uniontech <uoser@uniontech.com> - 5.4.5-1
+- Update to 5.4.5
