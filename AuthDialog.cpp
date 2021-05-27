@@ -115,7 +115,7 @@ void AuthDialog::setAuthInfo(const QString &info)
 
     m_passwordInput->lineEdit()->setPlaceholderText(QString(dgettext("deepin-authentication", info.toStdString().c_str())));
 
-    setButtonText(1, tr("Confirm"));
+    setButtonText(1, tr("Confirm", "button"));
     getButton(1)->setAccessibleName("Confirm");
     update();
 }
@@ -299,8 +299,8 @@ void AuthDialog::setupUI()
     m_adminsCombo->setAccessibleName("selectuser");
     m_passwordInput->setAccessibleName("passwordinput");
 
-    int cancelId = addButton(tr("Cancel"));
-    int confirmId = addButton(tr("Confirm"), true, ButtonType::ButtonRecommend);
+    int cancelId = addButton(tr("Cancel", "button"));
+    int confirmId = addButton(tr("Confirm", "button"), true, ButtonType::ButtonRecommend);
     getButton(confirmId)->setEnabled(false);
 
     setOnButtonClickedClose(false);
