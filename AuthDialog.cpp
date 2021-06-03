@@ -21,6 +21,9 @@
 #include "accessiblemap.h"
 #include "usersmanager.h"
 
+#include <DHiDPIHelper>
+#include <DApplicationHelper>
+
 #include <QProcess>
 #include <QPainter>
 #include <QStandardItemModel>
@@ -30,8 +33,6 @@
 #include <QUrl>
 #include <QAbstractButton>
 #include <QButtonGroup>
-
-#include <DHiDPIHelper>
 
 #include <PolkitQt1/Authority>
 #include <PolkitQt1/Details>
@@ -319,6 +320,9 @@ void AuthDialog::setupUI()
             break;
         case 1: {
             emit okClicked();
+            // 收起虚拟键盘
+            QInputMethod *m_inputmethod = QGuiApplication::inputMethod();
+            m_inputmethod->hide();
             break;
         }
         default:;
