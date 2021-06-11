@@ -2,17 +2,17 @@ Source: dde-polkit-agent
 Section: devel
 Priority: optional
 Maintainer: Deepin Packages Builder <packages@deepin.com>
-Build-Depends: debhelper (>=9), 
-	pkg-config, 
+Build-Depends: debhelper (>=9),
+	pkg-config,
 	libqt5webkit5-dev,
-        libgsettings-qt-dev,
-	libpolkit-qt5-1-dev, 
-	libdtkcore-dev,
-	libdtkwidget-dev,
-	qt5-qmake, 
-	qttools5-dev-tools, 
+    libgsettings-qt-dev,
+	libpolkit-qt5-1-dev,
+	libdtkcore5.5-dev,
+	libdtkwidget5.5-dev,
+	qt5-qmake,
+	qttools5-dev-tools,
 	libdframeworkdbus-dev,
-	libdtkcore5-bin
+	libdtkcore5.5-bin
 Standards-Version: 3.9.8
 Homepage: http://www.deepin.org/
 
@@ -20,7 +20,7 @@ Package: dde-polkit-agent
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, dpa-ext-gnomekeyring
 Description: PolicyKit agent for DDE.
- PolicyKit agent is usually a dialog used to provide a way to let users 
+ PolicyKit agent is usually a dialog used to provide a way to let users
  grant permission to specific actions, this package serves the role in
  Deepin Desktop Environment.
 
