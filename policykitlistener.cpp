@@ -19,6 +19,7 @@
 
 #include <QDBusConnection>
 #include <QDebug>
+#include <QtConcurrent>
 
 #include <polkit-qt5-1/PolkitQt1/Agent/Listener>
 #include <polkit-qt5-1/PolkitQt1/Agent/Session>
@@ -197,9 +198,15 @@ void PolicyKitListener::finishObtainPrivilege()
         }
     }
 
+    // 插件进行的操作不应该能够长时间阻塞 UI 线程
+    // 将插件操作放在新线程中完成的原因是
+    // https://gerrit.uniontech.com/c/dpa-ext-gnomekeyring/+/45034/2/gnomekeyringextention.cpp#138 
+    // 调用了一个可能会阻塞的方法, 导致了 pms bug 82328
     if (m_gainedAuthorization)
-        m_pluginManager.data()->reduce(m_selectedUser.toString().remove("unix-user:"),
-                                       m_dialog.data()->password());
+        QtConcurrent::run(m_pluginManager.data(),
+                          &PluginManager::reduce,
+                          m_selectedUser.toString().remove("unix-user:"),
+                          m_dialog.data()->password());
 
     // fill complete according to authentication result
     // to get cancel state, polkit-qt need be updated
