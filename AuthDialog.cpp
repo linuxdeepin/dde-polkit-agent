@@ -79,6 +79,9 @@ AuthDialog::AuthDialog(const QString &actionId,
 
     connect(this, &AuthDialog::aboutToClose, this, &AuthDialog::rejected);
     connect(this, &AuthDialog::clearAccessibleMap, AccessibleMap::instance(),&AccessibleMap::clearAccessibleMap,Qt::DirectConnection);
+
+    QInputMethod *m_inputmethod = QGuiApplication::inputMethod();
+    m_inputmethod->show();
 }
 
 AuthDialog::~AuthDialog()
