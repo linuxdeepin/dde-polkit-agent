@@ -44,13 +44,6 @@ public:
      * @brief extendedDo is where extension actually do the dirty work.
      */
     virtual void extendedDo() = 0;
-
-    /**
-     * @brief setKeyringPassword changed keyring password
-     * @param current
-     * @param newPass
-     */
-    virtual void setKeyringPassword(const QString current, const QString newPass) {}
 };
 
 }
