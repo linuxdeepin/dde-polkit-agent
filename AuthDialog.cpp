@@ -81,6 +81,9 @@ AuthDialog::AuthDialog(const QString &actionId,
     connect(this, &AuthDialog::clearAccessibleMap, AccessibleMap::instance(),&AccessibleMap::clearAccessibleMap,Qt::DirectConnection);
 
     QInputMethod *m_inputmethod = QGuiApplication::inputMethod();
+    connect(m_passwordInput, &DLineEdit::focusChanged, this, [=] {
+        m_passwordInput->hasFocus() ? m_inputmethod->show() : m_inputmethod->hide();
+    });
     m_inputmethod->show();
 }
 
@@ -323,13 +326,13 @@ void AuthDialog::setupUI()
             break;
         case 1: {
             emit okClicked();
-            // 收起虚拟键盘
-            QInputMethod *m_inputmethod = QGuiApplication::inputMethod();
-            m_inputmethod->hide();
             break;
         }
         default:;
         }
+        // 收起虚拟键盘
+        QInputMethod *m_inputmethod = QGuiApplication::inputMethod();
+        m_inputmethod->hide();
     });
 
     connect(m_passwordInput, &DPasswordEdit::textChanged, [ = ](const QString & text) {
