@@ -46,12 +46,13 @@ AuthDialog::AuthDialog(const QString &actionId,
                        const PolkitQt1::Details &details,
                        const PolkitQt1::Identity::List &identities,
                        WId parent)
-    : DDialog(message, "", nullptr),
-      m_message(message),
-      m_iconName(iconName),
-      m_adminsCombo(new QComboBox(this)),
-      m_passwordInput(new DPasswordEdit(this)),
-      m_tooltip(new ErrorTooltip(""))
+    : DDialog(message, "", nullptr)
+    , m_message(message)
+    , m_iconName(iconName)
+    , m_adminsCombo(new QComboBox(this))
+    , m_passwordInput(new DPasswordEdit(this))
+    , m_tooltip(new ErrorTooltip(""))
+    , m_numTries(0)
 {
     Q_UNUSED(details)
     Q_UNUSED(parent)
@@ -171,7 +172,7 @@ void AuthDialog::showErrorTip()
                     globalStart.y() + m_passwordInput->height());
 }
 
-PolkitQt1::Identity AuthDialog::adminUserSelected() const
+PolkitQt1::Identity AuthDialog::selectedAdminUser() const
 {
     qDebug() << m_adminsCombo->currentIndex() << m_adminsCombo->currentData().toString();
 
@@ -186,10 +187,11 @@ PolkitQt1::Identity AuthDialog::adminUserSelected() const
 
 void AuthDialog::on_userCB_currentIndexChanged(int /*index*/)
 {
-    PolkitQt1::Identity identity = adminUserSelected();
+    PolkitQt1::Identity identity = selectedAdminUser();
     // 清除上一个用户已经输入的密码
     m_passwordInput->clear();
     m_passwordInput->setAlert(false);
+    m_numTries = 0;
 
     // itemData is Null when "Select user" is selected
     if (!identity.isValid()) {
@@ -262,32 +264,25 @@ QString AuthDialog::password() const
     return m_passwordInput->text();
 }
 
-void AuthDialog::authenticationFailure(int numTries, bool usePassword)
+void AuthDialog::lock()
 {
-    if (!usePassword)
-        return;
+    m_passwordInput->setEnabled(false);
+    getButton(1)->setEnabled(false);
+}
 
+void AuthDialog::authenticationFailure()
+{
     // TODO: show error messages.
     m_passwordInput->setEnabled(true);
     m_passwordInput->setAlert(true);
     m_passwordInput->clear();
     m_passwordInput->lineEdit()->setFocus();
 
-    switch (numTries) {
-    case 2:
-        setError(tr("Wrong password, only one chance left"));
-        break;
-    case 1:
-        setError(tr("Wrong password, two chances left"));
-        break;
-    case 0:
-    default: {
-        setError(tr("Wrong password"));
-        setEnabled(false);
+    m_numTries++;
+    if (3 <= m_numTries) {
+        lock();
+        QTimer::singleShot(3000, this, &AuthDialog::close);
     }
-    break;
-    }
-
     activateWindow();
 }
 

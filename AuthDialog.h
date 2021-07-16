@@ -60,15 +60,16 @@ public:
 
     void setError(const QString &error);
     void setRequest(const QString &request, bool requiresAdmin);
+    void authenticationFailure();
 
     void setAuthInfo(const QString &info);
 
     void addOptions(QButtonGroup *bg);
 
     QString password() const;
-    void authenticationFailure(int numTries = 0, bool usePassword = true);
+    void lock();
 
-    PolkitQt1::Identity adminUserSelected() const;
+    PolkitQt1::Identity selectedAdminUser() const;
 
     PolkitQt1::ActionDescription m_actionDescription;
 
@@ -94,6 +95,8 @@ private:
     QComboBox *m_adminsCombo;
     DPasswordEdit *m_passwordInput;
     ErrorTooltip *m_tooltip;
+
+    int m_numTries;
 
     void setupUI();
     void createUserCB(const PolkitQt1::Identity::List &identities);
