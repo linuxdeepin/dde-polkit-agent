@@ -42,7 +42,7 @@ class PolicyKitListener : public Listener
     Q_CLASSINFO("D-Bus Interface", "com.deepin.Polkit1AuthAgent")
 public:
     PolicyKitListener(QObject *parent = 0);
-    virtual ~PolicyKitListener();
+    virtual ~PolicyKitListener() override;
 
 public slots:
     void initiateAuthentication(const QString &actionId,
@@ -55,7 +55,7 @@ public slots:
     bool initiateAuthenticationFinish() override;
     void cancelAuthentication() override;
 
-    void tryAgain();
+    void createSessionForId(const PolkitQt1::Identity &identity);
     void finishObtainPrivilege();
 
     void request(const QString &request, bool echo);
@@ -75,25 +75,22 @@ private:
     PolkitQt1::Identity::List m_identities;
     PolkitQt1::Agent::AsyncResult *m_result;
     QString m_cookie;
-    QString m_password{""};
+
     PolkitQt1::Identity m_selectedUser;
     QHash< QString, qulonglong > m_actionsToWID;
-    QTimer m_delayRemoveTimer;
 
     bool m_inProgress;
     bool m_gainedAuthorization;
     bool m_wasCancelled;
-    bool m_usePassword;
-    int m_numTries;
-    int m_numFPrint;
+
     bool m_showInfoSuccess;
+
+    void initDialog(const QString &actionId);
 
 private slots:
     bool isDeepin();
     void dialogAccepted();
     void dialogCanceled();
-    void userSelected(const PolkitQt1::Identity &identity);
-
 };
 
 #endif

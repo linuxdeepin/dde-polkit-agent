@@ -20,6 +20,9 @@
 #include <QDBusConnection>
 #include <QDebug>
 #include <QtConcurrent>
+#include <QJsonDocument>
+#include <QJsonArray>
+#include <QJsonObject>
 
 #include <polkit-qt5-1/PolkitQt1/Agent/Listener>
 #include <polkit-qt5-1/PolkitQt1/Agent/Session>
@@ -37,12 +40,14 @@
 
 #define USE_DEEPIN_AUTH "useDeepinAuth"
 
+static bool isAccountLocked(const PolkitQt1::Identity &identity);
+
 PolicyKitListener::PolicyKitListener(QObject *parent)
     : Listener(parent)
     , m_selectedUser(nullptr)
     , m_inProgress(false)
-    , m_usePassword(false)
-    , m_numFPrint(0)
+    , m_gainedAuthorization(false)
+    , m_wasCancelled(false)
     , m_showInfoSuccess(false)
 {
     (void) new Polkit1AuthAgentAdaptor(this);
@@ -65,16 +70,6 @@ PolicyKitListener::PolicyKitListener(QObject *parent)
     qDebug() << "Listener online";
 
     m_pluginManager = new PluginManager(this);
-
-    m_delayRemoveTimer.setInterval(3000);
-    m_delayRemoveTimer.setSingleShot(true);
-    connect(&m_delayRemoveTimer, &QTimer::timeout, this, [ = ] {
-        m_dialog.data()->hide();
-        // FIXME(hualet): don't know why deleteLater doesn't do its job,
-        // combined invokeMethod with Qt::QueuedConnection works well.
-        // m_dialog.data()->deleteLater();
-        QMetaObject::invokeMethod(m_dialog.data(), "deleteLater", Qt::QueuedConnection);
-    });
 }
 
 PolicyKitListener::~PolicyKitListener()
@@ -108,10 +103,8 @@ void PolicyKitListener::initiateAuthentication(const QString &actionId,
     m_cookie = cookie;
     m_result = result;
     m_session.clear();
-    m_password.clear();
-
+    m_wasCancelled = false;
     m_inProgress = true;
-    m_delayRemoveTimer.stop();
 
     WId parentId = 0;
     if (m_actionsToWID.contains(actionId)) {
@@ -120,19 +113,24 @@ void PolicyKitListener::initiateAuthentication(const QString &actionId,
 
     m_pluginManager.data()->setActionID(actionId);
 
-    if (!m_dialog.isNull()) {
-        m_dialog->deleteLater();
-        m_dialog = nullptr;
-    }
-
     m_dialog = new AuthDialog(actionId, message, iconName, details, identities, parentId);
+    m_dialog->setAttribute(Qt::WA_DeleteOnClose);
+    initDialog(actionId);
 
-    connect(m_dialog.data(), SIGNAL(okClicked()), SLOT(dialogAccepted()));
-    connect(m_dialog.data(), SIGNAL(rejected()), SLOT(dialogCanceled()));
-    connect(m_dialog.data(), SIGNAL(adminUserSelected(PolkitQt1::Identity)), SLOT(userSelected(PolkitQt1::Identity)));
+    if (identities.length() == 1) {
+        createSessionForId(identities[0]);
+    } else {
+        createSessionForId(m_dialog.data()->selectedAdminUser());
+    }
+}
+
+void PolicyKitListener::initDialog(const QString &actionId)
+{
+    connect(m_dialog.data(), &AuthDialog::okClicked, this, &PolicyKitListener::dialogAccepted);
+    connect(m_dialog.data(), &AuthDialog::rejected, this, &PolicyKitListener::dialogCanceled);
+    connect(m_dialog.data(), &AuthDialog::adminUserSelected, this, &PolicyKitListener::createSessionForId);
 
     // TODO(hualet): show extended action information.
-
     QList<QButtonGroup *> optionsList = m_pluginManager.data()->reduceGetOptions(actionId);
     for (QButtonGroup *bg : optionsList) {
         m_dialog.data()->addOptions(bg);
@@ -142,88 +140,39 @@ void PolicyKitListener::initiateAuthentication(const QString &actionId,
     m_dialog.data()->show();
     qDebug() << "WinId of the shown dialog is " << m_dialog.data()->winId() << m_dialog.data()->effectiveWinId();
     m_dialog.data()->activateWindow();
-
-    if (identities.length() == 1) {
-        m_selectedUser = identities[0];
-    } else {
-        m_selectedUser = m_dialog.data()->adminUserSelected();
-    }
-
-    m_numTries = 0;
-    tryAgain();
-}
-
-void PolicyKitListener::tryAgain()
-{
-    qDebug() << "Trying again";
-    m_wasCancelled = false;
-    m_password.clear();
-
-    qDebug() << m_selectedUser.isValid() << m_selectedUser.toString();
-
-    // We will create new session only when some user is selected
-    if (m_selectedUser.isValid()) {
-        m_session = new Session(m_selectedUser, m_cookie, m_result);
-        m_usePassword = false;
-
-        connect(m_session.data(), &Session::request, this, &PolicyKitListener::request);
-        connect(m_session.data(), &Session::completed, this, &PolicyKitListener::completed);
-        connect(m_session.data(), &Session::showError, this, &PolicyKitListener::showError);
-        connect(m_session.data(), &Session::showInfo, this, &PolicyKitListener::showInfo);
-
-        const QString username { m_selectedUser.toString().replace("unix-user:", "") };
-
-        m_session->initiate();
-
-    }
 }
 
 void PolicyKitListener::finishObtainPrivilege()
 {
     qDebug() << "Finishing obtaining privileges";
 
-    // Number of tries increase only when some user is selected
-    if (m_selectedUser.isValid() && m_usePassword) {
-        m_numTries++;
-    }
-
-    if (!m_gainedAuthorization && !m_wasCancelled && !m_dialog.isNull()) {
-        m_dialog.data()->authenticationFailure(m_numTries, m_usePassword);
-
-        if (m_numTries < 3) {
-            m_session.data()->deleteLater();
-
-            tryAgain();
-            return;
-        }
-    }
-
     // 插件进行的操作不应该能够长时间阻塞 UI 线程
     // 将插件操作放在新线程中完成的原因是
-    // https://gerrit.uniontech.com/c/dpa-ext-gnomekeyring/+/45034/2/gnomekeyringextention.cpp#138 
+    // https://gerrit.uniontech.com/c/dpa-ext-gnomekeyring/+/45034/2/gnomekeyringextention.cpp#138
     // 调用了一个可能会阻塞的方法, 导致了 pms bug 82328
-    if (m_gainedAuthorization)
+    if (m_gainedAuthorization) {
         QtConcurrent::run(m_pluginManager.data(),
                           &PluginManager::reduce,
                           m_selectedUser.toString().remove("unix-user:"),
                           m_dialog.data()->password());
+    } else if (!m_wasCancelled) {
+        // 认证失败
+        m_dialog->authenticationFailure();
+        if (isAccountLocked(m_selectedUser)) {
+            m_dialog->lock(); // 锁定
+        } else {
+            createSessionForId(m_selectedUser); // 重试
+        }
+        return;
+    }
 
     // fill complete according to authentication result
     // to get cancel state, polkit-qt need be updated
     fillResult();
     m_session.data()->deleteLater();
-    if (!m_dialog.isNull()) {
-        if (m_numTries >= 3 && !m_gainedAuthorization && !m_wasCancelled) {
-            m_delayRemoveTimer.start();
-        } else {
-            m_dialog.data()->hide();
-            QMetaObject::invokeMethod(m_dialog.data(), "deleteLater", Qt::QueuedConnection);
-        }
-    }
-    m_inProgress = false;
+    m_dialog->close();
 
-    m_numFPrint = 0;
-    m_usePassword = false;
+    m_inProgress = false;
 
     qDebug() << "Finish obtain authorization:" << m_gainedAuthorization;
 }
@@ -237,7 +186,6 @@ bool PolicyKitListener::initiateAuthenticationFinish()
 void PolicyKitListener::cancelAuthentication()
 {
     qDebug() << "Cancelling authentication";
-
     m_wasCancelled = true;
     finishObtainPrivilege();
 }
@@ -297,14 +245,8 @@ bool PolicyKitListener::isDeepin()
 
 void PolicyKitListener::dialogAccepted()
 {
-    m_delayRemoveTimer.stop();
-    if (!m_dialog.isNull()) {
-        qDebug() << "Dialog accepted";
-
-        m_usePassword = true;
-        m_password = m_dialog->password();
-        m_session->setResponse(m_password);
-    }
+    qDebug() << "Dialog accepted";
+    m_session->setResponse(m_dialog->password());
 }
 
 void PolicyKitListener::dialogCanceled()
@@ -312,23 +254,32 @@ void PolicyKitListener::dialogCanceled()
     qDebug() << "Dialog cancelled";
 
     m_inProgress = false;
-    m_delayRemoveTimer.stop();
     m_wasCancelled = true;
     if (!m_session.isNull()) {
         m_session.data()->cancel();
     }
-
     finishObtainPrivilege();
 }
 
-void PolicyKitListener::userSelected(const PolkitQt1::Identity &identity)
+void PolicyKitListener::createSessionForId(const PolkitQt1::Identity &identity)
 {
+    m_inProgress = true;
     m_selectedUser = identity;
     // If some user is selected we must destroy existing session
     if (!m_session.isNull()) {
         m_session.data()->deleteLater();
     }
-    tryAgain();
+    // We will create new session only when some user is selected
+    if (m_selectedUser.isValid()) {
+        m_session = new Session(m_selectedUser, m_cookie, m_result);
+
+        connect(m_session.data(), &Session::request, this, &PolicyKitListener::request);
+        connect(m_session.data(), &Session::completed, this, &PolicyKitListener::completed);
+        connect(m_session.data(), &Session::showError, this, &PolicyKitListener::showError);
+        connect(m_session.data(), &Session::showInfo, this, &PolicyKitListener::showInfo);
+
+        m_session->initiate();
+    }
 }
 
 void PolicyKitListener::fillResult()
@@ -348,4 +299,30 @@ void PolicyKitListener::fillResult()
         }
         m_result->setCompleted();
     }
+}
+
+static bool isAccountLocked(const PolkitQt1::Identity &identity)
+{
+    QString userName = identity.toString().replace("unix-user:", "");
+    QDBusMessage msg = QDBusMessage::createMethodCall("com.deepin.daemon.Authenticate",
+                                                      "/com/deepin/daemon/Authenticate",
+                                                      "com.deepin.daemon.Authenticate",
+                                                      "GetLimits");
+    msg << userName;
+    msg = QDBusConnection::systemBus().call(msg, QDBus::Block, 3000);
+    QJsonDocument document;
+    if (QDBusMessage::ReplyMessage == msg.type()) {
+        document = QJsonDocument::fromJson(msg.arguments().at(0).toString().toUtf8());
+    }
+    QJsonArray array = document.array();
+
+    bool result = false;
+    for (auto item = array.constBegin(); item != array.constEnd(); item++) {
+        // 后续可以支持多种认证方式：fingerprint, face, usbkey 等
+        if (item->toObject()["type"].toString() == "password") {
+            result = item->toObject()["locked"].toBool();
+            break;
+        }
+    }
+    return result;
 }
