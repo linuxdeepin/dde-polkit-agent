@@ -29,6 +29,7 @@
 #include <polkit-qt5-1/PolkitQt1/Subject>
 #include <polkit-qt5-1/PolkitQt1/Identity>
 #include <polkit-qt5-1/PolkitQt1/Details>
+#include <polkit-qt5-1/polkitqt1-version.h>
 #include <libintl.h>
 
 #include "policykitlistener.h"
@@ -284,20 +285,17 @@ void PolicyKitListener::createSessionForId(const PolkitQt1::Identity &identity)
 
 void PolicyKitListener::fillResult()
 {
-    if (!m_session.isNull()) {
+    PolkitQt1::Agent::AsyncResult *result = m_session.isNull() ? m_result : m_session->result();
+    if (result) {
+        //polkit-qt-1在0.115.0版本新增setCancel接口
+#if POLKITQT1_IS_VERSION(0, 115, 0)
         if (m_wasCancelled) {
-            m_session.data()->result()->setCancel("aciton cancel");
+            result->setCancel("action cancel");
         } else if (!m_gainedAuthorization) {
-            m_session.data()->result()->setError("password error");
+            result->setError("password error");
         }
-        m_session.data()->result()->setCompleted();
-    } else {
-        if (m_wasCancelled) {
-            m_result->setCancel("action cancel");
-        } else if (!m_gainedAuthorization) {
-            m_result->setError("password error");
-        }
-        m_result->setCompleted();
+#endif
+        result->setCompleted();
     }
 }
 
