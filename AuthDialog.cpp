@@ -136,7 +136,6 @@ void AuthDialog::addOptions(QButtonGroup *bg)
 
 void AuthDialog::createUserCB(const PolkitQt1::Identity::List &identities)
 {
-
     // Clears the combobox in the case some user be added
     m_adminsCombo->clear();
 
@@ -148,20 +147,15 @@ void AuthDialog::createUserCB(const PolkitQt1::Identity::List &identities)
 
         // appends the user item
         QString username = identity.toString().remove("unix-user:");
-
         QString fullname = UsersManager::instance()->getFullName(username);
-        if (!fullname.isEmpty()) username = fullname;
 
         if (username == qgetenv("USER"))
-            m_adminsCombo->insertItem(0, username, identity.toString());
+            m_adminsCombo->insertItem(0, fullname.isEmpty() ? username : fullname, identity.toString());
         else
-            m_adminsCombo->addItem(username, identity.toString());
-
-        // TODO: select the current user.
+            m_adminsCombo->addItem(fullname.isEmpty() ? username : fullname, identity.toString());
     }
 
-    m_adminsCombo->setCurrentIndex(0);
-
+    m_adminsCombo->setCurrentIndex(0); // select the current user.
     m_adminsCombo->show();
 }
 
