@@ -58,6 +58,10 @@ AuthDialog::AuthDialog(const QString &actionId,
     Q_UNUSED(details)
     Q_UNUSED(parent)
 
+    // 禁用剪切、复制
+    m_passwordInput->setCopyEnabled(false);
+    m_passwordInput->setCutEnabled(false);
+
     // TODO: associate this dialog with its parent.
     setupUI();
 
