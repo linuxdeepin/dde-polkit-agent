@@ -61,8 +61,6 @@ public:
     void setError(const QString &error);
     void setRequest(const QString &request, bool requiresAdmin);
 
-    void createUserCB(const PolkitQt1::Identity::List &identities);
-
     void setAuthInfo(const QString &info);
 
     void addOptions(QButtonGroup *bg);
@@ -98,6 +96,7 @@ private:
     ErrorTooltip *m_tooltip;
 
     void setupUI();
+    void createUserCB(const PolkitQt1::Identity::List &identities);
     void showErrorTip();
 };
 
