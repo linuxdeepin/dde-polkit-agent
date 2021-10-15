@@ -136,6 +136,8 @@ void PolicyKitListener::initDialog(const QString &actionId)
         m_dialog.data()->addOptions(bg);
     }
 
+    m_dialog.data()->createUserCB(m_identities);
+
     qDebug() << "WinId of the dialog is " << m_dialog.data()->winId() << m_dialog.data()->effectiveWinId();
     m_dialog.data()->show();
     qDebug() << "WinId of the shown dialog is " << m_dialog.data()->winId() << m_dialog.data()->effectiveWinId();
