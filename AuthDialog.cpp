@@ -74,8 +74,6 @@ AuthDialog::AuthDialog(const QString &actionId,
     connect(m_adminsCombo, SIGNAL(currentIndexChanged(int)),
             this, SLOT(on_userCB_currentIndexChanged(int)));
 
-    createUserCB(identities);
-
     connect(this, &AuthDialog::aboutToClose, this, &AuthDialog::rejected);
     connect(this, &AuthDialog::clearAccessibleMap, AccessibleMap::instance(),&AccessibleMap::clearAccessibleMap,Qt::DirectConnection);
 }
