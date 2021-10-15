@@ -26,10 +26,7 @@
 
 #include <polkit-qt5-1/PolkitQt1/Agent/Listener>
 #include <polkit-qt5-1/PolkitQt1/Agent/Session>
-#include <polkit-qt5-1/PolkitQt1/Subject>
 #include <polkit-qt5-1/PolkitQt1/Identity>
-#include <polkit-qt5-1/PolkitQt1/Details>
-#include <libintl.h>
 
 #include "policykitlistener.h"
 #include "AuthDialog.h"
@@ -102,6 +99,10 @@ void PolicyKitListener::initiateAuthentication(const QString &actionId,
     m_identities = identities;
     m_cookie = cookie;
     m_result = result;
+    m_details = details;
+
+    qDebug() << "details: " << m_details.keys();
+
     m_session.clear();
     m_wasCancelled = false;
     m_inProgress = true;
@@ -212,6 +213,9 @@ void PolicyKitListener::completed(bool gainedAuthorization)
         m_gainedAuthorization = true;
     m_showInfoSuccess = false;
 
+    if (m_exAuth) {
+      m_session.data()->authCtrl(AUTH_CLOSE, -1);
+    }
     finishObtainPrivilege();
 }
 
@@ -234,6 +238,22 @@ void PolicyKitListener::showInfo(const QString &info)
         m_showInfoSuccess = true;
     else
         m_showInfoSuccess = false;
+}
+
+void PolicyKitListener::exAuthStatus(int statusCode, int authFlags,
+                                     const QString &status) {
+  qDebug() << "exAuthStatus: " << status;
+}
+
+void PolicyKitListener::exAuthInfo(bool isMfa, QList<int> &authTypes) {
+  qDebug() << "exAuthInfo: " << isMfa;
+  m_exAuth = true;
+  m_isMfa = isMfa;
+  m_exAuthFlags = authTypes;
+
+  if (!isMfa) {
+    m_session.data()->authCtrl(AUTH_START, -1);
+  }
 }
 
 bool PolicyKitListener::isDeepin()
@@ -263,25 +283,33 @@ void PolicyKitListener::dialogCanceled()
     finishObtainPrivilege();
 }
 
-void PolicyKitListener::createSessionForId(const PolkitQt1::Identity &identity)
-{
-    m_inProgress = true;
-    m_selectedUser = identity;
-    // If some user is selected we must destroy existing session
-    if (!m_session.isNull()) {
-        m_session.data()->deleteLater();
-    }
-    // We will create new session only when some user is selected
-    if (m_selectedUser.isValid()) {
-        m_session = new Session(m_selectedUser, m_cookie, m_result);
+void PolicyKitListener::createSessionForId(
+    const PolkitQt1::Identity &identity) {
+  m_inProgress = true;
+  m_selectedUser = identity;
+  // If some user is selected we must destroy existing session
+  if (!m_session.isNull()) {
+    m_session.data()->deleteLater();
+  }
+  // We will create new session only when some user is selected
+  if (m_selectedUser.isValid()) {
+    m_session = new Session(m_selectedUser, m_cookie, m_result, &m_details);
 
-        connect(m_session.data(), &Session::request, this, &PolicyKitListener::request);
-        connect(m_session.data(), &Session::completed, this, &PolicyKitListener::completed);
-        connect(m_session.data(), &Session::showError, this, &PolicyKitListener::showError);
-        connect(m_session.data(), &Session::showInfo, this, &PolicyKitListener::showInfo);
+    connect(m_session.data(), &Session::request, this,
+            &PolicyKitListener::request);
+    connect(m_session.data(), &Session::completed, this,
+            &PolicyKitListener::completed);
+    connect(m_session.data(), &Session::showError, this,
+            &PolicyKitListener::showError);
+    connect(m_session.data(), &Session::showInfo, this,
+            &PolicyKitListener::showInfo);
+    connect(m_session.data(), &Session::exAuthStatus, this,
+            &PolicyKitListener::exAuthStatus);
+    connect(m_session.data(), &Session::exAuthInfo, this,
+            &PolicyKitListener::exAuthInfo);
 
-        m_session->initiate();
-    }
+    m_session->initiate();
+  }
 }
 
 void PolicyKitListener::fillResult()

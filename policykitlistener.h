@@ -25,6 +25,7 @@
 #include <QGSettings>
 
 #include <polkit-qt5-1/PolkitQt1/Agent/Listener>
+#include <polkit-qt5-1/PolkitQt1/Details>
 
 #include <com_deepin_daemon_fprintd.h>
 #include <com_deepin_daemon_fprintd_device.h>
@@ -62,6 +63,8 @@ public slots:
     void completed(bool gainedAuthorization);
     void showError(const QString &text);
     void showInfo(const QString &info);
+    void exAuthStatus(int statusCode, int authFlags, const QString &status);
+    void exAuthInfo(bool isMfa, QList<int> &authTypes);
 
     void fillResult();
     void setWIdForAction(const QString &action, qulonglong wID);
@@ -76,6 +79,7 @@ private:
     PolkitQt1::Agent::AsyncResult *m_result;
     QString m_cookie;
 
+    PolkitQt1::Details m_details;
     PolkitQt1::Identity m_selectedUser;
     QHash< QString, qulonglong > m_actionsToWID;
 
@@ -84,6 +88,9 @@ private:
     bool m_wasCancelled;
 
     bool m_showInfoSuccess;
+    bool m_exAuth;
+    bool m_isMfa;
+    QList<int> m_exAuthFlags;
 
     void initDialog(const QString &actionId);
 
