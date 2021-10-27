@@ -74,6 +74,9 @@ public:
 
     PolkitQt1::ActionDescription m_actionDescription;
 
+private:
+    int getLockLimitTryNum();
+
 signals:
     void adminUserSelected(PolkitQt1::Identity);
     void okClicked();
@@ -98,6 +101,7 @@ private:
     ErrorTooltip *m_tooltip;
 
     int m_numTries;
+    int m_lockLimitTryNum;
 
     void setupUI();
     void showErrorTip();
