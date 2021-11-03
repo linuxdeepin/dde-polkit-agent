@@ -34,7 +34,9 @@ DISTFILES += com.deepin.Polkit1AuthAgent.xml
 TRANSLATIONS = translations/dde-polkit-agent.ts
 
 # 增加安全编译参数
-QMAKE_CXXFLAGS += -fstack-protector-strong -D_FORTITY_SOURCE=1 -z noexecstack -pie -fPIC -z lazy
+QMAKE_LFLAGS += -z noexecstack -pie -z relro -z now
+QMAKE_CFLAGS += -fstack-protector-all -D_FORTITY_SOURCE=1
+QMAKE_CXXFLAGS += -fstack-protector-all -D_FORTITY_SOURCE=1
 
 # Automating generation .qm files from .ts files
 CONFIG(release, debug|release) {
