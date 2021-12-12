@@ -131,12 +131,15 @@ void PolicyKitListener::initiateAuthentication(const QString &actionId,
     connect(m_dialog.data(), SIGNAL(rejected()), SLOT(dialogCanceled()));
     connect(m_dialog.data(), SIGNAL(adminUserSelected(PolkitQt1::Identity)), SLOT(userSelected(PolkitQt1::Identity)));
 
+
     // TODO(hualet): show extended action information.
 
     QList<QButtonGroup *> optionsList = m_pluginManager.data()->reduceGetOptions(actionId);
     for (QButtonGroup *bg : optionsList) {
         m_dialog.data()->addOptions(bg);
     }
+
+    m_dialog.data()->createUserCB(m_identities);
 
     qDebug() << "WinId of the dialog is " << m_dialog.data()->winId() << m_dialog.data()->effectiveWinId();
     m_dialog.data()->show();
