@@ -61,6 +61,7 @@ public:
     void setError(const QString &error);
     void setRequest(const QString &request, bool requiresAdmin);
     void authenticationFailure();
+    void createUserCB(const PolkitQt1::Identity::List &identities);
 
     void setAuthInfo(const QString &info);
 
@@ -99,7 +100,6 @@ private:
     int m_numTries;
 
     void setupUI();
-    void createUserCB(const PolkitQt1::Identity::List &identities);
     void showErrorTip();
 };
 
