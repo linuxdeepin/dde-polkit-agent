@@ -4,8 +4,6 @@ Priority: optional
 Maintainer: Deepin Packages Builder <packages@deepin.com>
 Build-Depends: debhelper (>=9),
 	pkg-config,
-	libqt5webkit5-dev,
-	libgsettings-qt-dev,
 	libpolkit-qt5-1-dev (>> 5.0.0.2),
 	libdtkcore-dev,
 	libdtkwidget-dev,
