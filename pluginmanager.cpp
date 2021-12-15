@@ -63,21 +63,19 @@ AgentExtension *PluginManager::loadFile(const QString &filePath)
     const QString apiVersion = meta.value("api_version").toString();
 
     if (apiVersion == "1.0") {
-        AgentExtension *ret = qobject_cast<AgentExtension*>(loader->instance());
+        AgentExtension *extend = qobject_cast<AgentExtension*>(loader->instance());
 
-        if (ret) ret->initialize(this);
+        if (extend)
+            extend->initialize(this);
 
         qDebug() << "done loading plugin: " << filePath;
-
-        return ret;
-    } else {
-        qWarning() << "failed to load plugin file: " << loader->errorString();
-        loader->unload();
-        loader->deleteLater();
+        return extend;
     }
 
+    qWarning() << "failed to load plugin file: " << loader->errorString();
+    loader->unload();
+    loader->deleteLater();
     return nullptr;
-
 }
 
 void PluginManager::reduce(const QString &username, const QString passwd)

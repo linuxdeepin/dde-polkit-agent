@@ -43,11 +43,12 @@ private slots:
     void userRemoved(const QString &userPath);
 
 private:
+    explicit UsersManager(QObject *parent = nullptr);
+
+private:
     QMap<QString, QString> m_fullNameMap;
     QMap<QString, UserDBus*> m_usersMap;
     AccountsDBus *m_accountsInter;
-
-    UsersManager(QObject *parent = nullptr);
 };
 
 #endif // USERSMANAGER_H

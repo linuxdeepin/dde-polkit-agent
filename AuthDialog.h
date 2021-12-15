@@ -20,16 +20,14 @@
 #ifndef AUTHDIALOG_H
 #define AUTHDIALOG_H
 
-#include <ddialog.h>
-#include <dpasswordedit.h>
+#include <DDialog>
+#include <DPasswordEdit>
 
 #include <QWindow>
 #include <QComboBox>
 
 #include <PolkitQt1/Identity>
 #include <PolkitQt1/ActionDescription>
-
-#include "errortooltip.h"
 
 namespace PolkitQt1 {
 class Details;
@@ -50,16 +48,11 @@ public:
         Password = 1
     };
 
-    AuthDialog(const QString &actionId,
-               const QString &message,
-               const QString &iconName,
-               const PolkitQt1::Details &details,
-               const PolkitQt1::Identity::List &identities,
-               WId parent);
+    AuthDialog(const QString &message,
+               const QString &iconName);
     ~AuthDialog();
 
     void setError(const QString &error);
-    void setRequest(const QString &request, bool requiresAdmin);
     void authenticationFailure();
     void createUserCB(const PolkitQt1::Identity::List &identities);
 
@@ -72,24 +65,15 @@ public:
 
     PolkitQt1::Identity selectedAdminUser() const;
 
-    PolkitQt1::ActionDescription m_actionDescription;
-
-private:
-    int getLockLimitTryNum();
-
 signals:
     void adminUserSelected(PolkitQt1::Identity);
-    void okClicked();
-    void clearAccessibleMap();
+
+private:
+    void initUI();
+    int getLockLimitTryNum();
 
 private slots:
     void on_userCB_currentIndexChanged(int index);
-
-protected:
-    void showEvent(QShowEvent *event) Q_DECL_OVERRIDE;
-    void hideEvent(QHideEvent *event) Q_DECL_OVERRIDE;
-    void moveEvent(QMoveEvent *event) Q_DECL_OVERRIDE;
-    void focusInEvent(QFocusEvent *event) Q_DECL_OVERRIDE;
 
 private:
     QString m_appname;
@@ -98,27 +82,8 @@ private:
 
     QComboBox *m_adminsCombo;
     DPasswordEdit *m_passwordInput;
-    ErrorTooltip *m_tooltip;
 
     int m_numTries;
     int m_lockLimitTryNum;
-
-    void setupUI();
-    void showErrorTip();
 };
-
-class AuthDetails : public QWidget
-{
-    Q_OBJECT
-public:
-    AuthDetails(const PolkitQt1::Details &details,
-                const PolkitQt1::ActionDescription &actionDescription,
-                const QString &appname,
-                QWidget *parent);
-
-private slots:
-    void openUrl(const QString &);
-    void openAction(const QString &);
-};
-
 #endif // AUTHDIALOG_H

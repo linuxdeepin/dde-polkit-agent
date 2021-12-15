@@ -2,7 +2,7 @@ TARGET = dde-polkit-agent
 TEMPLATE = app
 QT += core gui widgets dbus concurrent
 CONFIG += link_pkgconfig c++11
-PKGCONFIG += polkit-qt5-1 dframeworkdbus gsettings-qt dtkwidget
+PKGCONFIG += polkit-qt5-1 dframeworkdbus dtkwidget
 
 load(dtk_qmake)
 
@@ -11,21 +11,17 @@ DBUS_ADAPTORS += com.deepin.Polkit1AuthAgent.xml
 SOURCES += policykitlistener.cpp \
     AuthDialog.cpp \
     main.cpp \
-    errortooltip.cpp \
     usersmanager.cpp \
-    pluginmanager.cpp \
-    accessiblemap.cpp
+    pluginmanager.cpp
 
 HEADERS += policykitlistener.h \
     AuthDialog.h \
-    errortooltip.h \
     usersmanager.h \
     pluginmanager.h \
     agent-extension.h \
     agent-extension-proxy.h \
     accessibledefine.h \
-    accessible.h \
-    accessiblemap.h
+    accessible.h
 
 RESOURCES += images.qrc
 

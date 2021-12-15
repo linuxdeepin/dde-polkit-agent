@@ -22,8 +22,8 @@
 static UsersManager *userManagerInstance = Q_NULLPTR;
 
 UsersManager::UsersManager(QObject *parent)
-    : QObject(parent),
-      m_accountsInter(new AccountsDBus("com.deepin.daemon.Accounts",
+    : QObject(parent)
+    , m_accountsInter(new AccountsDBus("com.deepin.daemon.Accounts",
                                        "/com/deepin/daemon/Accounts",
                                        QDBusConnection::systemBus(),
                                        this))

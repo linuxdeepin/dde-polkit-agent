@@ -22,7 +22,6 @@
 
 #include <QPointer>
 #include <QHash>
-#include <QGSettings>
 
 #include <polkit-qt5-1/PolkitQt1/Agent/Listener>
 #include <polkit-qt5-1/PolkitQt1/Details>
@@ -42,7 +41,7 @@ class PolicyKitListener : public Listener
     Q_OBJECT
     Q_CLASSINFO("D-Bus Interface", "com.deepin.Polkit1AuthAgent")
 public:
-    PolicyKitListener(QObject *parent = 0);
+    explicit PolicyKitListener(QObject *parent = nullptr);
     virtual ~PolicyKitListener() override;
 
 public slots:
@@ -69,11 +68,17 @@ public slots:
     void fillResult();
     void setWIdForAction(const QString &action, qulonglong wID);
 
+private slots:
+    void dialogAccepted();
+    void dialogCanceled();
+
+private:
+    void initDialog(const QString &actionId);
+
 private:
     QPointer<AuthDialog> m_dialog;
     QPointer<PluginManager> m_pluginManager;
     QPointer<Session> m_session;
-    QGSettings *m_gsettings = nullptr;
 
     PolkitQt1::Identity::List m_identities;
     PolkitQt1::Agent::AsyncResult *m_result;
@@ -90,14 +95,6 @@ private:
     bool m_showInfoSuccess;
     bool m_exAuth;
     bool m_isMfa;
-    QList<int> m_exAuthFlags;
-
-    void initDialog(const QString &actionId);
-
-private slots:
-    bool isDeepin();
-    void dialogAccepted();
-    void dialogCanceled();
 };
 
 #endif

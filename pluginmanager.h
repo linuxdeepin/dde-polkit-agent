@@ -27,13 +27,14 @@ public:
     void setActionID(const QString &actionID);
 
 private:
+    void load();
+    AgentExtension *loadFile(const QString &file);
+
+private:
     QList<AgentExtension*> m_plugins;
     QString m_actionID;
     QString m_username;
     QString m_password;
-
-    void load();
-    AgentExtension *loadFile(const QString &file);
 };
 
 #endif // PLUGINMANAGER_H

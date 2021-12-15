@@ -1,5 +1,6 @@
 #ifndef AGENTEXTENSIONPROXY_H
 #define AGENTEXTENSIONPROXY_H
+#include <QString>
 
 namespace dpa {
 

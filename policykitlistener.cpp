@@ -30,9 +30,7 @@
 
 #include "policykitlistener.h"
 #include "AuthDialog.h"
-
 #include "polkit1authagent_adaptor.h"
-
 #include "pluginmanager.h"
 
 #define USE_DEEPIN_AUTH "useDeepinAuth"
@@ -48,10 +46,6 @@ PolicyKitListener::PolicyKitListener(QObject *parent)
     , m_showInfoSuccess(false)
 {
     (void) new Polkit1AuthAgentAdaptor(this);
-
-    if (QGSettings::isSchemaInstalled("com.deepin.dde.auth.control")) {
-        m_gsettings = new QGSettings("com.deepin.dde.auth.control", "/com/deepin/dde/auth/control/", this);
-    }
 
     QDBusConnection sessionBus = QDBusConnection::sessionBus();
     if (!sessionBus.registerService("com.deepin.Polkit1AuthAgent")) {
@@ -114,7 +108,7 @@ void PolicyKitListener::initiateAuthentication(const QString &actionId,
 
     m_pluginManager.data()->setActionID(actionId);
 
-    m_dialog = new AuthDialog(actionId, message, iconName, details, identities, parentId);
+    m_dialog = new AuthDialog(message, iconName);
     m_dialog->setAttribute(Qt::WA_DeleteOnClose);
     initDialog(actionId);
 
@@ -127,7 +121,7 @@ void PolicyKitListener::initiateAuthentication(const QString &actionId,
 
 void PolicyKitListener::initDialog(const QString &actionId)
 {
-    connect(m_dialog.data(), &AuthDialog::okClicked, this, &PolicyKitListener::dialogAccepted);
+    connect(m_dialog.data(), &AuthDialog::accepted, this, &PolicyKitListener::dialogAccepted);
     connect(m_dialog.data(), &AuthDialog::rejected, this, &PolicyKitListener::dialogCanceled);
     connect(m_dialog.data(), &AuthDialog::adminUserSelected, this, &PolicyKitListener::createSessionForId);
 
@@ -197,7 +191,7 @@ void PolicyKitListener::request(const QString &request, bool echo)
 {
     Q_UNUSED(echo);
 
-    qDebug() << "Request: " << request;
+    qDebug() << "session request: " << request;
 
     if (m_dialog && !request.isEmpty())
         m_dialog.data()->setAuthInfo(request);
@@ -206,7 +200,7 @@ void PolicyKitListener::request(const QString &request, bool echo)
 
 void PolicyKitListener::completed(bool gainedAuthorization)
 {
-    qDebug() << "Completed: " << gainedAuthorization;
+    qDebug() << "session completed: " << gainedAuthorization;
 
     m_gainedAuthorization = gainedAuthorization;
     if (m_showInfoSuccess)
@@ -214,14 +208,14 @@ void PolicyKitListener::completed(bool gainedAuthorization)
     m_showInfoSuccess = false;
 
     if (m_exAuth) {
-      m_session.data()->authCtrl(AUTH_CLOSE, -1);
+        m_session.data()->authCtrl(AUTH_CLOSE, -1);
     }
     finishObtainPrivilege();
 }
 
 void PolicyKitListener::showError(const QString &text)
 {
-    qDebug() << "Error: " << text;
+    qDebug() << "show error: " << text;
 
     if (m_dialog && !text.isEmpty())
         m_dialog.data()->setError(text);
@@ -229,7 +223,7 @@ void PolicyKitListener::showError(const QString &text)
 
 void PolicyKitListener::showInfo(const QString &info)
 {
-    qDebug() << "Info: " << info;
+    qDebug() << "show info: " << info;
 
     if (m_dialog && !info.isEmpty())
         m_dialog.data()->setAuthInfo(info);
@@ -242,40 +236,29 @@ void PolicyKitListener::showInfo(const QString &info)
 
 void PolicyKitListener::exAuthStatus(int statusCode, int authFlags,
                                      const QString &status) {
-  qDebug() << "exAuthStatus: " << status;
+    Q_UNUSED(statusCode)
+    Q_UNUSED(authFlags)
+    qDebug() << "exAuthStatus: " << status;
 }
 
 void PolicyKitListener::exAuthInfo(bool isMfa, QList<int> &authTypes) {
-  qDebug() << "exAuthInfo: " << isMfa;
-  m_exAuth = true;
-  m_isMfa = isMfa;
-  m_exAuthFlags = authTypes;
+    Q_UNUSED(authTypes)
+    qDebug() << "exAuthInfo: " << isMfa;
+    m_exAuth = true;
+    m_isMfa = isMfa;
 
-  if (!isMfa) {
-    m_session.data()->authCtrl(AUTH_START, -1);
-  }
-}
-
-bool PolicyKitListener::isDeepin()
-{
-    bool is_deepin = true;
-    if (m_gsettings != nullptr && m_gsettings->keys().contains(USE_DEEPIN_AUTH)) {
-        is_deepin = m_gsettings->get(USE_DEEPIN_AUTH).toBool();
+    if (!isMfa) {
+        m_session.data()->authCtrl(AUTH_START, -1);
     }
-    return is_deepin;
 }
 
 void PolicyKitListener::dialogAccepted()
 {
-    qDebug() << "Dialog accepted";
     m_session->setResponse(m_dialog->password());
 }
 
 void PolicyKitListener::dialogCanceled()
-{
-    qDebug() << "Dialog cancelled";
-
-    m_inProgress = false;
+{    m_inProgress = false;
     m_wasCancelled = true;
     if (!m_session.isNull()) {
         m_session.data()->cancel();
@@ -283,33 +266,33 @@ void PolicyKitListener::dialogCanceled()
     finishObtainPrivilege();
 }
 
-void PolicyKitListener::createSessionForId(
-    const PolkitQt1::Identity &identity) {
-  m_inProgress = true;
-  m_selectedUser = identity;
-  // If some user is selected we must destroy existing session
-  if (!m_session.isNull()) {
-    m_session.data()->deleteLater();
-  }
-  // We will create new session only when some user is selected
-  if (m_selectedUser.isValid()) {
-    m_session = new Session(m_selectedUser, m_cookie, m_result, &m_details);
+void PolicyKitListener::createSessionForId(const PolkitQt1::Identity &identity)
+{
+    m_inProgress = true;
+    m_selectedUser = identity;
+    // If some user is selected we must destroy existing session
+    if (!m_session.isNull()) {
+        m_session.data()->deleteLater();
+    }
+    // We will create new session only when some user is selected
+    if (m_selectedUser.isValid()) {
+        m_session = new Session(m_selectedUser, m_cookie, m_result, &m_details);
 
-    connect(m_session.data(), &Session::request, this,
-            &PolicyKitListener::request);
-    connect(m_session.data(), &Session::completed, this,
-            &PolicyKitListener::completed);
-    connect(m_session.data(), &Session::showError, this,
-            &PolicyKitListener::showError);
-    connect(m_session.data(), &Session::showInfo, this,
-            &PolicyKitListener::showInfo);
-    connect(m_session.data(), &Session::exAuthStatus, this,
-            &PolicyKitListener::exAuthStatus);
-    connect(m_session.data(), &Session::exAuthInfo, this,
-            &PolicyKitListener::exAuthInfo);
+        connect(m_session.data(), &Session::request, this,
+                &PolicyKitListener::request);
+        connect(m_session.data(), &Session::completed, this,
+                &PolicyKitListener::completed);
+        connect(m_session.data(), &Session::showError, this,
+                &PolicyKitListener::showError);
+        connect(m_session.data(), &Session::showInfo, this,
+                &PolicyKitListener::showInfo);
+        connect(m_session.data(), &Session::exAuthStatus, this,
+                &PolicyKitListener::exAuthStatus);
+        connect(m_session.data(), &Session::exAuthInfo, this,
+                &PolicyKitListener::exAuthInfo);
 
-    m_session->initiate();
-  }
+        m_session->initiate();
+    }
 }
 
 void PolicyKitListener::fillResult()
