@@ -53,6 +53,7 @@ AuthDialog::AuthDialog(const QString &actionId,
     , m_passwordInput(new DPasswordEdit(this))
     , m_tooltip(new ErrorTooltip(""))
     , m_numTries(0)
+    , m_lockLimitTryNum(getLockLimitTryNum())
 {
     Q_UNUSED(details)
     Q_UNUSED(parent)
@@ -70,6 +71,8 @@ AuthDialog::AuthDialog(const QString &actionId,
             break;
         }
     }
+
+    qDebug() << "lock limit: " << m_lockLimitTryNum;
 
     // 始终显示用户名 (bug:9145,降低用户理解成本)
     connect(m_adminsCombo, SIGNAL(currentIndexChanged(int)),
@@ -177,6 +180,22 @@ PolkitQt1::Identity AuthDialog::selectedAdminUser() const
     return PolkitQt1::Identity::fromString(id);
 }
 
+int AuthDialog::getLockLimitTryNum()
+{
+    const QString path = "/usr/share/dde-session-shell/dde-session-shell.conf";
+    int count = 5;
+    QFile file(path);
+    if (!file.exists()) {
+        return count;
+    }
+
+    QSettings settings(path, QSettings::IniFormat);
+    settings.beginGroup("LockTime");
+    count = settings.value("lockLimitTryNum").toInt();
+    settings.endGroup();
+    return count;
+}
+
 void AuthDialog::on_userCB_currentIndexChanged(int /*index*/)
 {
     PolkitQt1::Identity identity = selectedAdminUser();
@@ -271,7 +290,7 @@ void AuthDialog::authenticationFailure()
     m_passwordInput->lineEdit()->setFocus();
 
     m_numTries++;
-    if (3 <= m_numTries) {
+    if (m_lockLimitTryNum <= m_numTries) {
         lock();
         QTimer::singleShot(3000, this, &AuthDialog::close);
     }
