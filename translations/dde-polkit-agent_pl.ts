@@ -1,45 +1,48 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="pl" version="2.1">
+<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="pl">
 <context>
     <name>AuthDialog</name>
     <message>
-        <location filename="../AuthDialog.cpp" line="96"/>
+        <location filename="../AuthDialog.cpp" line="98"/>
         <source>Finger moved too fast, please do not lift until prompted</source>
         <translation>Palec przesunięty za szybko, proszę nie podnoś palca przed komunikatem </translation>
     </message>
     <message>
-        <location filename="../AuthDialog.cpp" line="98"/>
+        <location filename="../AuthDialog.cpp" line="100"/>
         <source>Verification failed, two chances left</source>
         <translation>Weryfikacja nie powiodła się, pozostały dwie szanse</translation>
     </message>
     <message>
-        <location filename="../AuthDialog.cpp" line="118"/>
-        <location filename="../AuthDialog.cpp" line="303"/>
+        <location filename="../AuthDialog.cpp" line="120"/>
+        <location filename="../AuthDialog.cpp" line="326"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>Potwierdź</translation>
     </message>
     <message>
-        <location filename="../AuthDialog.cpp" line="213"/>
+        <location filename="../AuthDialog.cpp" line="227"/>
         <source>You are required to change your password immediately (password expired)</source>
         <translation>Musisz natychmiast zmienić hasło (hasło wygasło)</translation>
     </message>
     <message>
-        <location filename="../AuthDialog.cpp" line="278"/>
+        <location filename="../AuthDialog.cpp" line="299"/>
+        <source>Locked, please try again later</source>
+        <translation>Zablokowane, proszę spróbować później</translation>
+    </message>
+    <message>
         <source>Wrong password, only one chance left</source>
-        <translation>Błędne hasło, pozostała tylko jedna szansa</translation>
+        <translation type="vanished">Nieprawidłowe hasło, pozostała tylko jedna szansa</translation>
     </message>
     <message>
-        <location filename="../AuthDialog.cpp" line="281"/>
         <source>Wrong password, two chances left</source>
-        <translation>Błędne hasło, pozostały dwie szanse</translation>
+        <translation type="vanished">Nieprawidłowe hasło, pozostały dwie szanse</translation>
     </message>
     <message>
-        <location filename="../AuthDialog.cpp" line="285"/>
+        <location filename="../AuthDialog.cpp" line="301"/>
         <source>Wrong password</source>
-        <translation>Błędne hasło</translation>
+        <translation>Nieprawidłowe hasło</translation>
     </message>
     <message>
-        <location filename="../AuthDialog.cpp" line="302"/>
+        <location filename="../AuthDialog.cpp" line="325"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Anuluj</translation>
