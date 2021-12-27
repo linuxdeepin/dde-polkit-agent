@@ -53,7 +53,8 @@ public:
     ~AuthDialog();
 
     void setError(const QString &error);
-    void authenticationFailure();
+    void setRequest(const QString &request, bool requiresAdmin);
+    void authenticationFailure(bool &isLock);
     void createUserCB(const PolkitQt1::Identity::List &identities);
 
     void setAuthInfo(const QString &info);
@@ -85,5 +86,10 @@ private:
 
     int m_numTries;
     int m_lockLimitTryNum;
+
+    void setupUI();
+    void showErrorTip();
+
+    QString m_errorMsg;
 };
 #endif // AUTHDIALOG_H
