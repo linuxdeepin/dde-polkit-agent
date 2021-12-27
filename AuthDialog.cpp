@@ -72,7 +72,7 @@ AuthDialog::AuthDialog(const QString &actionId,
         }
     }
 
-    qInfo() << Q_FUNC_INFO << " lockLimitTryNum : " << m_lockLimitTryNum;
+    qDebug() << "lock limit: " << m_lockLimitTryNum;
 
     // 始终显示用户名 (bug:9145,降低用户理解成本)
     connect(m_adminsCombo, SIGNAL(currentIndexChanged(int)),
