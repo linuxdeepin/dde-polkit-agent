@@ -159,10 +159,9 @@ void PolicyKitListener::finishObtainPrivilege()
                           m_dialog.data()->password());
     } else if (!m_wasCancelled) {
         // 认证失败
-        m_dialog->authenticationFailure();
-        if (isAccountLocked(m_selectedUser)) {
-            m_dialog->lock(); // 锁定
-        } else {
+        bool isLock = isAccountLocked(m_selectedUser);
+        m_dialog->authenticationFailure(isLock);
+        if (!isLock) {
             createSessionForId(m_selectedUser); // 重试
         }
         return;

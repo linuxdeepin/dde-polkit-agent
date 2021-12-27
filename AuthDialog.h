@@ -60,7 +60,7 @@ public:
 
     void setError(const QString &error);
     void setRequest(const QString &request, bool requiresAdmin);
-    void authenticationFailure();
+    void authenticationFailure(bool &isLock);
     void createUserCB(const PolkitQt1::Identity::List &identities);
 
     void setAuthInfo(const QString &info);
@@ -105,6 +105,8 @@ private:
 
     void setupUI();
     void showErrorTip();
+
+    QString m_errorMsg;
 };
 
 class AuthDetails : public QWidget

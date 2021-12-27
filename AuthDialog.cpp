@@ -101,7 +101,7 @@ void AuthDialog::setError(const QString &error)
     } else {
         dgetText = QString(dgettext("deepin-authentication", error.toUtf8()));
     }
-    m_passwordInput->showAlertMessage(dgetText);
+    m_errorMsg = dgetText;
 }
 
 void AuthDialog::setRequest(const QString &request, bool requiresAdmin)
@@ -202,6 +202,7 @@ void AuthDialog::on_userCB_currentIndexChanged(int /*index*/)
     // 清除上一个用户已经输入的密码
     m_passwordInput->clear();
     m_passwordInput->setAlert(false);
+    m_errorMsg = "";
     m_numTries = 0;
 
     // itemData is Null when "Select user" is selected
@@ -281,18 +282,34 @@ void AuthDialog::lock()
     getButton(1)->setEnabled(false);
 }
 
-void AuthDialog::authenticationFailure()
+void AuthDialog::authenticationFailure(bool &isLock)
 {
-    // TODO: show error messages.
+    m_numTries++;
+    if (!isLock) {
+        // 不存在DA的情况，由次数来判定是否锁定
+        if (m_lockLimitTryNum <= m_numTries) {
+            isLock = true;
+        }
+    }
+
+    if (m_errorMsg.isEmpty()) {
+        // 专业版错误信息现在由DA提供，考虑没有DA的版本，保留以前由agent提供错误的方案
+        qDebug() << "authentication failed, error message is empty, set error message by agent.";
+        if (isLock) {
+            setError(tr("Locked, please try again later"));
+        } else {
+            setError(tr("Wrong password"));
+        }
+    }
+
     m_passwordInput->setEnabled(true);
+    m_passwordInput->showAlertMessage(m_errorMsg);
     m_passwordInput->setAlert(true);
     m_passwordInput->clear();
     m_passwordInput->lineEdit()->setFocus();
 
-    m_numTries++;
-    if (m_lockLimitTryNum <= m_numTries) {
+    if (isLock) {
         lock();
-        QTimer::singleShot(3000, this, &AuthDialog::close);
     }
     activateWindow();
 }
@@ -337,6 +354,7 @@ void AuthDialog::setupUI()
 
         m_tooltip->hide();
         m_passwordInput->setAlert(false);
+        m_errorMsg = "";
     });
 
     QPixmap icon;
