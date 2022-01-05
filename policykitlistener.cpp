@@ -69,8 +69,9 @@ PolicyKitListener::~PolicyKitListener()
 
 void PolicyKitListener::setWIdForAction(const QString &action, qulonglong wID)
 {
+    Q_UNUSED(action);
+    Q_UNUSED(wID);
     qDebug() << "On to the handshake";
-    m_actionsToWID[action] = wID;
 }
 
 void PolicyKitListener::initiateAuthentication(const QString &actionId,
@@ -100,11 +101,6 @@ void PolicyKitListener::initiateAuthentication(const QString &actionId,
     m_session.clear();
     m_wasCancelled = false;
     m_inProgress = true;
-
-    WId parentId = 0;
-    if (m_actionsToWID.contains(actionId)) {
-        parentId = m_actionsToWID[actionId];
-    }
 
     m_pluginManager.data()->setActionID(actionId);
 

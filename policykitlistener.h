@@ -86,7 +86,6 @@ private:
 
     PolkitQt1::Details m_details;
     PolkitQt1::Identity m_selectedUser;
-    QHash< QString, qulonglong > m_actionsToWID;
 
     bool m_inProgress;
     bool m_gainedAuthorization;
