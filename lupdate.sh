@@ -1,5 +1,4 @@
 #!/bin/bash
-cp ".transifexrc" ${HOME}/
 
 lupdate ./ -ts -no-obsolete translations/dde-polkit-agent.ts
 
