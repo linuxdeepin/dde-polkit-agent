@@ -52,7 +52,7 @@ public:
                const QString &iconName);
     ~AuthDialog();
 
-    void setError(const QString &error);
+    void setError(const QString &error, bool alertImmediately = false);
     void setRequest(const QString &request, bool requiresAdmin);
     void authenticationFailure(bool &isLock);
     void createUserCB(const PolkitQt1::Identity::List &identities);

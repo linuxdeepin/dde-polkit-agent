@@ -64,7 +64,7 @@ AuthDialog::~AuthDialog()
 {
 }
 
-void AuthDialog::setError(const QString &error)
+void AuthDialog::setError(const QString &error, bool alertImmediately)
 {
     //由于无法获取到dgetText的临时方案
     QString dgetText = "";
@@ -76,6 +76,8 @@ void AuthDialog::setError(const QString &error)
         dgetText = QString(dgettext("deepin-authentication", error.toUtf8()));
     }
     m_errorMsg = dgetText;
+    if (alertImmediately)
+        m_passwordInput->showAlertMessage(dgetText);
 }
 
 void AuthDialog::setAuthInfo(const QString &info)
@@ -186,7 +188,8 @@ void AuthDialog::on_userCB_currentIndexChanged(int /*index*/)
         // 如果密码已过期
         if (passwordIsExpired) {
             m_passwordInput->setEnabled(false);
-            setError(tr("You are required to change your password immediately (password expired)"));
+            // 密码过期不会执行到验证失败的逻辑，需要立即弹出提醒
+            setError(tr("You are required to change your password immediately (password expired)"), true);
         } else {
             // 清理警告信息
             m_passwordInput->setEnabled(true);
