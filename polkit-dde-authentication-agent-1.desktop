@@ -1,9 +1,0 @@
-[Desktop Entry]
-Name=PolicyKit Authentication Agent
-Name[zh_CN]=PolicyKit 认证代理
-Comment=PolicyKit Authentication Agent
-Comment[zh_CN]=PolicyKit 认证代理
-Exec=/usr/lib/polkit-1-dde/dde-polkit-agent
-Terminal=false
-Type=Application
-OnlyShowIn=Deepin
