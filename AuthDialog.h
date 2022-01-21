@@ -66,6 +66,8 @@ public:
 
     PolkitQt1::Identity selectedAdminUser() const;
 
+    bool hasOpenSecurity();
+    bool hasSecurityHighLever(QString userName);
 signals:
     void adminUserSelected(PolkitQt1::Identity);
 

@@ -32,6 +32,7 @@
 #include "AuthDialog.h"
 #include "polkit1authagent_adaptor.h"
 #include "pluginmanager.h"
+#include "policykitlistener.h"
 
 #define USE_DEEPIN_AUTH "useDeepinAuth"
 

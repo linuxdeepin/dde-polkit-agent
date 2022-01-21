@@ -105,10 +105,44 @@ void AuthDialog::addOptions(QButtonGroup *bg)
     }
 }
 
+bool AuthDialog::hasSecurityHighLever(QString userName)
+{
+    bool re = false;
+    QDBusInterface securityEnhance("com.deepin.daemon.SecurityEnhance",
+                                   "/com/deepin/daemon/SecurityEnhance",
+                                   "com.deepin.daemon.SecurityEnhance",
+                                   QDBusConnection::systemBus());
+
+    QDBusReply<QString> reply = securityEnhance.call("GetSEUserByName", userName);
+    if(reply.isValid()){
+        QString value = reply.value();
+        re = (value == "sysadm_u");
+    }
+
+    return re;
+}
+
+bool AuthDialog::hasOpenSecurity()
+{
+    bool hasOpen = false;
+    QDBusInterface securityEnhance("com.deepin.daemon.SecurityEnhance",
+                            "/com/deepin/daemon/SecurityEnhance",
+                            "com.deepin.daemon.SecurityEnhance",
+                            QDBusConnection::systemBus());
+     QDBusReply<QString> reply = securityEnhance.call("Status");
+     if(reply.isValid()){
+         QString value = reply.value();
+         hasOpen = (value == "open");
+     }
+
+    return hasOpen;
+}
+
 void AuthDialog::createUserCB(const PolkitQt1::Identity::List &identities)
 {
     // Clears the combobox in the case some user be added
     m_adminsCombo->clear();
+    bool isOpen = hasOpenSecurity();
 
     // For each user
     foreach (const PolkitQt1::Identity &identity, identities) {
@@ -119,6 +153,17 @@ void AuthDialog::createUserCB(const PolkitQt1::Identity::List &identities)
         // appends the user item
         QString username = identity.toString().remove("unix-user:");
         QString fullname = UsersManager::instance()->getFullName(username);
+
+        if (isOpen) {
+            if (hasSecurityHighLever(username) && identities.count() > 1) {
+                m_adminsCombo->clear();
+                if (username == qgetenv("USER"))
+                    m_adminsCombo->insertItem(0, fullname.isEmpty() ? username : fullname, identity.toString());
+                else
+                    m_adminsCombo->addItem(fullname.isEmpty() ? username : fullname, identity.toString());
+                break;
+            }
+        }
 
         if (username == qgetenv("USER"))
             m_adminsCombo->insertItem(0, fullname.isEmpty() ? username : fullname, identity.toString());
