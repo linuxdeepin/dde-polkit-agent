@@ -191,12 +191,20 @@ void AuthDialog::on_userCB_currentIndexChanged(int /*index*/)
     } else {
         // 判断用户密码是否在有效期内
         QDBusInterface accounts("com.deepin.daemon.Accounts", "/com/deepin/daemon/Accounts", "com.deepin.daemon.Accounts", QDBusConnection::systemBus());
-        const QString &path = accounts.call("FindUserById", QString::number(identity.toUnixUserIdentity().uid())).arguments().value(0).toString();
+        QString path;
+        QDBusReply<QString> reply = accounts.call("FindUserById", QString::number(identity.toUnixUserIdentity().uid()));
+        if (reply.isValid()) {
+            path = reply.value();
+        }
+
         bool passwordIsExpired = false;
 
         if (!path.isEmpty()) {
             QDBusInterface accounts_user("com.deepin.daemon.Accounts", path, "com.deepin.daemon.Accounts.User", QDBusConnection::systemBus());
-            passwordIsExpired = accounts_user.call("IsPasswordExpired").arguments().value(0).toBool();
+            QDBusReply<bool> reply = accounts_user.call("IsPasswordExpired");
+            if (reply.isValid()) {
+                passwordIsExpired = reply.value();
+            }
         }
 
         // 如果密码以过期
