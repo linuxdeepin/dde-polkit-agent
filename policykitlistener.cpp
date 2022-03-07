@@ -108,12 +108,6 @@ void PolicyKitListener::initiateAuthentication(const QString &actionId,
     m_dialog = new AuthDialog(message, iconName);
     m_dialog->setAttribute(Qt::WA_DeleteOnClose);
     initDialog(actionId);
-
-    if (identities.length() == 1) {
-        createSessionForId(identities[0]);
-    } else {
-        createSessionForId(m_dialog.data()->selectedAdminUser());
-    }
 }
 
 void PolicyKitListener::initDialog(const QString &actionId)

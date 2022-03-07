@@ -74,6 +74,7 @@ signals:
 private:
     void initUI();
     int getLockLimitTryNum();
+    bool passwordIsExpired(PolkitQt1::Identity identity);
 
 private slots:
     void on_userCB_currentIndexChanged(int index);

@@ -154,21 +154,24 @@ void AuthDialog::createUserCB(const PolkitQt1::Identity::List &identities)
         QString username = identity.toString().remove("unix-user:");
         QString fullname = UsersManager::instance()->getFullName(username);
 
+        QString displayName = fullname.isEmpty() ? username : fullname;
+        if (passwordIsExpired(identity))
+            displayName += QString("(%1)").arg(tr("Expired"));
         if (isOpen) {
             if (hasSecurityHighLever(username) && identities.count() > 1) {
                 m_adminsCombo->clear();
                 if (username == qgetenv("USER"))
-                    m_adminsCombo->insertItem(0, fullname.isEmpty() ? username : fullname, identity.toString());
+                    m_adminsCombo->insertItem(0, displayName, identity.toString());
                 else
-                    m_adminsCombo->addItem(fullname.isEmpty() ? username : fullname, identity.toString());
+                    m_adminsCombo->addItem(displayName, identity.toString());
                 break;
             }
         }
 
         if (username == qgetenv("USER"))
-            m_adminsCombo->insertItem(0, fullname.isEmpty() ? username : fullname, identity.toString());
+            m_adminsCombo->insertItem(0, displayName, identity.toString());
         else
-            m_adminsCombo->addItem(fullname.isEmpty() ? username : fullname, identity.toString());
+            m_adminsCombo->addItem(displayName, identity.toString());
     }
     if (m_adminsCombo->count() > 0) {
         m_adminsCombo->setCurrentIndex(0); // select the current user.
@@ -176,6 +179,24 @@ void AuthDialog::createUserCB(const PolkitQt1::Identity::List &identities)
         qWarning() << "ERROR, no valid user";
     }
     m_adminsCombo->show();
+}
+
+// 判断用户密码是否在有效期内
+bool AuthDialog::passwordIsExpired(PolkitQt1::Identity identity)
+{
+    QDBusInterface accounts("com.deepin.daemon.Accounts", "/com/deepin/daemon/Accounts", "com.deepin.daemon.Accounts", QDBusConnection::systemBus());
+    QDBusReply<QString> reply = accounts.call("FindUserById", QString::number(identity.toUnixUserIdentity().uid()));
+    if (reply.isValid()) {
+        const QString path = reply.value();
+        if (!path.isEmpty()) {
+            QDBusInterface accounts_user("com.deepin.daemon.Accounts", path, "com.deepin.daemon.Accounts.User", QDBusConnection::systemBus());
+            QDBusReply<bool> expiredReply = accounts_user.call("IsPasswordExpired");
+            if (expiredReply.isValid())
+                return expiredReply.value();
+        }
+    }
+
+    return false;
 }
 
 PolkitQt1::Identity AuthDialog::selectedAdminUser() const
@@ -212,6 +233,7 @@ void AuthDialog::on_userCB_currentIndexChanged(int /*index*/)
     // 清除上一个用户已经输入的密码
     m_passwordInput->clear();
     m_passwordInput->setAlert(false);
+    m_passwordInput->lineEdit()->setPlaceholderText("");
     m_errorMsg = "";
     m_numTries = 0;
 
@@ -220,32 +242,16 @@ void AuthDialog::on_userCB_currentIndexChanged(int /*index*/)
         // 清理警告信息
         m_passwordInput->setEnabled(false);
     } else {
-        // 判断用户密码是否在有效期内
-        QDBusInterface accounts("com.deepin.daemon.Accounts", "/com/deepin/daemon/Accounts", "com.deepin.daemon.Accounts", QDBusConnection::systemBus());
-        QString path;
-        QDBusReply<QString> reply = accounts.call("FindUserById", QString::number(identity.toUnixUserIdentity().uid()));
-        if (reply.isValid()) {
-            path = reply.value();
-        }
-
-        bool passwordIsExpired = false;
-
-        if (!path.isEmpty()) {
-            QDBusInterface accounts_user("com.deepin.daemon.Accounts", path, "com.deepin.daemon.Accounts.User", QDBusConnection::systemBus());
-            QDBusReply<bool> reply = accounts_user.call("IsPasswordExpired");
-            if (reply.isValid()) {
-                passwordIsExpired = reply.value();
-            }
-        }
-
         // 如果密码已过期
-        if (passwordIsExpired) {
+        if (passwordIsExpired(identity)) {
             m_passwordInput->setEnabled(false);
+            m_passwordInput->lineEdit()->setPlaceholderText(tr("Unavailable"));
             // 密码过期不会执行到验证失败的逻辑，需要立即弹出提醒
-            setError(tr("You are required to change your password immediately (password expired)"), true);
+            setError(tr("The password of this user has expired. Please authenticate using another user account or change the password and try again."), true);
         } else {
             // 清理警告信息
             m_passwordInput->setEnabled(true);
+            m_passwordInput->hideAlertMessage();
             // We need this to restart the auth with the new user
             emit adminUserSelected(identity);
             // git password label focus
