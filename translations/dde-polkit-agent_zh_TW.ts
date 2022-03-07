@@ -12,29 +12,39 @@
         <translation>驗證失敗，您還可以嘗試2次</translation>
     </message>
     <message>
-        <location filename="../AuthDialog.cpp" line="88"/>
-        <location filename="../AuthDialog.cpp" line="266"/>
+        <location filename="../AuthDialog.cpp" line="90"/>
+        <location filename="../AuthDialog.cpp" line="327"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>確 定</translation>
     </message>
     <message>
-        <location filename="../AuthDialog.cpp" line="189"/>
-        <source>You are required to change your password immediately (password expired)</source>
-        <translation>您的密碼已過期，請更改</translation>
+        <location filename="../AuthDialog.cpp" line="159"/>
+        <source>Expired</source>
+        <translation>已過期</translation>
     </message>
     <message>
-        <location filename="../AuthDialog.cpp" line="226"/>
+        <location filename="../AuthDialog.cpp" line="248"/>
+        <source>Unavailable</source>
+        <translation>不可用</translation>
+    </message>
+    <message>
+        <location filename="../AuthDialog.cpp" line="250"/>
+        <source>The password of this user has expired. Please authenticate using another user account or change the password and try again.</source>
+        <translation>此帳號密碼已過期，請使用其他帳號鑒權或者修改此帳號密碼後再嘗試</translation>
+    </message>
+    <message>
+        <location filename="../AuthDialog.cpp" line="287"/>
         <source>Locked, please try again later</source>
         <translation>已鎖定，請稍後再試</translation>
     </message>
     <message>
-        <location filename="../AuthDialog.cpp" line="228"/>
+        <location filename="../AuthDialog.cpp" line="289"/>
         <source>Wrong password</source>
         <translation>密碼錯誤</translation>
     </message>
     <message>
-        <location filename="../AuthDialog.cpp" line="265"/>
+        <location filename="../AuthDialog.cpp" line="326"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>取 消</translation>
