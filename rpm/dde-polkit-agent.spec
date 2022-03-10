@@ -16,6 +16,7 @@ License:        GPLv3
 URL:            https://github.com/linuxdeepin/dde-polkit-agent
 Source0:        %{name}-%{version}.orig.tar.xz
 
+BuildRequires:  cmake
 BuildRequires:  gcc-c++
 BuildRequires:  dtkwidget-devel >= 5.1.1
 #BuildRequires:  pkgconfig(dframeworkdbus) >= 2.0
@@ -44,7 +45,8 @@ Header files and libraries for %{name}.
 sed -i 's|lrelease|lrelease-qt5|' translate_generation.sh
 
 %build
-%qmake_qt5 PREFIX=%{_prefix}
+export PATH=%{_qt5_bindir}:$PATH
+%cmake -DCMAKE_INSTALL_PREFIX=%{_prefix} -DARCHITECTURE=%{_arch} .
 %make_build
 
 %install
