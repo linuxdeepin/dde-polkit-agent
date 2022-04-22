@@ -5,7 +5,7 @@ Maintainer: Deepin Packages Builder <packages@deepin.com>
 Build-Depends: debhelper (>=9),
 	pkg-config,
 	cmake,
-	libpolkit-qt5-1-dev,
+	libpolkit-qt5-1-dev (>0.114.0),
 	libdtkwidget-dev,
 	qttools5-dev-tools,
 	libdframeworkdbus-dev
