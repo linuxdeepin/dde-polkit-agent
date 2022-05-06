@@ -22,6 +22,7 @@ Description: PolicyKit agent for DDE.
 
 Package: dde-polkit-agent-dev
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}
+Depends: dde-polkit-agent( =${binary:Version}),
+${shlibs:Depends}, ${misc:Depends}
 Description: developement files of dde-polkit-agent extensions.
  Development files of dde-polkit-agent extensions.
