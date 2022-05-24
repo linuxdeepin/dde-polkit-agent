@@ -183,9 +183,10 @@ void PolicyKitListener::request(const QString &request, bool echo)
 
     qDebug() << "session request: " << request;
 
-    if (m_dialog && !request.isEmpty())
+    if (m_dialog && !request.isEmpty()) {
         m_dialog.data()->setAuthInfo(request);
-
+        m_dialog.data()->setInAuth(AuthDialog::WaitingInput);
+    }
 }
 
 void PolicyKitListener::completed(bool gainedAuthorization)
@@ -203,6 +204,7 @@ void PolicyKitListener::completed(bool gainedAuthorization)
     }
 #endif
     finishObtainPrivilege();
+    m_dialog.data()->setInAuth(AuthDialog::Completed);
 }
 
 void PolicyKitListener::showError(const QString &text)
@@ -248,6 +250,7 @@ void PolicyKitListener::exAuthInfo(bool isMfa, QList<int> &authTypes) {
 
 void PolicyKitListener::dialogAccepted()
 {
+    m_dialog.data()->setInAuth(AuthDialog::Authenticating);
     m_session->setResponse(m_dialog->password());
 }
 
