@@ -48,6 +48,7 @@ AuthDialog::AuthDialog(const QString &message,
     , m_passwordInput(new DPasswordEdit(this))
     , m_numTries(0)
     , m_lockLimitTryNum(getLockLimitTryNum())
+    , m_authStatus(AuthStatus::None)
 {
     initUI();
 
@@ -358,11 +359,17 @@ void AuthDialog::initUI()
     });
 
     connect(m_passwordInput, &DPasswordEdit::textChanged, [ = ](const QString & text) {
-        getButton(confirmId)->setEnabled(text.length() > 0);
+        getButton(confirmId)->setEnabled(text.length() > 0 && Authenticating != m_authStatus && None != m_authStatus);
         if (text.length() == 0)
             return;
 
         m_passwordInput->setAlert(false);
         m_errorMsg = "";
     });
+}
+
+void AuthDialog::setInAuth(AuthStatus authStatus)
+{
+    m_authStatus = authStatus;
+    getButton(1)->setEnabled(Authenticating != authStatus && m_passwordInput->text().length() > 0);
 }

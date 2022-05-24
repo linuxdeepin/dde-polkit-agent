@@ -48,6 +48,13 @@ public:
         Password = 1
     };
 
+    enum AuthStatus {
+        None = -1,
+        WaitingInput,
+        Authenticating,
+        Completed,
+    };
+
     AuthDialog(const QString &message,
                const QString &iconName);
     ~AuthDialog();
@@ -68,6 +75,8 @@ public:
 
     bool hasOpenSecurity();
     bool hasSecurityHighLever(QString userName);
+    void setInAuth(AuthStatus authStatus);
+
 signals:
     void adminUserSelected(PolkitQt1::Identity);
 
@@ -94,5 +103,6 @@ private:
     void showErrorTip();
 
     QString m_errorMsg;
+    AuthStatus m_authStatus;
 };
 #endif // AUTHDIALOG_H
