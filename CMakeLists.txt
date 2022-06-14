@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.13)
 
 set(BIN_NAME dde-polkit-agent)
 
-project(${BIN_NAME})
+project(${BIN_NAME} CXX)
 
 #set(CMAKE_VERBOSE_MAKEFILE ON)
 set(CMAKE_CXX_STANDARD 14)
@@ -58,6 +58,20 @@ generation_dbus_adaptor(
     ${CMAKE_CURRENT_BINARY_DIR}/polkit1authagent_adaptor
     -N
 )
+
+# test deepin-polkit
+try_compile(DEEPIN_POLKIT_TEST
+              ${CMAKE_CURRENT_BINARY_DIR}/try_compile
+            SOURCES
+              ${CMAKE_CURRENT_SOURCE_DIR}/tests/polkit.cc
+            LINK_LIBRARIES
+              ${Polkit-qt5_LIBRARIES}
+              Qt5::Core
+)
+
+if (DEEPIN_POLKIT_TEST)
+    add_definitions(-DUSE_DEEPIN_POLKIT)
+endif()
 
 set(AuthAgent_DBUS_SCRS
     ${CMAKE_CURRENT_BINARY_DIR}/polkit1authagent_adaptor.h

@@ -4,4 +4,3 @@ export QT_SELECT=5
 
 %:
 	dh $@ 
-
