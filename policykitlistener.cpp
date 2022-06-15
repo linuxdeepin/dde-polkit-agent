@@ -197,9 +197,11 @@ void PolicyKitListener::completed(bool gainedAuthorization)
         m_gainedAuthorization = true;
     m_showInfoSuccess = false;
 
+#ifdef USE_DEEPIN_POLKIT
     if (m_exAuth) {
         m_session.data()->authCtrl(AUTH_CLOSE, -1);
     }
+#endif
     finishObtainPrivilege();
 }
 
@@ -237,9 +239,11 @@ void PolicyKitListener::exAuthInfo(bool isMfa, QList<int> &authTypes) {
     m_exAuth = true;
     m_isMfa = isMfa;
 
+#ifdef USE_DEEPIN_POLKIT
     if (!isMfa) {
         m_session.data()->authCtrl(AUTH_START, -1);
     }
+#endif
 }
 
 void PolicyKitListener::dialogAccepted()
@@ -266,7 +270,11 @@ void PolicyKitListener::createSessionForId(const PolkitQt1::Identity &identity)
     }
     // We will create new session only when some user is selected
     if (m_selectedUser.isValid()) {
+#ifdef USE_DEEPIN_POLKIT
         m_session = new Session(m_selectedUser, m_cookie, m_result, &m_details);
+#else
+        m_session = new Session(m_selectedUser, m_cookie, m_result);
+#endif
 
         connect(m_session.data(), &Session::request, this,
                 &PolicyKitListener::request);
@@ -276,11 +284,12 @@ void PolicyKitListener::createSessionForId(const PolkitQt1::Identity &identity)
                 &PolicyKitListener::showError);
         connect(m_session.data(), &Session::showInfo, this,
                 &PolicyKitListener::showInfo);
+#ifdef USE_DEEPIN_POLKIT
         connect(m_session.data(), &Session::exAuthStatus, this,
                 &PolicyKitListener::exAuthStatus);
         connect(m_session.data(), &Session::exAuthInfo, this,
                 &PolicyKitListener::exAuthInfo);
-
+#endif
         m_session->initiate();
     }
 }
@@ -289,14 +298,22 @@ void PolicyKitListener::fillResult()
 {
     if (!m_session.isNull()) {
         if (m_wasCancelled) {
+#ifdef USE_DEEPIN_POLKIT
             m_session.data()->result()->setCancel("aciton cancel");
+#else
+            m_session->result()->setError("action cancel");
+#endif
         } else if (!m_gainedAuthorization) {
             m_session.data()->result()->setError("password error");
         }
         m_session.data()->result()->setCompleted();
     } else {
         if (m_wasCancelled) {
+#ifdef USE_DEEPIN_POLKIT
             m_result->setCancel("action cancel");
+#else
+            m_result->setError("action cancel");
+#endif
         } else if (!m_gainedAuthorization) {
             m_result->setError("password error");
         }
