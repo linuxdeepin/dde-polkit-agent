@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include <QString>
 #include <polkit-qt5-1/PolkitQt1/Agent/Listener>
 #include <polkit-qt5-1/PolkitQt1/Agent/Session>
