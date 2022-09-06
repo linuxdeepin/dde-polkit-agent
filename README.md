@@ -3,40 +3,31 @@
 DDE Polkit Agent is the [polkit](https://www.freedesktop.org/software/polkit/docs/latest/polkit.8.html) agent used in Deepin Desktop Environment.
 
 ## Dependencies
+You can also check the "Depends" provided in the `debian/control` file.
 
 ### Build dependencies
-
-* Qt (>= 5.6)
-* libpolkit-qt5
-* [dtk](https://github.com/linuxdeepin/libdtk)
-
-### Runtime dependencies
-
-* polkit
-* Qt5 (>= 5.6)
-  * Qt5-Gui
-  * Qt5-Widgets
-  * Qt5-DBus
-  * Qt5-X11extras
+You can also check the "Build-Depends" provided in the `debian/control` file.
 
 ## Installation
 
 ### Build from source code
 
 1. Make sure you have installed all dependencies.
-
-2. Build:
-```
-$ cd dde-polkit-agent
-$ mkdir build
-$ cd build
-$ qmake ..
-$ make
+```bash
+sudo apt build-dep dde-polkit-agent
 ```
 
-3. Install:
+2. Build
+```bash
+mkdir build
+cd build
+qmake ..
+make
 ```
-$ sudo make install
+
+3. Install
+```bash
+sudo make install
 ```
 
 ## Usage
@@ -46,14 +37,19 @@ more about how to use polkit.
 
 ## Getting help
 
-You may also find these channels useful if you encounter any other issues:
+Any usage issues can ask for help via
 
 * [Gitter](https://gitter.im/orgs/linuxdeepin/rooms)
-* [IRC Channel](https://webchat.freenode.net/?channels=deepin)
-* [Official Forum](https://bbs.deepin.org/)
-* [Wiki](http://wiki.deepin.org/)
+* [IRC channel](https://webchat.freenode.net/?channels=deepin)
+* [WiKi](https://wiki.deepin.org)
+* [Forum](https://bbs.deepin.org)
+* [Developer Center](https://github.com/linuxdeepin/dde-polkit-agent) 
+
+## Getting involved
+
+We encourage you to report issues and contribute changes
+
+- [**Contribution guide for developers**](https://github.com/linuxdeepin/developer-center/wiki/Contribution-Guidelines-for-Developers-en) 
 
 ## License
-
-DDE Polkit Agent is licensed under [GPLv3](https://github.com/linuxdeepin/developer-center/wiki/LICENSE).
-
+DDE Polkit Agent is licensed under [GPL-3.0-or-later](LICENSE).
