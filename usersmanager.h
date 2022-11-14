@@ -24,11 +24,11 @@
 #include <QMap>
 #include <QString>
 
-#include <com_deepin_daemon_accounts.h>
-#include <com_deepin_daemon_accounts_user.h>
+#include "account_interface.h"
+#include "accountuser_interface.h"
 
-using AccountsDBus = com::deepin::daemon::Accounts;
-using UserDBus = com::deepin::daemon::accounts::User;
+using AccountsDBus = org::deepin::dde::Accounts1;
+using UserDBus = org::deepin::dde::accounts1::User;
 
 class UsersManager : public QObject
 {

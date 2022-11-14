@@ -35,7 +35,7 @@ DCORE_USE_NAMESPACE
 
 #define APP_NAME "dde-polkit-agent"
 #define APP_DISPLAY_NAME "Deepin Polkit Agent"
-#define AUTH_DBUS_PATH "/com/deepin/polkit/AuthenticationAgent"
+#define AUTH_DBUS_PATH "/com/deepin/dde/Polkit1/AuthAgent"
 
 int main(int argc, char *argv[])
 {
