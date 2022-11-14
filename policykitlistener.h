@@ -11,20 +11,20 @@
 #include <polkit-qt5-1/PolkitQt1/Agent/Listener>
 #include <polkit-qt5-1/PolkitQt1/Details>
 
-#include <com_deepin_daemon_fprintd.h>
-#include <com_deepin_daemon_fprintd_device.h>
+#include "fprintd_interface.h"
+#include "fprintddevice_interface.h"
 
 class PluginManager;
 class AuthDialog;
 
 using namespace PolkitQt1::Agent;
-using FPrintd = com::deepin::daemon::Fprintd;
-using FPrintdDevice = com::deepin::daemon::fprintd::Device;
+using FPrintd = org::deepin::dde::Fprintd1;
+using FPrintdDevice = org::deepin::dde::fprintd1::Device;
 
 class PolicyKitListener : public Listener
 {
     Q_OBJECT
-    Q_CLASSINFO("D-Bus Interface", "com.deepin.Polkit1AuthAgent")
+    Q_CLASSINFO("D-Bus Interface", "org.deepin.dde.Polkit1.AuthAgent")
 public:
     explicit PolicyKitListener(QObject *parent = nullptr);
     virtual ~PolicyKitListener() override;

@@ -44,8 +44,6 @@ find_package(DtkWidget REQUIRED)
 find_package(Qt5 COMPONENTS Core Widgets DBus Concurrent REQUIRED)
 
 pkg_check_modules(Polkit-qt5 REQUIRED polkit-qt5-1)
-pkg_check_modules(DFrameworkDBus REQUIRED dframeworkdbus)
-
 
 function(generation_dbus_adaptor xml class_name class_file option)
     execute_process(COMMAND qdbusxml2cpp ${option} -a ${class_file} -c ${class_name} ${xml}
@@ -53,28 +51,46 @@ function(generation_dbus_adaptor xml class_name class_file option)
 endfunction(generation_dbus_adaptor)
 
 generation_dbus_adaptor(
-    ${CMAKE_SOURCE_DIR}/com.deepin.Polkit1AuthAgent.xml
+    ${CMAKE_SOURCE_DIR}/dbus/adapter/org.deepin.dde.Polkit1.AuthAgent.xml
     Polkit1AuthAgentAdaptor
     ${CMAKE_CURRENT_BINARY_DIR}/polkit1authagent_adaptor
     -N
 )
 
-# test deepin-polkit
-try_compile(DEEPIN_POLKIT_TEST
-              ${CMAKE_CURRENT_BINARY_DIR}/try_compile
-            SOURCES
-              ${CMAKE_CURRENT_SOURCE_DIR}/tests/polkit.cc
-            LINK_LIBRARIES
-              ${Polkit-qt5_LIBRARIES}
-              Qt5::Core
+set(DBUS_INTERFACE_DIR ${PROJECT_SOURCE_DIR}/dbus/interface)
+function(generation_dbus_interface xml class_name class_file)
+    execute_process(COMMAND qdbusxml2cpp-fix -c ${class_name} -p ${class_file} ${xml}
+        WORKING_DIRECTORY ${DBUS_INTERFACE_DIR})
+endfunction(generation_dbus_interface)
+
+generation_dbus_interface(
+    ${CMAKE_SOURCE_DIR}/dbus/org.deepin.dde.Accounts1.User.xml
+    AccountsUser
+    ${DBUS_INTERFACE_DIR}/accountuser_interface
 )
 
-if (DEEPIN_POLKIT_TEST)
-    add_definitions(-DUSE_DEEPIN_POLKIT)
-endif()
+generation_dbus_interface(
+    ${CMAKE_SOURCE_DIR}/dbus/org.deepin.dde.Accounts1.xml
+    Accounts
+    ${DBUS_INTERFACE_DIR}/account_interface
+)
+
+generation_dbus_interface(
+    ${CMAKE_SOURCE_DIR}/dbus/org.deepin.dde.Fprintd1.Device.xml
+    FprintdDevice
+    ${DBUS_INTERFACE_DIR}/fprintddevice_interface
+)
+
+generation_dbus_interface(
+    ${CMAKE_SOURCE_DIR}/dbus/org.deepin.dde.Fprintd1.xml
+    FPrintd
+    ${DBUS_INTERFACE_DIR}/fprintd_interface
+)
+
+aux_source_directory(${PROJECT_SOURCE_DIR}/dbus/qtdbusextended/ DBUS_EXTENDS)
+aux_source_directory(${PROJECT_SOURCE_DIR}/dbus/interface/ DBUS_INTERFACES)
 
 set(AuthAgent_DBUS_SCRS
-    ${CMAKE_CURRENT_BINARY_DIR}/polkit1authagent_adaptor.h
     ${CMAKE_CURRENT_BINARY_DIR}/polkit1authagent_adaptor.cpp
 )
 
@@ -86,21 +102,24 @@ add_executable(${BIN_NAME}
     pluginmanager.cpp
     images.qrc
     ${AuthAgent_DBUS_SCRS}
+    ${DBUS_EXTENDS}
+    ${DBUS_INTERFACES}
 )
+
 target_include_directories(${BIN_NAME} PUBLIC
     ${DtkWidget_INCLUDE_DIRS}
     ${Polkit-qt5_INCLUDE_DIRS}
-    ${DFrameworkDBus_INCLUDE_DIRS}
     Qt5::Core
     Qt5::Widgets
     Qt5::DBus
     Qt5::Concurrent
+    ${PROJECT_SOURCE_DIR}/dbus/interface
+    ${PROJECT_SOURCE_DIR}/dbus/qtdbusextended
 )
 
 target_link_libraries(${BIN_NAME} PRIVATE
     ${DtkWidget_LIBRARIES}
     ${Polkit-qt5_LIBRARIES}
-    ${DFrameworkDBus_LIBRARIES}
     Qt5::Core
     Qt5::Widgets
     Qt5::DBus

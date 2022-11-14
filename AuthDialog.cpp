@@ -170,12 +170,12 @@ void AuthDialog::createUserCB(const PolkitQt1::Identity::List &identities)
 // 判断用户密码是否在有效期内
 bool AuthDialog::passwordIsExpired(PolkitQt1::Identity identity)
 {
-    QDBusInterface accounts("com.deepin.daemon.Accounts", "/com/deepin/daemon/Accounts", "com.deepin.daemon.Accounts", QDBusConnection::systemBus());
+    QDBusInterface accounts("org.deepin.dde.Accounts1", "/org/deepin/dde/Accounts1", "org.deepin.dde.Accounts1", QDBusConnection::systemBus());
     QDBusReply<QString> reply = accounts.call("FindUserById", QString::number(identity.toUnixUserIdentity().uid()));
     if (reply.isValid()) {
         const QString path = reply.value();
         if (!path.isEmpty()) {
-            QDBusInterface accounts_user("com.deepin.daemon.Accounts", path, "com.deepin.daemon.Accounts.User", QDBusConnection::systemBus());
+            QDBusInterface accounts_user("org.deepin.dde.Accounts1", path, "org.deepin.dde.Accounts1.User", QDBusConnection::systemBus());
             QDBusReply<bool> expiredReply = accounts_user.call("IsPasswordExpired");
             if (expiredReply.isValid())
                 return expiredReply.value();

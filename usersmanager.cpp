@@ -8,8 +8,8 @@ static UsersManager *userManagerInstance = Q_NULLPTR;
 
 UsersManager::UsersManager(QObject *parent)
     : QObject(parent)
-    , m_accountsInter(new AccountsDBus("com.deepin.daemon.Accounts",
-                                       "/com/deepin/daemon/Accounts",
+    , m_accountsInter(new AccountsDBus("com.deepin.dde.Accounts1",
+                                       "/com/deepin/dde/Accounts1",
                                        QDBusConnection::systemBus(),
                                        this))
 {
@@ -37,7 +37,7 @@ QString UsersManager::getFullName(const QString &name)
 
 void UsersManager::userAdded(const QString &userPath)
 {
-    UserDBus *userInter = new UserDBus("com.deepin.daemon.Accounts",
+    UserDBus *userInter = new UserDBus("org.deepin.dde.Accounts1",
                                        userPath,
                                        QDBusConnection::systemBus(),
                                        this);
@@ -46,7 +46,7 @@ void UsersManager::userAdded(const QString &userPath)
     m_usersMap[userPath] = userInter;
     m_fullNameMap[username] = userInter->fullName();
 
-    connect(userInter, &__User::FullNameChanged, this, [this, username] (const QString &fullname) {
+    connect(userInter, &__AccountsUser::FullNameChanged, this, [this, username] (const QString &fullname) {
         m_fullNameMap[username]  = fullname;
     });
 }
