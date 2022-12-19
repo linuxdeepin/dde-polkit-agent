@@ -7,6 +7,7 @@ Build-Depends: debhelper (>=9),
 	cmake,
 	libpolkit-qt5-1-dev (>0.114.0),
 	libdtkwidget-dev,
+	libdtkcore-dev,
 	qttools5-dev-tools,
 	libdtkcore5-bin
 Standards-Version: 3.9.8
