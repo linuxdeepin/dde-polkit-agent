@@ -41,6 +41,7 @@ endif ()
 # Find the library
 find_package(PkgConfig REQUIRED)
 find_package(DtkWidget REQUIRED)
+find_package(DtkCore REQUIRED)
 find_package(Qt5 COMPONENTS Core Widgets DBus Concurrent REQUIRED)
 
 pkg_check_modules(Polkit-qt5 REQUIRED polkit-qt5-1)
@@ -87,7 +88,6 @@ generation_dbus_interface(
     ${DBUS_INTERFACE_DIR}/fprintd_interface
 )
 
-aux_source_directory(${PROJECT_SOURCE_DIR}/dbus/qtdbusextended/ DBUS_EXTENDS)
 aux_source_directory(${PROJECT_SOURCE_DIR}/dbus/interface/ DBUS_INTERFACES)
 
 set(AuthAgent_DBUS_SCRS
@@ -102,12 +102,12 @@ add_executable(${BIN_NAME}
     pluginmanager.cpp
     images.qrc
     ${AuthAgent_DBUS_SCRS}
-    ${DBUS_EXTENDS}
     ${DBUS_INTERFACES}
 )
 
 target_include_directories(${BIN_NAME} PUBLIC
     ${DtkWidget_INCLUDE_DIRS}
+    ${DtkCore_INCLUDE_DIRS}
     ${Polkit-qt5_INCLUDE_DIRS}
     Qt5::Core
     Qt5::Widgets
@@ -119,6 +119,7 @@ target_include_directories(${BIN_NAME} PUBLIC
 
 target_link_libraries(${BIN_NAME} PRIVATE
     ${DtkWidget_LIBRARIES}
+    ${DtkCore_LIBRARIES}
     ${Polkit-qt5_LIBRARIES}
     Qt5::Core
     Qt5::Widgets
