@@ -1,3 +1,9 @@
+dde-polkit-agent (5.5.22) unstable; urgency=low
+
+  * bump version to 5.5.22
+
+ -- lichangze <lichangze@uniontech.com>  Mon, 9 Jan 2023 16:20:17 +0000
+
 dde-polkit-agent (1.0) unstable; urgency=medium
 
   * Initial release
