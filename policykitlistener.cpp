@@ -259,9 +259,9 @@ void PolicyKitListener::createSessionForId(const PolkitQt1::Identity &identity)
     // We will create new session only when some user is selected
     if (m_selectedUser.isValid()) {
 #ifdef USE_DEEPIN_POLKIT
-        m_session = new Session(m_selectedUser, m_cookie, m_result, &m_details);
+        m_session = new Session(m_selectedUser, m_cookie, m_result, &m_details, parent());
 #else
-        m_session = new Session(m_selectedUser, m_cookie, m_result);
+        m_session = new Session(m_selectedUser, m_cookie, m_result, parent());
 #endif
 
         connect(m_session.data(), &Session::request, this,
