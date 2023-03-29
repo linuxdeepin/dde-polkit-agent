@@ -9,7 +9,7 @@ Copyright: None
 License: CC0-1.0
 
 # ci
-Files: .github/* .gitlab-ci.yml
+Files: .github/* .gitlab-ci.yml .obs/workflows.yml
 Copyright: None
 License: CC0-1.0
 
@@ -34,7 +34,7 @@ Copyright: UnionTech Software Technology Co., Ltd.
 License: CC-BY-4.0
 
 # Project file
-Files: CMakeLists.txt *.qrc *.project
+Files: CMakeLists.txt *.qrc *.project *.gitignore
 Copyright: None
 License: CC0-1.0
 
@@ -45,5 +45,10 @@ License: GPL-3.0-or-later
 
 # sh
 Files: lupdate.sh translate_generation.sh
+Copyright: None
+License: CC0-1.0
+
+# dbus
+Files: dbus/adapter/*.xml dbus/*.xml
 Copyright: None
 License: CC0-1.0
