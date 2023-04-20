@@ -23,7 +23,9 @@ prepare() {
 
 build() {
   cd $sourcedir
-  cmake . -G Ninja -DCMAKE_INSTALL_PREFIX=/usr
+  cmake . -G Ninja \
+    -DCMAKE_INSTALL_PREFIX=/usr \
+    -DUSE_DEEPIN_POLKIT=OFF
   ninja
 }
 
