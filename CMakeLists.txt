@@ -11,6 +11,10 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_FLAGS "-g -Wall")
 
+option(USE_DEEPIN_POLKIT "enable deepin polkit" OFF)
+
+message(STATUS "TO USE Deepin_Polkit : ${USE_DEEPIN_POLKIT}")
+
 # 增加安全编译参数
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fstack-protector-all")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fstack-protector-all")
@@ -63,6 +67,19 @@ function(generation_dbus_interface xml class_name class_file)
     execute_process(COMMAND qdbusxml2cpp-fix -c ${class_name} -p ${class_file} ${xml}
         WORKING_DIRECTORY ${DBUS_INTERFACE_DIR})
 endfunction(generation_dbus_interface)
+
+if(${USE_DEEPIN_POLKIT})
+  add_definitions(-DUSE_DEEPIN_POLKIT)
+else()
+  find_package(DtkCMake)
+  message(STATUS "ID: ${CMAKE_PLATFORM_ID}")
+  if("${CMAKE_PLATFORM_ID}" STREQUAL "DEEPIN")
+    message(STATUS "You are deepin, so enable Deepin_Polkit")
+    add_definitions(-DUSE_DEEPIN_POLKIT)
+  else()
+    message(STATUS "You are not deepin, so disable Deepin_Polkit")
+  endif()
+endif()
 
 generation_dbus_interface(
     ${CMAKE_SOURCE_DIR}/dbus/org.deepin.dde.Accounts1.User.xml
