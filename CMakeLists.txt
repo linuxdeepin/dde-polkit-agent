@@ -70,15 +70,6 @@ endfunction(generation_dbus_interface)
 
 if(${USE_DEEPIN_POLKIT})
   add_definitions(-DUSE_DEEPIN_POLKIT)
-else()
-  find_package(DtkCMake)
-  message(STATUS "ID: ${CMAKE_PLATFORM_ID}")
-  if("${CMAKE_PLATFORM_ID}" STREQUAL "DEEPIN")
-    message(STATUS "You are deepin, so enable Deepin_Polkit")
-    add_definitions(-DUSE_DEEPIN_POLKIT)
-  else()
-    message(STATUS "You are not deepin, so disable Deepin_Polkit")
-  endif()
 endif()
 
 generation_dbus_interface(
