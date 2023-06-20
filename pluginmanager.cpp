@@ -47,10 +47,6 @@ void PluginManager::load()
         QFileInfoList pluginFiles = dir.entryInfoList((QStringList("*.so")));
 
         for (const QFileInfo &pluginFile : pluginFiles) {
-            // 密钥环优化后，在keyring PAM中对keyring密码进行管理，不需要加载libdpa-ext-gnomekeyring来清空密钥环
-            if (pluginFile.baseName() == "libdpa-ext-gnomekeyring")
-                continue;
-
             AgentExtension *plugin = loadFile(pluginFile.absoluteFilePath());
             if (plugin)
                 m_plugins << plugin;
