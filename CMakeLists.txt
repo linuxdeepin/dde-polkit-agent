@@ -47,6 +47,7 @@ find_package(PkgConfig REQUIRED)
 find_package(DtkWidget REQUIRED)
 find_package(DtkCore REQUIRED)
 find_package(Qt5 COMPONENTS Core Widgets DBus Concurrent REQUIRED)
+find_package(DtkTools REQUIRED)
 
 pkg_check_modules(Polkit-qt5 REQUIRED polkit-qt5-1)
 
@@ -64,7 +65,7 @@ generation_dbus_adaptor(
 
 set(DBUS_INTERFACE_DIR ${PROJECT_SOURCE_DIR}/dbus/interface)
 function(generation_dbus_interface xml class_name class_file)
-    execute_process(COMMAND qdbusxml2cpp-fix -c ${class_name} -p ${class_file} ${xml}
+    execute_process(COMMAND ${DTK_XML2CPP} -c ${class_name} -p ${class_file} ${xml}
         WORKING_DIRECTORY ${DBUS_INTERFACE_DIR})
 endfunction(generation_dbus_interface)
 
