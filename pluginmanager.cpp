@@ -47,6 +47,9 @@ void PluginManager::load()
         QFileInfoList pluginFiles = dir.entryInfoList((QStringList("*.so")));
 
         for (const QFileInfo &pluginFile : pluginFiles) {
+            // dpa-ext-gnonekeyring 项目暂时无实质作用，如果安装过 dpa-ext-gnonekeyring 包, 进行一个过滤。
+            if (pluginFile.fileName() == "libdpa-ext-gnomekeyring.so") continue;
+
             AgentExtension *plugin = loadFile(pluginFile.absoluteFilePath());
             if (plugin)
                 m_plugins << plugin;
