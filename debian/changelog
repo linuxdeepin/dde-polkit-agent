@@ -1,3 +1,9 @@
+dde-polkit-agent (6.0.5) unstable; urgency=medium
+
+  * chore: filter dpa-ext-gnomekeyring and cancel pre installation
+
+ -- bluesky <chenchongbiao@deepin.org>  Mon, 04 Sep 2023 11:35:33 +0800
+
 dde-polkit-agent (6.0.4) unstable; urgency=medium
 
   * fix qdbusxml2cpp-fix not found
