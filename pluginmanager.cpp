@@ -38,7 +38,7 @@ QList<QButtonGroup*> PluginManager::reduceGetOptions(const QString &actionID)
 void PluginManager::load()
 {
 
-    QStringList pluginsDirs = QProcessEnvironment::systemEnvironment().value("DDE_POLKIT_AGENT_PLUGINS_DIRS").split(QDir::listSeparator(), QString::SkipEmptyParts);
+    QStringList pluginsDirs = QProcessEnvironment::systemEnvironment().value("DDE_POLKIT_AGENT_PLUGINS_DIRS").split(QDir::listSeparator(), Qt::SkipEmptyParts);
     pluginsDirs.append("/usr/lib/polkit-1-dde/plugins/");
 
     for (const QString &dirName : pluginsDirs) {
