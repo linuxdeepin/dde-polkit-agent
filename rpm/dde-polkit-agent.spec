@@ -19,7 +19,6 @@ Source0:        %{name}-%{version}.orig.tar.xz
 BuildRequires:  cmake
 BuildRequires:  gcc-c++
 BuildRequires:  dtkwidget-devel >= 5.1.1
-#BuildRequires:  pkgconfig(dframeworkdbus) >= 2.0
 BuildRequires:  dde-qt-dbus-factory-devel
 BuildRequires:  dde-qt-dbus-factory
 BuildRequires:  pkgconfig(polkit-qt5-1)
@@ -28,7 +27,6 @@ BuildRequires:  qt5-linguist
 BuildRequires:  gsettings-qt-devel
 BuildRequires:  qt5-qtmultimedia-devel
 BuildRequires:  qt5-qtx11extras-devel
-#BuildRequires:  libdframeworkdbus-dev
 
 %description
 DDE Polkit Agent is the polkit agent used in Deepin Desktop Environment.
