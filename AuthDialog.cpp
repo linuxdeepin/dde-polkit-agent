@@ -14,7 +14,6 @@
 #include <QUrl>
 #include <QAbstractButton>
 #include <QButtonGroup>
-#include <QMouseEvent>
 
 #include <DHiDPIHelper>
 
@@ -290,15 +289,19 @@ void AuthDialog::authenticationFailure(bool &isLock)
     activateWindow();
 }
 
-void AuthDialog::mouseMoveEvent(QMouseEvent *event)
+bool AuthDialog::event(QEvent *event)
 {
-    // 鉴权窗口不可移动
-    event->ignore();
+    if (event->type() == QEvent::Enter) {
+        activateWindow();
+        m_passwordInput->setFocus();
+    }
+    return DDialog::event(event);
 }
 
 void AuthDialog::initUI()
 {
     setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint | Qt::Tool);
+    setWindowFlag(Qt::BypassWindowManagerHint, true);
     setMinimumWidth(380);
     setOnButtonClickedClose(false);
 

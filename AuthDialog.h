@@ -66,7 +66,7 @@ signals:
     void adminUserSelected(PolkitQt1::Identity);
 
 protected:
-    void mouseMoveEvent(QMouseEvent *event) override;
+    bool event(QEvent *event) override;
 
 private:
     void initUI();
