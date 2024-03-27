@@ -1,3 +1,15 @@
+dde-polkit-agent (6.0.7) unstable; urgency=medium
+
+  * fix: set BypassWindowManagerHint to deny resize/move/layer
+
+ -- rewine <luhongxu@deepin.org>  Tue, 26 Mar 2024 18:24:41 +0800
+
+dde-polkit-agent (6.0.6) unstable; urgency=medium
+
+  * fix: auth dialog should be immovable
+
+ -- rewine <luhongxu@deepin.org>  Fri, 15 Mar 2024 11:19:17 +0800
+
 dde-polkit-agent (6.0.5) unstable; urgency=medium
 
   * chore: filter dpa-ext-gnomekeyring and cancel pre installation

@@ -65,6 +65,9 @@ public:
 signals:
     void adminUserSelected(PolkitQt1::Identity);
 
+protected:
+    bool event(QEvent *event) override;
+
 private:
     void initUI();
     int getLockLimitTryNum();
