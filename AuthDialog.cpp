@@ -289,9 +289,19 @@ void AuthDialog::authenticationFailure(bool &isLock)
     activateWindow();
 }
 
+bool AuthDialog::event(QEvent *event)
+{
+    if (event->type() == QEvent::Enter) {
+        activateWindow();
+        m_passwordInput->setFocus();
+    }
+    return DDialog::event(event);
+}
+
 void AuthDialog::initUI()
 {
     setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint | Qt::Tool);
+    setWindowFlag(Qt::BypassWindowManagerHint, true);
     setMinimumWidth(380);
     setOnButtonClickedClose(false);
 
