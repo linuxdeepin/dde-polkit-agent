@@ -1,3 +1,9 @@
+dde-polkit-agent (6.0.8) unstable; urgency=medium
+
+  * Allow empty password
+
+ -- Yutao Meng <mengyutao@deepin.org>  Wed, 04 Sep 2024 14:53:06 +0800
+
 dde-polkit-agent (6.0.7) unstable; urgency=medium
 
   * fix: set BypassWindowManagerHint to deny resize/move/layer
