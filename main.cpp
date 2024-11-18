@@ -25,7 +25,6 @@ DCORE_USE_NAMESPACE
 int main(int argc, char *argv[])
 {
     DApplication a(argc, argv);
-    DApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
     a.setOrganizationName("deepin");
     a.setApplicationName(APP_NAME);
     a.setApplicationDisplayName(APP_DISPLAY_NAME);

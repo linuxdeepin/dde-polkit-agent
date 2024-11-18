@@ -21,7 +21,7 @@ BuildRequires:  gcc-c++
 BuildRequires:  dtkwidget-devel >= 5.1.1
 BuildRequires:  dde-qt-dbus-factory-devel
 BuildRequires:  dde-qt-dbus-factory
-BuildRequires:  pkgconfig(polkit-qt5-1)
+BuildRequires:  pkgconfig(polkit-qt6-1)
 BuildRequires:  qt5-devel
 BuildRequires:  qt5-linguist
 BuildRequires:  gsettings-qt-devel

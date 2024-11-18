@@ -1,15 +1,16 @@
-cmake_minimum_required(VERSION 3.13)
+cmake_minimum_required(VERSION 3.16)
 
 set(BIN_NAME dde-polkit-agent)
 
 project(${BIN_NAME} CXX)
 
 #set(CMAKE_VERBOSE_MAKEFILE ON)
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_FLAGS "-g -Wall")
+set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,--no-undefined")
 
 option(USE_DEEPIN_POLKIT "enable deepin polkit" OFF)
 
@@ -34,115 +35,82 @@ if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
     set(CMAKE_INSTALL_PREFIX /usr)
 endif ()
 
-if (NOT (${CMAKE_BUILD_TYPE} MATCHES "Debug"))
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Ofast")
+set(QT_VERSION_MAJOR 6)
+set(DTK_VERSION_MAJOR 6)
 
-    # generate qm
-    execute_process(COMMAND bash "translate_generation.sh"
-                    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
-endif ()
+include(GNUInstallDirs)
 
 # Find the library
 find_package(PkgConfig REQUIRED)
-find_package(DtkWidget REQUIRED)
-find_package(DtkCore REQUIRED)
-find_package(Qt5 COMPONENTS Core Widgets DBus Concurrent REQUIRED)
-find_package(DtkTools REQUIRED)
+find_package(Qt${QT_VERSION_MAJOR} ${REQUIRED_QT_VERSION} REQUIRED Core Widgets DBus Concurrent LinguistTools)
+find_package(Dtk${DTK_VERSION_MAJOR} REQUIRED Widget Core Tools)
 
-pkg_check_modules(Polkit-qt5 REQUIRED polkit-qt5-1)
+pkg_check_modules(Polkit-qt6 REQUIRED polkit-qt6-1)
 
-function(generation_dbus_adaptor xml class_name class_file option)
-    execute_process(COMMAND qdbusxml2cpp ${option} -a ${class_file} -c ${class_name} ${xml}
-    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
-endfunction(generation_dbus_adaptor)
-
-generation_dbus_adaptor(
-    ${CMAKE_SOURCE_DIR}/dbus/adapter/org.deepin.dde.Polkit1.AuthAgent.xml
-    Polkit1AuthAgentAdaptor
-    ${CMAKE_CURRENT_BINARY_DIR}/polkit1authagent_adaptor
-    -N
-)
-
-set(DBUS_INTERFACE_DIR ${PROJECT_SOURCE_DIR}/dbus/interface)
-function(generation_dbus_interface xml class_name class_file)
-    execute_process(COMMAND ${DTK_XML2CPP} -c ${class_name} -p ${class_file} ${xml}
-        WORKING_DIRECTORY ${DBUS_INTERFACE_DIR})
-endfunction(generation_dbus_interface)
+qt_add_dbus_adaptor(DBUS_INTERFACES ${CMAKE_SOURCE_DIR}/dbus/adapter/org.deepin.dde.Polkit1.AuthAgent.xml policykitlistener.h PolicyKitListener)
 
 if(${USE_DEEPIN_POLKIT})
   add_definitions(-DUSE_DEEPIN_POLKIT)
 endif()
 
-generation_dbus_interface(
-    ${CMAKE_SOURCE_DIR}/dbus/org.deepin.dde.Accounts1.User.xml
-    AccountsUser
-    ${DBUS_INTERFACE_DIR}/accountuser_interface
-)
+dtk_add_dbus_interfaces(DBUS_INTERFACES ${CMAKE_SOURCE_DIR}/dbus/org.deepin.dde.Accounts1.xml)
+dtk_add_dbus_interface(DBUS_INTERFACES ${CMAKE_SOURCE_DIR}/dbus/org.deepin.dde.Accounts1.User.xml accounts1userinterface)
 
-generation_dbus_interface(
-    ${CMAKE_SOURCE_DIR}/dbus/org.deepin.dde.Accounts1.xml
-    Accounts
-    ${DBUS_INTERFACE_DIR}/account_interface
-)
-
-generation_dbus_interface(
-    ${CMAKE_SOURCE_DIR}/dbus/org.deepin.dde.Fprintd1.Device.xml
-    FprintdDevice
-    ${DBUS_INTERFACE_DIR}/fprintddevice_interface
-)
-
-generation_dbus_interface(
-    ${CMAKE_SOURCE_DIR}/dbus/org.deepin.dde.Fprintd1.xml
-    FPrintd
-    ${DBUS_INTERFACE_DIR}/fprintd_interface
-)
-
-aux_source_directory(${PROJECT_SOURCE_DIR}/dbus/interface/ DBUS_INTERFACES)
-
-set(AuthAgent_DBUS_SCRS
-    ${CMAKE_CURRENT_BINARY_DIR}/polkit1authagent_adaptor.cpp
-)
+file(GLOB DDE_POLKIT_AGENT_SCRS "*.h" "*.cpp")
 
 add_executable(${BIN_NAME}
-    policykitlistener.cpp
-    AuthDialog.cpp
-    main.cpp
-    usersmanager.cpp
-    pluginmanager.cpp
-    images.qrc
-    ${AuthAgent_DBUS_SCRS}
     ${DBUS_INTERFACES}
+    ${DDE_POLKIT_AGENT_SCRS}
+    images.qrc
 )
 
 target_include_directories(${BIN_NAME} PUBLIC
-    ${DtkWidget_INCLUDE_DIRS}
-    ${DtkCore_INCLUDE_DIRS}
-    ${Polkit-qt5_INCLUDE_DIRS}
-    Qt5::Core
-    Qt5::Widgets
-    Qt5::DBus
-    Qt5::Concurrent
-    ${PROJECT_SOURCE_DIR}/dbus/interface
-    ${PROJECT_SOURCE_DIR}/dbus/qtdbusextended
+    Dtk${DTK_VERSION_MAJOR}::Widget
+    Dtk${DTK_VERSION_MAJOR}::Core
+    ${Polkit-qt6_INCLUDE_DIRS}
+    Qt${QT_VERSION_MAJOR}::Core
+    Qt${QT_VERSION_MAJOR}::Widgets
+    Qt${QT_VERSION_MAJOR}::DBus
+    Qt${QT_VERSION_MAJOR}::Concurrent
 )
 
 target_link_libraries(${BIN_NAME} PRIVATE
-    ${DtkWidget_LIBRARIES}
-    ${DtkCore_LIBRARIES}
-    ${Polkit-qt5_LIBRARIES}
-    Qt5::Core
-    Qt5::Widgets
-    Qt5::DBus
-    Qt5::Concurrent
+    Dtk${DTK_VERSION_MAJOR}::Widget
+    Dtk${DTK_VERSION_MAJOR}::Core
+    Qt${QT_VERSION_MAJOR}::Core
+    Qt${QT_VERSION_MAJOR}::Widgets
+    Qt${QT_VERSION_MAJOR}::DBus
+    Qt${QT_VERSION_MAJOR}::Concurrent
+    ${Polkit-qt6_LIBRARIES}
+)
+
+# can use qt_standard_project_setup(I18N_TRANSLATED_LANGUAGES xx xx) from Qt6.7
+set(TRANSLATION_LANGUAGES
+    af am_ET ar ast az bg bn bo ca cs da de el en_AU en_GB eo es et fa fi fr gl_ES
+    he hi_IN hr hu hy id it ja ko ku_IQ lo lt ml mn ms nb ne nl pl pt_BR pt ro ru
+    si sk sl sq sr sv sw ta tr pam ug uk vi zh_CN zh_HK zh_TW
+)
+
+set(TRANSLATION_FILES "")
+list(APPEND TRANSLATION_FILES "${PROJECT_SOURCE_DIR}/translations/dde-polkit-agent.ts")
+
+foreach(LANG ${TRANSLATION_LANGUAGES})
+    list(APPEND TRANSLATION_FILES "${PROJECT_SOURCE_DIR}/translations/dde-polkit-agent_${LANG}.ts")
+endforeach()
+
+# can generate ts and qm file
+qt_add_translations(${BIN_NAME}
+    TS_FILES ${TRANSLATION_FILES}
+    SOURCES ${DDE_POLKIT_AGENT_SCRS}
+    QM_FILES_OUTPUT_VARIABLE TR_QM_FILES
 )
 
 ## qm files
-file(GLOB QM_FILES "translations/*.qm")
-install(FILES ${QM_FILES} DESTINATION share/${BIN_NAME}/translations)
+install(FILES ${TR_QM_FILES} DESTINATION ${CMAKE_INSTALL_DATADIR}/${BIN_NAME}/translations)
 
 ## header files
 file(GLOB HEADER_FILES "agent-extension-proxy.h" "agent-extension.h")
-install(FILES ${HEADER_FILES} DESTINATION include/dpa)
+install(FILES ${HEADER_FILES} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/dpa)
 
 # bin
 install(TARGETS ${BIN_NAME} DESTINATION lib/polkit-1-dde)

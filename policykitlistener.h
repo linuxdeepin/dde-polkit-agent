@@ -8,18 +8,13 @@
 #include <QPointer>
 #include <QHash>
 
-#include <polkit-qt5-1/PolkitQt1/Agent/Listener>
-#include <polkit-qt5-1/PolkitQt1/Details>
-
-#include "fprintd_interface.h"
-#include "fprintddevice_interface.h"
+#include <polkit-qt6-1/PolkitQt1/Agent/Listener>
+#include <polkit-qt6-1/PolkitQt1/Details>
 
 class PluginManager;
 class AuthDialog;
 
 using namespace PolkitQt1::Agent;
-using FPrintd = org::deepin::dde::Fprintd1;
-using FPrintdDevice = org::deepin::dde::fprintd1::Device;
 
 class PolicyKitListener : public Listener
 {

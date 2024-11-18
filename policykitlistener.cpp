@@ -7,19 +7,13 @@
 #include <QtConcurrent>
 #include <QJsonDocument>
 #include <QJsonArray>
-#include <QJsonObject>
 
-#include <polkit-qt5-1/PolkitQt1/Agent/Listener>
-#include <polkit-qt5-1/PolkitQt1/Agent/Session>
-#include <polkit-qt5-1/PolkitQt1/Identity>
+#include <polkit-qt6-1/PolkitQt1/Agent/Listener>
 
 #include "policykitlistener.h"
 #include "AuthDialog.h"
-#include "polkit1authagent_adaptor.h"
+#include "authagentadaptor.h"
 #include "pluginmanager.h"
-#include "policykitlistener.h"
-
-#define USE_DEEPIN_AUTH "useDeepinAuth"
 
 static bool isAccountLocked(const PolkitQt1::Identity &identity);
 
@@ -31,7 +25,7 @@ PolicyKitListener::PolicyKitListener(QObject *parent)
     , m_wasCancelled(false)
     , m_showInfoSuccess(false)
 {
-    (void) new Polkit1AuthAgentAdaptor(this);
+    (void) new AuthAgentAdaptor(this);
 
     QDBusConnection sessionBus = QDBusConnection::sessionBus();
     if (!sessionBus.registerService("org.deepin.dde.Polkit1.AuthAgent")) {
@@ -124,10 +118,11 @@ void PolicyKitListener::finishObtainPrivilege()
     // https://gerrit.uniontech.com/c/dpa-ext-gnomekeyring/+/45034/2/gnomekeyringextention.cpp#138
     // 调用了一个可能会阻塞的方法, 导致了 pms bug 82328
     if (m_gainedAuthorization) {
-        QtConcurrent::run(m_pluginManager.data(),
-                          &PluginManager::reduce,
-                          m_selectedUser.toString().remove("unix-user:"),
-                          m_dialog.data()->password());
+        (void)QtConcurrent::run([=]() {
+            QString user = m_selectedUser.toString().remove("unix-user:");
+            QString password = m_dialog.data()->password();
+            m_pluginManager->reduce(user, password);
+        });
     } else if (!m_wasCancelled) {
         // 认证失败
         bool isLock = isAccountLocked(m_selectedUser);

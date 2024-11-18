@@ -9,8 +9,8 @@
 #include <QMap>
 #include <QString>
 
-#include "account_interface.h"
-#include "accountuser_interface.h"
+#include "accounts1interface.h"
+#include "accounts1userinterface.h"
 
 using AccountsDBus = org::deepin::dde::Accounts1;
 using UserDBus = org::deepin::dde::accounts1::User;
