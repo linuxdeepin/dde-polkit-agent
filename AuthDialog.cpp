@@ -41,8 +41,6 @@ AuthDialog::AuthDialog(const QString &message,
 
     qDebug() << "lock limit: " << m_lockLimitTryNum;
 
-    // 始终显示用户名 (bug:9145,降低用户理解成本)
-    connect(m_adminsCombo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &AuthDialog::on_userCB_currentIndexChanged);
     connect(this, &AuthDialog::aboutToClose, this, &AuthDialog::rejected);
 }
 
@@ -164,6 +162,8 @@ void AuthDialog::createUserCB(const PolkitQt1::Identity::List &identities)
     } else {
         qWarning() << "ERROR, no valid user";
     }
+    connect(m_adminsCombo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &AuthDialog::on_userCB_currentIndexChanged);
+    on_userCB_currentIndexChanged(0);
     m_adminsCombo->show();
 }
 
