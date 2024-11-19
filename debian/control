@@ -5,11 +5,12 @@ Maintainer: Deepin Packages Builder <packages@deepin.com>
 Build-Depends: debhelper (>=9),
 	pkg-config,
 	cmake,
-	libpolkit-qt5-1-dev (>0.114.0),
-	libdtkwidget-dev,
-	libdtkcore-dev,
-	qttools5-dev-tools,
-	libdtkcore5-bin,
+	libpolkit-qt6-1-dev,
+	libdtk6widget-dev,
+	libdtk6core-dev,
+	qt6-tools-dev,
+	qt6-tools-dev-tools,
+	libdtk6core-bin,
 	lsb-release
 Standards-Version: 3.9.8
 Homepage: http://www.deepin.org/

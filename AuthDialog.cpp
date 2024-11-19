@@ -5,20 +5,14 @@
 #include "AuthDialog.h"
 #include "usersmanager.h"
 
-#include <QProcess>
 #include <QPainter>
-#include <QStandardItemModel>
 #include <QDesktopServices>
-#include <QDialogButtonBox>
 #include <QVBoxLayout>
 #include <QUrl>
 #include <QAbstractButton>
 #include <QButtonGroup>
 
-#include <DHiDPIHelper>
-
-#include <PolkitQt1/Authority>
-#include <PolkitQt1/Details>
+#include <DIcon>
 
 #include <libintl.h>
 
@@ -312,7 +306,7 @@ void AuthDialog::initUI()
     if (!m_iconName.isEmpty() && QIcon::hasThemeIcon(m_iconName)) {
         icon = QIcon::fromTheme(m_iconName).pixmap(static_cast<int>(48 * dpr), static_cast<int>(48 * dpr));
     } else {
-        icon = DHiDPIHelper::loadNxPixmap(":/images/default.svg");
+        icon = Dtk::Gui::DIcon::loadNxPixmap(":/images/default.svg");
     }
     icon.setDevicePixelRatio(dpr);
     setIcon(icon);

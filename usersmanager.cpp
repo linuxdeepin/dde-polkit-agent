@@ -46,7 +46,7 @@ void UsersManager::userAdded(const QString &userPath)
     m_usersMap[userPath] = userInter;
     m_fullNameMap[username] = userInter->fullName();
 
-    connect(userInter, &__AccountsUser::FullNameChanged, this, [this, username] (const QString &fullname) {
+    connect(userInter, &UserDBus::FullNameChanged, this, [this, username] (const QString &fullname) {
         m_fullNameMap[username]  = fullname;
     });
 }
