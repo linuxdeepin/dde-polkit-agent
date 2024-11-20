@@ -1,3 +1,10 @@
+dde-polkit-agent (6.0.8) unstable; urgency=medium
+
+  * feat: Allow empty password(Issue: 10484)
+  * chore: adapt to qt6 (#165)(Task: 367947)
+
+ -- Deepin Packages Builder <packages@deepin.org>  Wed, 20 Nov 2024 11:14:20 +0800
+
 dde-polkit-agent (6.0.7) unstable; urgency=medium
 
   * fix: set BypassWindowManagerHint to deny resize/move/layer
