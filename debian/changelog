@@ -1,3 +1,9 @@
+dde-polkit-agent (6.0.9) unstable; urgency=medium
+
+  * fix: uos polkit agent cannot authenticate (#168)(Bug: 289335)
+
+ -- Deepin Packages Builder <packages@deepin.org>  Mon, 25 Nov 2024 20:01:23 +0800
+
 dde-polkit-agent (6.0.8) unstable; urgency=medium
 
   * feat: Allow empty password(Issue: 10484)
