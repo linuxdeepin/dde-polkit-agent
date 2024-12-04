@@ -15,6 +15,7 @@
 #include <DIcon>
 
 #include <libintl.h>
+#include <dde-shell/dlayershellwindow.h>
 
 DWIDGET_USE_NAMESPACE
 
@@ -295,8 +296,16 @@ bool AuthDialog::event(QEvent *event)
 
 void AuthDialog::initUI()
 {
-    setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint | Qt::Tool);
-    setWindowFlag(Qt::BypassWindowManagerHint, true);
+    // create window
+    winId();
+    auto wnd = windowHandle();
+    if (wnd) {
+        auto layerShellWnd = ds::DLayerShellWindow::get(wnd);
+        layerShellWnd->setLayer(ds::DLayerShellWindow::LayerTop);
+        layerShellWnd->setKeyboardInteractivity(ds::DLayerShellWindow::KeyboardInteractivityOnDemand);
+    } else {
+        qDebug() << "WindowHandle is null!!!";
+    }
     setMinimumWidth(380);
     setOnButtonClickedClose(false);
 
