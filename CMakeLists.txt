@@ -44,6 +44,7 @@ include(GNUInstallDirs)
 find_package(PkgConfig REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} ${REQUIRED_QT_VERSION} REQUIRED Core Widgets DBus Concurrent LinguistTools)
 find_package(Dtk${DTK_VERSION_MAJOR} REQUIRED Widget Core Tools)
+find_package(DDEShell REQUIRED)
 
 pkg_check_modules(Polkit-qt6 REQUIRED polkit-qt6-1)
 
@@ -81,6 +82,7 @@ target_link_libraries(${BIN_NAME} PRIVATE
     Qt${QT_VERSION_MAJOR}::Widgets
     Qt${QT_VERSION_MAJOR}::DBus
     Qt${QT_VERSION_MAJOR}::Concurrent
+    Dde::Shell
     ${Polkit-qt6_LIBRARIES}
 )
 
