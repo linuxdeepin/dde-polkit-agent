@@ -301,7 +301,7 @@ void AuthDialog::initUI()
     auto wnd = windowHandle();
     if (wnd) {
         auto layerShellWnd = ds::DLayerShellWindow::get(wnd);
-        layerShellWnd->setLayer(ds::DLayerShellWindow::LayerTop);
+        layerShellWnd->setLayer(ds::DLayerShellWindow::LayerOverlay);
         layerShellWnd->setKeyboardInteractivity(ds::DLayerShellWindow::KeyboardInteractivityOnDemand);
     } else {
         qDebug() << "WindowHandle is null!!!";
