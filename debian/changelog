@@ -1,3 +1,9 @@
+dde-polkit-agent (6.0.11) unstable; urgency=medium
+
+  * Fix unable to input password on x11 environment
+
+ -- Yutao Meng <mengyutao@deepin.org>  Mon, 16 Dec 2024 17:37:15 +0800
+
 dde-polkit-agent (6.0.10) unstable; urgency=medium
 
   * fix: Support always on top under Wayland by Layershell (#164)
