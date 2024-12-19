@@ -121,8 +121,8 @@ void PolicyKitListener::finishObtainPrivilege()
 
     // 插件进行的操作不应该能够长时间阻塞 UI 线程
     // 将插件操作放在新线程中完成的原因是
-    // https://gerrit.uniontech.com/c/dpa-ext-gnomekeyring/+/45034/2/gnomekeyringextention.cpp#138
-    // 调用了一个可能会阻塞的方法, 导致了 pms bug 82328
+    // https://gerxxx.xxx.com/c/dpa-ext-gnomekeyring/+/45034/2/gnomekeyringextention.cpp#138
+    // 调用了一个可能会阻塞的方法, 导致了bug 82328
     if (m_gainedAuthorization) {
         QtConcurrent::run(m_pluginManager.data(),
                           &PluginManager::reduce,
