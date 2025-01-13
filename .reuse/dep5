@@ -52,3 +52,7 @@ License: CC0-1.0
 Files: dbus/adapter/*.xml dbus/*.xml
 Copyright: None
 License: CC0-1.0
+
+Files: toolGenerate/**/*
+Copyright: None
+License: CC0-1.0
