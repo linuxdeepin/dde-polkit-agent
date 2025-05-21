@@ -11,8 +11,11 @@ int main(int argc, char* argv[])
     const QString                  cookie;
     PolkitQt1::Agent::AsyncResult* result  = nullptr;
     PolkitQt1::Details*            details = nullptr;
+#ifdef USE_DEEPIN_POLKIT
     auto session = new PolkitQt1::Agent::Session(identity, cookie, result, details);
-
+#else
+    auto session = new PolkitQt1::Agent::Session(identity, cookie, result);
+#endif
     session->authCtrl(AUTH_START, -1);
     session->setResponseEx(0, cookie);
 

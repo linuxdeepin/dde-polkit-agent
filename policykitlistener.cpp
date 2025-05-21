@@ -15,7 +15,9 @@
 #include "authagentadaptor.h"
 #include "pluginmanager.h"
 
+#ifdef USE_DEEPIN_POLKIT
 static bool isAccountLocked(const PolkitQt1::Identity &identity);
+#endif
 
 PolicyKitListener::PolicyKitListener(QObject *parent)
     : Listener(parent)
@@ -116,14 +118,16 @@ void PolicyKitListener::finishObtainPrivilege()
     // 插件进行的操作不应该能够长时间阻塞 UI 线程
     // 将插件操作放在新线程中完成的原因是
     // https://gerxxx.xxx.com/c/dpa-ext-gnomekeyring/+/45034/2/gnomekeyringextention.cpp#138
-    // 调用了一个可能会阻塞的方法, 导致了bug 82328
+    // 调用了一个可能会阻塞的方法，导致了 bug 82328
     if (m_gainedAuthorization) {
         (void)QtConcurrent::run([=]() {
             QString user = m_selectedUser.toString().remove("unix-user:");
             QString password = m_dialog.data()->password();
             m_pluginManager->reduce(user, password);
         });
-    } else if (!m_wasCancelled) {
+    }
+#ifdef USE_DEEPIN_POLKIT
+    else if (!m_wasCancelled) {
         // 认证失败
         bool isLock = isAccountLocked(m_selectedUser);
         m_dialog->authenticationFailure(isLock);
@@ -132,7 +136,7 @@ void PolicyKitListener::finishObtainPrivilege()
         }
         return;
     }
-
+#endif
     // fill complete according to authentication result
     // to get cancel state, polkit-qt need be updated
     fillResult();
@@ -254,7 +258,7 @@ void PolicyKitListener::createSessionForId(const PolkitQt1::Identity &identity)
     // We will create new session only when some user is selected
     if (m_selectedUser.isValid()) {
 #ifdef USE_DEEPIN_POLKIT
-        m_session = new Session(m_selectedUser, m_cookie, m_result, &m_details, parent());
+        m_session = new Session(m_selectedUser, m_cookie, m_result, parent(), &m_details);
 #else
         m_session = new Session(m_selectedUser, m_cookie, m_result, parent());
 #endif
@@ -304,6 +308,7 @@ void PolicyKitListener::fillResult()
     }
 }
 
+#ifdef USE_DEEPIN_POLKIT
 static bool isAccountLocked(const PolkitQt1::Identity &identity)
 {
     QString userName = identity.toString().replace("unix-user:", "");
@@ -329,3 +334,4 @@ static bool isAccountLocked(const PolkitQt1::Identity &identity)
     }
     return result;
 }
+#endif
