@@ -9,17 +9,13 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
-set(CMAKE_CXX_FLAGS "-g -Wall")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall")
 set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,--no-undefined")
 
 option(USE_DEEPIN_POLKIT "enable deepin polkit" OFF)
 
 message(STATUS "TO USE Deepin_Polkit : ${USE_DEEPIN_POLKIT}")
 
-# 增加安全编译参数
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fstack-protector-all")
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fstack-protector-all")
-set(CMAKE_EXE_LINKER_FLAGS  "-z relro -z now -z noexecstack -pie")
 
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -fsanitize=address -O2")
