@@ -14,7 +14,7 @@ Build-Depends: debhelper (>=9),
 	libdde-shell-dev,
 	lsb-release
 Standards-Version: 3.9.8
-Homepage: http://www.deepin.org/
+Homepage: https://github.com/linuxdeepin/dde-polkit-agent
 
 Package: dde-polkit-agent
 Architecture: any
