@@ -1,3 +1,10 @@
+dde-polkit-agent (6.0.15) unstable; urgency=medium
+
+  * fix: Modify the status of the authorization dialog box button
+  * fix: update homepage url in debian/control
+
+ -- YeShanShan <yeshanshan@uniontech.com>  Thu, 18 Sep 2025 20:01:55 +0800
+
 dde-polkit-agent (6.0.14) unstable; urgency=medium
 
   * refactor: update build flags and security hardening
