@@ -277,7 +277,10 @@ void AuthDialog::authenticationFailure(bool &isLock)
     m_passwordInput->setAlert(true);
     m_passwordInput->clear();
     m_passwordInput->lineEdit()->setFocus();
-    getButton(1)->setEnabled(true);
+    const bool enable = (m_authStatus != Authenticating
+                         && m_authStatus != None
+                         && !m_passwordInput->text().isEmpty());
+    getButton(1)->setEnabled(enable);
 
     if (isLock) {
         lock();
@@ -328,7 +331,7 @@ void AuthDialog::initUI()
     int confirmId = addButton(tr("Confirm", "button"), true, ButtonType::ButtonRecommend);
     setDefaultButton(1);
 
-    getButton(confirmId)->setEnabled(true);
+    getButton(confirmId)->setEnabled(false);
 
     getButton(cancelId)->setAccessibleName("Cancel");
     getButton(confirmId)->setAccessibleName("Confirm");
@@ -358,17 +361,20 @@ void AuthDialog::initUI()
     });
 
     connect(m_passwordInput, &DPasswordEdit::textChanged, [ = ](const QString & text) {
-        getButton(confirmId)->setEnabled(Authenticating != m_authStatus && None != m_authStatus);
-        if (text.length() == 0)
-            return;
+        getButton(confirmId)->setEnabled(Authenticating != m_authStatus && None != m_authStatus && text.length() > 0);
 
-        m_passwordInput->setAlert(false);
-        m_errorMsg = "";
+        if (text.length() > 0) {
+            m_passwordInput->setAlert(false);
+            m_errorMsg = "";
+        }
     });
 }
 
 void AuthDialog::setInAuth(AuthStatus authStatus)
 {
     m_authStatus = authStatus;
-    getButton(1)->setEnabled(Authenticating != authStatus);
+    const bool enable = (authStatus != Authenticating
+                         && authStatus != None
+                         && !m_passwordInput->text().isEmpty());
+    getButton(1)->setEnabled(enable);
 }

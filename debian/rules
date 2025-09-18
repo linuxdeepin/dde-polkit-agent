@@ -11,6 +11,8 @@ ifeq ($(DISTRO),Deepin)
 	USE_DEEPIN_POLKIT=ON
 else ifeq ($(DISTRO),uos)
     USE_DEEPIN_POLKIT=ON
+else ifeq ($(DISTRO),Uos)
+    USE_DEEPIN_POLKIT=ON
 else
 	USE_DEEPIN_POLKIT=OFF
 endif
