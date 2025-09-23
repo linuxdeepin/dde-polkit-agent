@@ -275,8 +275,8 @@ void AuthDialog::authenticationFailure(bool &isLock)
     m_passwordInput->setEnabled(true);
     m_passwordInput->showAlertMessage(m_errorMsg);
     m_passwordInput->setAlert(true);
-    m_passwordInput->clear();
     m_passwordInput->lineEdit()->setFocus();
+    m_passwordInput->lineEdit()->selectAll();
     const bool enable = (m_authStatus != Authenticating
                          && m_authStatus != None
                          && !m_passwordInput->text().isEmpty());
