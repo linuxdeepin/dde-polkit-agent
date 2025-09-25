@@ -1,3 +1,10 @@
+dde-polkit-agent (6.0.16) unstable; urgency=medium
+
+  * refactor: remove fingerprint authentication related files
+  * fix: Fix the password error not selected completely
+
+ -- fuleyi <fuleyi@uniontech.com>  Thu, 25 Sep 2025 20:52:29 +0800
+
 dde-polkit-agent (6.0.15) unstable; urgency=medium
 
   * fix: Modify the status of the authorization dialog box button
