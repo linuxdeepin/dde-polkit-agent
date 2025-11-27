@@ -12,29 +12,39 @@
         <translation>Перевірку не пройдено, лишилося дві спроби</translation>
     </message>
     <message>
-        <location filename="../AuthDialog.cpp" line="88"/>
-        <location filename="../AuthDialog.cpp" line="266"/>
+        <location filename="../AuthDialog.cpp" line="90"/>
+        <location filename="../AuthDialog.cpp" line="327"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>Підтвердити</translation>
     </message>
     <message>
-        <location filename="../AuthDialog.cpp" line="189"/>
-        <source>You are required to change your password immediately (password expired)</source>
-        <translation>Ви маєте змінити ваш пароль негайно (строк дії пароля вичерпано)</translation>
+        <location filename="../AuthDialog.cpp" line="159"/>
+        <source>Expired</source>
+        <translation>Вичерпано строк дії</translation>
     </message>
     <message>
-        <location filename="../AuthDialog.cpp" line="226"/>
+        <location filename="../AuthDialog.cpp" line="248"/>
+        <source>Unavailable</source>
+        <translation>Недоступний</translation>
+    </message>
+    <message>
+        <location filename="../AuthDialog.cpp" line="250"/>
+        <source>The password of this user has expired. Please authenticate using another user account or change the password and try again.</source>
+        <translation>Строк дії пароля для цього користувача вичерпано. Будь ласка, пройдіть розпізнавання з використанням іншого облікового запису або змініть пароль і повторіть спробу.</translation>
+    </message>
+    <message>
+        <location filename="../AuthDialog.cpp" line="287"/>
         <source>Locked, please try again later</source>
         <translation>Заблоковано — будь ласка, повторіть спробу пізніше</translation>
     </message>
     <message>
-        <location filename="../AuthDialog.cpp" line="228"/>
+        <location filename="../AuthDialog.cpp" line="289"/>
         <source>Wrong password</source>
         <translation>Невірний пароль</translation>
     </message>
     <message>
-        <location filename="../AuthDialog.cpp" line="265"/>
+        <location filename="../AuthDialog.cpp" line="326"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Скасувати</translation>
