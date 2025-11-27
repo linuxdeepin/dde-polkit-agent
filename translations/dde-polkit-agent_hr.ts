@@ -12,29 +12,39 @@
         <translation>Neuspjela ovjera, preostale su dvije prilike</translation>
     </message>
     <message>
-        <location filename="../AuthDialog.cpp" line="88"/>
-        <location filename="../AuthDialog.cpp" line="266"/>
+        <location filename="../AuthDialog.cpp" line="90"/>
+        <location filename="../AuthDialog.cpp" line="327"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>Potvrdi</translation>
     </message>
     <message>
-        <location filename="../AuthDialog.cpp" line="189"/>
-        <source>You are required to change your password immediately (password expired)</source>
-        <translation>Potebno je da odmah promjenite svoju lozinku (lozinka je istekla)</translation>
+        <location filename="../AuthDialog.cpp" line="159"/>
+        <source>Expired</source>
+        <translation>Isteklo</translation>
     </message>
     <message>
-        <location filename="../AuthDialog.cpp" line="226"/>
+        <location filename="../AuthDialog.cpp" line="248"/>
+        <source>Unavailable</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../AuthDialog.cpp" line="250"/>
+        <source>The password of this user has expired. Please authenticate using another user account or change the password and try again.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../AuthDialog.cpp" line="287"/>
         <source>Locked, please try again later</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../AuthDialog.cpp" line="228"/>
+        <location filename="../AuthDialog.cpp" line="289"/>
         <source>Wrong password</source>
         <translation>Neispravna lozinka</translation>
     </message>
     <message>
-        <location filename="../AuthDialog.cpp" line="265"/>
+        <location filename="../AuthDialog.cpp" line="326"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Otkaži</translation>

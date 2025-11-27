@@ -12,29 +12,39 @@
         <translation>Verifikimi dështoi, edhe dy prova.</translation>
     </message>
     <message>
-        <location filename="../AuthDialog.cpp" line="88"/>
-        <location filename="../AuthDialog.cpp" line="266"/>
+        <location filename="../AuthDialog.cpp" line="90"/>
+        <location filename="../AuthDialog.cpp" line="327"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>Ripohojeni</translation>
     </message>
     <message>
-        <location filename="../AuthDialog.cpp" line="189"/>
-        <source>You are required to change your password immediately (password expired)</source>
-        <translation>Është e domosdoshme të ndryshoni fjalëkalimin tuaj  menjëherë (fjalëkalimi ka skaduar)</translation>
+        <location filename="../AuthDialog.cpp" line="159"/>
+        <source>Expired</source>
+        <translation>I skaduar</translation>
     </message>
     <message>
-        <location filename="../AuthDialog.cpp" line="226"/>
+        <location filename="../AuthDialog.cpp" line="248"/>
+        <source>Unavailable</source>
+        <translation>Jo e passhme</translation>
+    </message>
+    <message>
+        <location filename="../AuthDialog.cpp" line="250"/>
+        <source>The password of this user has expired. Please authenticate using another user account or change the password and try again.</source>
+        <translation>Fjalëkalimi i këtij përdoruesi ka skaduar. Ju lutemi, bëni mirëfilltësimin duke përdorur një tjetër llogari përdoruesi, ose ndryshoni fjalëkalimin dhe riprovoni.</translation>
+    </message>
+    <message>
+        <location filename="../AuthDialog.cpp" line="287"/>
         <source>Locked, please try again later</source>
         <translation>I kyçur, ju lutemi, riprovoni më vonë</translation>
     </message>
     <message>
-        <location filename="../AuthDialog.cpp" line="228"/>
+        <location filename="../AuthDialog.cpp" line="289"/>
         <source>Wrong password</source>
         <translation>Fjalëkalim i gabuar</translation>
     </message>
     <message>
-        <location filename="../AuthDialog.cpp" line="265"/>
+        <location filename="../AuthDialog.cpp" line="326"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Anuloje</translation>
