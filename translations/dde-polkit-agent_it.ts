@@ -12,29 +12,39 @@
         <translation>Verifica fallita, due tentativi rimasti</translation>
     </message>
     <message>
-        <location filename="../AuthDialog.cpp" line="88"/>
-        <location filename="../AuthDialog.cpp" line="266"/>
+        <location filename="../AuthDialog.cpp" line="90"/>
+        <location filename="../AuthDialog.cpp" line="327"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>Conferma</translation>
     </message>
     <message>
-        <location filename="../AuthDialog.cpp" line="189"/>
-        <source>You are required to change your password immediately (password expired)</source>
-        <translation>Occorre cambiare immediatamente la password (password scaduta)</translation>
+        <location filename="../AuthDialog.cpp" line="159"/>
+        <source>Expired</source>
+        <translation>Scaduto</translation>
     </message>
     <message>
-        <location filename="../AuthDialog.cpp" line="226"/>
+        <location filename="../AuthDialog.cpp" line="248"/>
+        <source>Unavailable</source>
+        <translation>Non disponibile</translation>
+    </message>
+    <message>
+        <location filename="../AuthDialog.cpp" line="250"/>
+        <source>The password of this user has expired. Please authenticate using another user account or change the password and try again.</source>
+        <translation>La password di questo utente è scaduta. Autenticarsi utilizzando un altro account utente o modificare la password e riprovare.</translation>
+    </message>
+    <message>
+        <location filename="../AuthDialog.cpp" line="287"/>
         <source>Locked, please try again later</source>
-        <translation type="unfinished"/>
+        <translation>Bloccato, riprova più tardi</translation>
     </message>
     <message>
-        <location filename="../AuthDialog.cpp" line="228"/>
+        <location filename="../AuthDialog.cpp" line="289"/>
         <source>Wrong password</source>
         <translation>Password errata</translation>
     </message>
     <message>
-        <location filename="../AuthDialog.cpp" line="265"/>
+        <location filename="../AuthDialog.cpp" line="326"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Annulla</translation>
