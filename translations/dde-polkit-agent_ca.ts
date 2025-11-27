@@ -21,7 +21,7 @@
     <message>
         <location filename="../AuthDialog.cpp" line="159"/>
         <source>Expired</source>
-        <translation>Caducat</translation>
+        <translation>Caducada</translation>
     </message>
     <message>
         <location filename="../AuthDialog.cpp" line="248"/>
