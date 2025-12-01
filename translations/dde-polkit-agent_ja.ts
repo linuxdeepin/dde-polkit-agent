@@ -31,7 +31,7 @@
     <message>
         <location filename="../AuthDialog.cpp" line="250"/>
         <source>The password of this user has expired. Please authenticate using another user account or change the password and try again.</source>
-        <translation type="unfinished"/>
+        <translation>このユーザーのパスワードの有効期限が切れています。他のユーザーを使用するか、パスワードを変更してもう一度お試しください。</translation>
     </message>
     <message>
         <location filename="../AuthDialog.cpp" line="287"/>
