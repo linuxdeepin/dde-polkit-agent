@@ -26,7 +26,7 @@
     <message>
         <location filename="../AuthDialog.cpp" line="248"/>
         <source>Unavailable</source>
-        <translation type="unfinished"/>
+        <translation>利用できません</translation>
     </message>
     <message>
         <location filename="../AuthDialog.cpp" line="250"/>
@@ -36,7 +36,7 @@
     <message>
         <location filename="../AuthDialog.cpp" line="287"/>
         <source>Locked, please try again later</source>
-        <translation type="unfinished"/>
+        <translation>ロックされました。しばらくしてからもうもう一度お試しください</translation>
     </message>
     <message>
         <location filename="../AuthDialog.cpp" line="289"/>
