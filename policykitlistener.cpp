@@ -140,7 +140,9 @@ void PolicyKitListener::finishObtainPrivilege()
     // fill complete according to authentication result
     // to get cancel state, polkit-qt need be updated
     fillResult();
-    m_session.data()->deleteLater();
+    if (!m_session.isNull()) {
+        m_session->deleteLater();
+    }
     m_dialog->close();
 
     m_inProgress = false;
