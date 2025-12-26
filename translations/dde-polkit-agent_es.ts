@@ -26,7 +26,7 @@
     <message>
         <location filename="../AuthDialog.cpp" line="248"/>
         <source>Unavailable</source>
-        <translation>(No disponible)</translation>
+        <translation>No disponible</translation>
     </message>
     <message>
         <location filename="../AuthDialog.cpp" line="250"/>
