@@ -13,6 +13,7 @@
 #include <QButtonGroup>
 
 #include <DIcon>
+#include <DGuiApplicationHelper>
 
 #include <libintl.h>
 #include <dde-shell/dlayershellwindow.h>
@@ -299,16 +300,22 @@ bool AuthDialog::event(QEvent *event)
 
 void AuthDialog::initUI()
 {
-    // create window
-    winId();
-    auto wnd = windowHandle();
-    if (wnd) {
-        auto layerShellWnd = ds::DLayerShellWindow::get(wnd);
-        layerShellWnd->setLayer(ds::DLayerShellWindow::LayerOverlay);
-        layerShellWnd->setKeyboardInteractivity(ds::DLayerShellWindow::KeyboardInteractivityOnDemand);
+    if (Dtk::Gui::DGuiApplicationHelper::testAttribute(Dtk::Gui::DGuiApplicationHelper::IsWaylandPlatform)) {
+        // create window
+        winId();
+        auto wnd = windowHandle();
+        if (wnd) {
+            auto layerShellWnd = ds::DLayerShellWindow::get(wnd);
+            layerShellWnd->setLayer(ds::DLayerShellWindow::LayerOverlay);
+            layerShellWnd->setKeyboardInteractivity(ds::DLayerShellWindow::KeyboardInteractivityOnDemand);
+        } else {
+            qWarning() << "WindowHandle is null!";
+        }
     } else {
-        qDebug() << "WindowHandle is null!!!";
+        setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint | Qt::Tool);
+        setWindowFlag(Qt::BypassWindowManagerHint, true);
     }
+
     setMinimumWidth(380);
     setOnButtonClickedClose(false);
 
