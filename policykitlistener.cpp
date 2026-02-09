@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2017 - 2022 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2017 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -95,6 +95,7 @@ void PolicyKitListener::initDialog(const QString &actionId)
 {
     connect(m_dialog.data(), &AuthDialog::accepted, this, &PolicyKitListener::dialogAccepted);
     connect(m_dialog.data(), &AuthDialog::rejected, this, &PolicyKitListener::dialogCanceled);
+    connect(m_dialog.data(), &AuthDialog::finished, this, &PolicyKitListener::dialogFinished);
     connect(m_dialog.data(), &AuthDialog::adminUserSelected, this, &PolicyKitListener::createSessionForId);
 
     // TODO(hualet): show extended action information.
@@ -160,7 +161,6 @@ void PolicyKitListener::cancelAuthentication()
 {
     qDebug() << "Cancelling authentication";
     m_wasCancelled = true;
-    finishObtainPrivilege();
 }
 
 void PolicyKitListener::request(const QString &request, bool echo)
@@ -241,12 +241,20 @@ void PolicyKitListener::dialogAccepted()
 }
 
 void PolicyKitListener::dialogCanceled()
-{    m_inProgress = false;
+{
+    m_inProgress = false;
     m_wasCancelled = true;
     if (!m_session.isNull()) {
         m_session.data()->cancel();
     }
-    finishObtainPrivilege();
+}
+
+void PolicyKitListener::dialogFinished(int result)
+{
+    // 处理其他方式关闭对话框的情况
+    if (result != QDialog::Accepted && result != QDialog::Rejected) {
+        dialogCanceled();
+    }
 }
 
 void PolicyKitListener::createSessionForId(const PolkitQt1::Identity &identity)

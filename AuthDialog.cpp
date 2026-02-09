@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2017 - 2022 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2017 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -39,7 +39,6 @@ AuthDialog::AuthDialog(const QString &message,
 
     // 始终显示用户名 (bug:9145,降低用户理解成本)
     connect(m_adminsCombo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &AuthDialog::on_userCB_currentIndexChanged);
-    connect(this, &AuthDialog::aboutToClose, this, &AuthDialog::rejected);
 }
 
 AuthDialog::~AuthDialog()
