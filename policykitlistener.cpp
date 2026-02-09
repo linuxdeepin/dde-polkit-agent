@@ -114,6 +114,9 @@ void PolicyKitListener::initDialog(const QString &actionId)
 void PolicyKitListener::finishObtainPrivilege()
 {
     qDebug() << "Finishing obtaining privileges";
+    if (m_inProgress == false) {
+        return;
+    }
 
     // 插件进行的操作不应该能够长时间阻塞 UI 线程
     // 将插件操作放在新线程中完成的原因是
