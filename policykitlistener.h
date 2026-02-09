@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2017 - 2022 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2017 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -51,6 +51,7 @@ public slots:
 private slots:
     void dialogAccepted();
     void dialogCanceled();
+    void dialogFinished(int result);
 
 private:
     void initDialog(const QString &actionId);
