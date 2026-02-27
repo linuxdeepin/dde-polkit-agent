@@ -1,3 +1,9 @@
+dde-polkit-agent (6.0.19) unstable; urgency=medium
+
+  * fix: prevent duplicate PolicyKit authentication calls
+
+ -- zhangkun <zhangkun2@uniontech.com>  Fri, 27 Feb 2026 17:03:50 +0800
+
 dde-polkit-agent (6.0.18) unstable; urgency=medium
 
   * fix: restrict layer shell usage to Wayland only
