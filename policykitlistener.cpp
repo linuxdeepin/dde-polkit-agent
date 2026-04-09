@@ -244,8 +244,19 @@ void PolicyKitListener::dialogCanceled()
 {
     m_inProgress = false;
     m_wasCancelled = true;
+
+    // 设置认证结果为取消状态
+    fillResult();
+
+    // 清理 session
     if (!m_session.isNull()) {
-        m_session.data()->cancel();
+        m_session->deleteLater();
+        m_session = nullptr;
+    }
+
+    // 确保对话框关闭
+    if (m_dialog) {
+        m_dialog->close();
     }
 }
 
@@ -293,29 +304,17 @@ void PolicyKitListener::createSessionForId(const PolkitQt1::Identity &identity)
 
 void PolicyKitListener::fillResult()
 {
-    if (!m_session.isNull()) {
-        if (m_wasCancelled) {
+    // 始终使用 m_result，因为 session 可能已经 completed
+    if (m_wasCancelled) {
 #ifdef USE_DEEPIN_POLKIT
-            m_session.data()->result()->setCancel("aciton cancel");
+        m_result->setCancel("action cancel");
 #else
-            m_session->result()->setError("action cancel");
+        m_result->setError("action cancel");
 #endif
-        } else if (!m_gainedAuthorization) {
-            m_session.data()->result()->setError("password error");
-        }
-        m_session.data()->result()->setCompleted();
-    } else {
-        if (m_wasCancelled) {
-#ifdef USE_DEEPIN_POLKIT
-            m_result->setCancel("action cancel");
-#else
-            m_result->setError("action cancel");
-#endif
-        } else if (!m_gainedAuthorization) {
-            m_result->setError("password error");
-        }
-        m_result->setCompleted();
+    } else if (!m_gainedAuthorization) {
+        m_result->setError("password error");
     }
+    m_result->setCompleted();
 }
 
 #ifdef USE_DEEPIN_POLKIT
