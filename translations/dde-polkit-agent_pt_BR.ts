@@ -9,7 +9,7 @@
     <message>
         <location filename="../AuthDialog.cpp" line="74"/>
         <source>Verification failed, two chances left</source>
-        <translation>A verificação falhou, duas tentativas restantes</translation>
+        <translation>A verificação falhou. Restam duas tentativas.</translation>
     </message>
     <message>
         <location filename="../AuthDialog.cpp" line="90"/>
