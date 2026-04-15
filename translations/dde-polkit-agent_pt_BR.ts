@@ -36,7 +36,7 @@
     <message>
         <location filename="../AuthDialog.cpp" line="287"/>
         <source>Locked, please try again later</source>
-        <translation>Bloqueado, tente novamente mais tarde</translation>
+        <translation>Bloqueado. Tente novamente mais tarde</translation>
     </message>
     <message>
         <location filename="../AuthDialog.cpp" line="289"/>
