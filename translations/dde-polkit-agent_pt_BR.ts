@@ -4,7 +4,7 @@
     <message>
         <location filename="../AuthDialog.cpp" line="72"/>
         <source>Finger moved too fast, please do not lift until prompted</source>
-        <translation>O dedo se moveu muito rápido; não levante até que seja solicitado</translation>
+        <translation>Movimento do dedo muito rápido. Não levante até ser solicitado</translation>
     </message>
     <message>
         <location filename="../AuthDialog.cpp" line="74"/>
