@@ -236,12 +236,19 @@ void PolicyKitListener::exAuthInfo(bool isMfa, QList<int> &authTypes) {
 
 void PolicyKitListener::dialogAccepted()
 {
+    if (!m_inProgress || m_session.isNull() || m_dialog.isNull())
+        return;
+
     m_dialog.data()->setInAuth(AuthDialog::Authenticating);
     m_session->setResponse(m_dialog->password());
 }
 
 void PolicyKitListener::dialogCanceled()
 {
+    if (!m_inProgress)
+        return;
+
+    qDebug() << "PolicyKitListener::dialogCanceled()";
     m_inProgress = false;
     m_wasCancelled = true;
 
@@ -262,8 +269,12 @@ void PolicyKitListener::dialogCanceled()
 
 void PolicyKitListener::dialogFinished(int result)
 {
-    // 处理其他方式关闭对话框的情况
-    if (result != QDialog::Accepted && result != QDialog::Rejected) {
+    Q_UNUSED(result);
+    // 确保对话框关闭时清理状态
+    // 修复：当用户通过标题栏关闭按钮(X)关闭对话框时，
+    // DDialog::closeEvent 使用残留的 clickedButtonIndex 调用 done()，
+    // 可能导致触发 accepted() 而非 rejected()，使 m_inProgress 卡死为 true
+    if (m_inProgress) {
         dialogCanceled();
     }
 }
