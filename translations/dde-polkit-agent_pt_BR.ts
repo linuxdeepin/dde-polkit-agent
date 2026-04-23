@@ -4,12 +4,12 @@
     <message>
         <location filename="../AuthDialog.cpp" line="72"/>
         <source>Finger moved too fast, please do not lift until prompted</source>
-        <translation>O dedo se moveu muito rápido; não levante até que seja solicitado</translation>
+        <translation>Movimento do dedo muito rápido. Não levante até ser solicitado</translation>
     </message>
     <message>
         <location filename="../AuthDialog.cpp" line="74"/>
         <source>Verification failed, two chances left</source>
-        <translation>A verificação falhou, duas tentativas restantes</translation>
+        <translation>A verificação falhou. Restam duas tentativas.</translation>
     </message>
     <message>
         <location filename="../AuthDialog.cpp" line="90"/>
@@ -31,12 +31,12 @@
     <message>
         <location filename="../AuthDialog.cpp" line="250"/>
         <source>The password of this user has expired. Please authenticate using another user account or change the password and try again.</source>
-        <translation>A senha desse usuário expirou. Autentique-se usando outra conta ou altere a senha e tente novamente.</translation>
+        <translation>A senha deste usuário expirou. Autentique-se com outra conta de usuário ou altere a senha e tente novamente.</translation>
     </message>
     <message>
         <location filename="../AuthDialog.cpp" line="287"/>
         <source>Locked, please try again later</source>
-        <translation>Bloqueado, tente novamente mais tarde</translation>
+        <translation>Bloqueado. Tente novamente mais tarde</translation>
     </message>
     <message>
         <location filename="../AuthDialog.cpp" line="289"/>
