@@ -1,3 +1,10 @@
+dde-polkit-agent (6.0.21) unstable; urgency=medium
+
+  * fix: prevent polkit auth dialog from being permanently blocked after
+    locked dismissal
+
+ -- zhangkun <zhangkun2@uniontech.com>  Thu, 23 Apr 2026 21:48:42 +0800
+
 dde-polkit-agent (6.0.20) unstable; urgency=medium
 
   * fix: properly handle cancel when authentication is locked
