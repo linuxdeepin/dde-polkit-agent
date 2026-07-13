@@ -194,7 +194,7 @@ PolkitQt1::Identity AuthDialog::selectedAdminUser() const
 
 int AuthDialog::getLockLimitTryNum()
 {
-    const QString path = "/usr/share/dde-session-shell/dde-session-shell.conf";
+    const QString path = "/var/lib/dde-session-shell/dde-session-shell.conf";
     int count = 5;
     QFile file(path);
     if (!file.exists()) {

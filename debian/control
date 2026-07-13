@@ -18,7 +18,7 @@ Homepage: https://github.com/linuxdeepin/dde-polkit-agent
 
 Package: dde-polkit-agent
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends},
+Depends: ${shlibs:Depends}, ${misc:Depends}, dde-session-shell (>> 6.0.64),
 Description: PolicyKit agent for DDE.
  PolicyKit agent is usually a dialog used to provide a way to let users
  grant permission to specific actions, this package serves the role in
