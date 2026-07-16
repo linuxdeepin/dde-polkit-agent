@@ -1,3 +1,9 @@
+dde-polkit-agent (6.0.23) unstable; urgency=medium
+
+  * feat: update dde-session-shell.conf path and add dependency
+
+ -- zhangkun <zhangkun2@uniontech.com>  Thu, 16 Jul 2026 21:46:08 +0800
+
 dde-polkit-agent (6.0.22) unstable; urgency=medium
 
   * fix: set screen config to ScreenFromCompositor
