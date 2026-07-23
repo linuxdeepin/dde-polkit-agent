@@ -1,3 +1,10 @@
+dde-polkit-agent (6.0.24) unstable; urgency=medium
+
+  * fix(CI): broken cppcheck
+  * fix: unlock password input automatically after lock period expires
+
+ -- zhangkun <zhangkun2@uniontech.com>  Thu, 23 Jul 2026 21:48:47 +0800
+
 dde-polkit-agent (6.0.23) unstable; urgency=medium
 
   * feat: update dde-session-shell.conf path and add dependency
