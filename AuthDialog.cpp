@@ -11,6 +11,8 @@
 #include <QUrl>
 #include <QAbstractButton>
 #include <QButtonGroup>
+#include <QDateTime>
+#include <QSettings>
 
 #include <DIcon>
 #include <DGuiApplicationHelper>
@@ -29,9 +31,13 @@ AuthDialog::AuthDialog(const QString &message,
     , m_passwordInput(new DPasswordEdit(this))
     , m_numTries(0)
     , m_lockLimitTryNum(getLockLimitTryNum())
+    , m_unlockTimer(new QTimer(this))
     , m_authStatus(AuthStatus::None)
 {
     initUI();
+
+    m_unlockTimer->setSingleShot(true);
+    connect(m_unlockTimer, &QTimer::timeout, this, &AuthDialog::onUnlockTimeout);
 
     setlocale(LC_ALL, "");
 
@@ -217,6 +223,7 @@ void AuthDialog::on_userCB_currentIndexChanged(int /*index*/)
     m_passwordInput->lineEdit()->setPlaceholderText("");
     m_errorMsg = "";
     m_numTries = 0;
+    m_unlockTimer->stop();
 
     // itemData is Null when "Select user" is selected
     if (!identity.isValid()) {
@@ -252,7 +259,65 @@ void AuthDialog::lock()
     getButton(1)->setEnabled(false);
 }
 
-void AuthDialog::authenticationFailure(bool &isLock)
+void AuthDialog::unlock()
+{
+    m_unlockTimer->stop();
+    m_passwordInput->setEnabled(true);
+    m_passwordInput->setAlert(false);
+    m_passwordInput->hideAlertMessage();
+    m_passwordInput->lineEdit()->setPlaceholderText("");
+    m_errorMsg = "";
+    m_passwordInput->lineEdit()->setFocus();
+    const bool enable = (m_authStatus != Authenticating
+                         && m_authStatus != None
+                         && !m_passwordInput->text().isEmpty());
+    getButton(1)->setEnabled(enable);
+}
+
+void AuthDialog::setLockedState(const QString &unlockTime)
+{
+    lock();
+
+    // 清空已输入的密码，清除残留提示
+    m_passwordInput->clear();
+    m_passwordInput->setAlert(false);
+    m_passwordInput->hideAlertMessage();
+
+    // 保留 DA 已下发的错误文本，仅在没有时使用 fallback
+    if (m_errorMsg.isEmpty()) {
+        setError(tr("Locked, please try again later"));
+    }
+    // alert 弹窗使用 m_errorMsg（与 master 一致，可能含 DA 下发的分钟数）
+    m_passwordInput->showAlertMessage(m_errorMsg);
+    m_passwordInput->setAlert(true);
+    // placeholder 使用固定通用文案，不显示分钟数
+    m_passwordInput->lineEdit()->setPlaceholderText(tr("Locked, please try again later"));
+
+    if (unlockTime.isEmpty()) {
+        return;
+    }
+
+    const QDateTime unlockDt = QDateTime::fromString(unlockTime, Qt::ISODateWithMs);
+    if (!unlockDt.isValid()) {
+        return;
+    }
+
+    // 单次定时器：剩余锁定时长到期后触发一次，由 listener 重新查询 DA 确认是否真正解锁；
+    // 若仍锁定，listener 会再次调用 setLockedState 重新计算剩余时间并重启定时器
+    qint64 remainingMs = QDateTime::currentDateTime().msecsTo(unlockDt);
+    if (remainingMs < 1000) {
+        // 已到期或即将到期，尽快触发重新查询
+        remainingMs = 1000;
+    }
+    m_unlockTimer->start(static_cast<int>(remainingMs));
+}
+
+void AuthDialog::onUnlockTimeout()
+{
+    emit unlockTimeout();
+}
+
+void AuthDialog::authenticationFailure(bool &isLock, const QString &unlockTime)
 {
     m_numTries++;
     if (!isLock) {
@@ -262,14 +327,18 @@ void AuthDialog::authenticationFailure(bool &isLock)
         }
     }
 
+    if (isLock) {
+        // 锁定场景：unlockTime 由 DA 的 GetLimits 提供（DA 自身已读取 lockWaitTime 配置换算）
+        setLockedState(unlockTime);
+        activateWindow();
+        return;
+    }
+
+    // 非锁定场景：显示错误提示并允许继续输入
     if (m_errorMsg.isEmpty()) {
         // 专业版错误信息现在由DA提供，考虑没有DA的版本，保留以前由agent提供错误的方案
         qDebug() << "authentication failed, error message is empty, set error message by agent.";
-        if (isLock) {
-            setError(tr("Locked, please try again later"));
-        } else {
-            setError(tr("Wrong password"));
-        }
+        setError(tr("Wrong password"));
     }
 
     m_passwordInput->setEnabled(true);
@@ -281,10 +350,6 @@ void AuthDialog::authenticationFailure(bool &isLock)
                          && m_authStatus != None
                          && !m_passwordInput->text().isEmpty());
     getButton(1)->setEnabled(enable);
-
-    if (isLock) {
-        lock();
-    }
     activateWindow();
 }
 
@@ -380,6 +445,10 @@ void AuthDialog::initUI()
 void AuthDialog::setInAuth(AuthStatus authStatus)
 {
     m_authStatus = authStatus;
+    // 锁定期间不恢复按钮可用状态，由 unlock() 负责恢复
+    if (m_unlockTimer->isActive()) {
+        return;
+    }
     const bool enable = (authStatus != Authenticating
                          && authStatus != None
                          && !m_passwordInput->text().isEmpty());

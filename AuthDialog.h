@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2017 - 2022 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2017 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -10,6 +10,7 @@
 
 #include <QWindow>
 #include <QComboBox>
+#include <QTimer>
 
 #include <PolkitQt1/Identity>
 #include <PolkitQt1/ActionDescription>
@@ -46,7 +47,7 @@ public:
 
     void setError(const QString &error, bool alertImmediately = false);
     void setRequest(const QString &request, bool requiresAdmin);
-    void authenticationFailure(bool &isLock);
+    void authenticationFailure(bool &isLock, const QString &unlockTime = QString());
     void createUserCB(const PolkitQt1::Identity::List &identities);
 
     void setAuthInfo(const QString &info);
@@ -55,6 +56,8 @@ public:
 
     QString password() const;
     void lock();
+    void unlock();
+    void setLockedState(const QString &unlockTime);
 
     PolkitQt1::Identity selectedAdminUser() const;
 
@@ -64,6 +67,7 @@ public:
 
 signals:
     void adminUserSelected(PolkitQt1::Identity);
+    void unlockTimeout();
 
 protected:
     bool event(QEvent *event) override;
@@ -75,6 +79,7 @@ private:
 
 private slots:
     void on_userCB_currentIndexChanged(int index);
+    void onUnlockTimeout();
 
 private:
     QString m_appname;
@@ -86,6 +91,8 @@ private:
 
     int m_numTries;
     int m_lockLimitTryNum;
+
+    QTimer *m_unlockTimer;
 
     void setupUI();
     void showErrorTip();

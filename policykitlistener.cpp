@@ -7,6 +7,7 @@
 #include <QtConcurrent>
 #include <QJsonDocument>
 #include <QJsonArray>
+#include <QJsonObject>
 
 #include <polkit-qt6-1/PolkitQt1/Agent/Listener>
 
@@ -16,7 +17,7 @@
 #include "pluginmanager.h"
 
 #ifdef USE_DEEPIN_POLKIT
-static bool isAccountLocked(const PolkitQt1::Identity &identity);
+static bool isAccountLocked(const PolkitQt1::Identity &identity, QString *unlockTime = nullptr);
 #endif
 
 PolicyKitListener::PolicyKitListener(QObject *parent)
@@ -97,6 +98,9 @@ void PolicyKitListener::initDialog(const QString &actionId)
     connect(m_dialog.data(), &AuthDialog::rejected, this, &PolicyKitListener::dialogCanceled);
     connect(m_dialog.data(), &AuthDialog::finished, this, &PolicyKitListener::dialogFinished);
     connect(m_dialog.data(), &AuthDialog::adminUserSelected, this, &PolicyKitListener::createSessionForId);
+#ifdef USE_DEEPIN_POLKIT
+    connect(m_dialog.data(), &AuthDialog::unlockTimeout, this, &PolicyKitListener::onUnlockTimeout);
+#endif
 
     // TODO(hualet): show extended action information.
     QList<QButtonGroup *> optionsList = m_pluginManager.data()->reduceGetOptions(actionId);
@@ -130,8 +134,9 @@ void PolicyKitListener::finishObtainPrivilege()
 #ifdef USE_DEEPIN_POLKIT
     else if (!m_wasCancelled) {
         // 认证失败
-        bool isLock = isAccountLocked(m_selectedUser);
-        m_dialog->authenticationFailure(isLock);
+        QString unlockTime;
+        bool isLock = isAccountLocked(m_selectedUser, &unlockTime);
+        m_dialog->authenticationFailure(isLock, unlockTime);
         if (!isLock) {
             createSessionForId(m_selectedUser); // 重试
         }
@@ -279,10 +284,45 @@ void PolicyKitListener::dialogFinished(int result)
     }
 }
 
+#ifdef USE_DEEPIN_POLKIT
+void PolicyKitListener::onUnlockTimeout()
+{
+    if (m_dialog.isNull() || !m_selectedUser.isValid()) {
+        return;
+    }
+
+    // 重新查询 DA 锁定状态
+    QString unlockTime;
+    if (isAccountLocked(m_selectedUser, &unlockTime)) {
+        // 仍然锁定，更新解锁时间并继续等待
+        m_dialog->setLockedState(unlockTime);
+    } else {
+        // 已解锁，恢复输入框并重建 session
+        m_dialog->unlock();
+        createSessionForId(m_selectedUser);
+    }
+}
+#else
+void PolicyKitListener::onUnlockTimeout()
+{
+}
+#endif
+
 void PolicyKitListener::createSessionForId(const PolkitQt1::Identity &identity)
 {
     m_inProgress = true;
     m_selectedUser = identity;
+
+#ifdef USE_DEEPIN_POLKIT
+    // 检查用户是否已被锁定，若锁定则显示锁定态并等待解锁，不创建 session
+    // 覆盖"关闭窗口后重新打开"场景：新对话框初始化时主动查询锁定状态
+    QString unlockTime;
+    if (isAccountLocked(identity, &unlockTime)) {
+        m_dialog->setLockedState(unlockTime);
+        return;
+    }
+#endif
+
     // If some user is selected we must destroy existing session
     if (!m_session.isNull()) {
         m_session.data()->deleteLater();
@@ -329,7 +369,7 @@ void PolicyKitListener::fillResult()
 }
 
 #ifdef USE_DEEPIN_POLKIT
-static bool isAccountLocked(const PolkitQt1::Identity &identity)
+static bool isAccountLocked(const PolkitQt1::Identity &identity, QString *unlockTime)
 {
     QString userName = identity.toString().replace("unix-user:", "");
     QDBusMessage msg = QDBusMessage::createMethodCall("org.deepin.dde.Authenticate1",
@@ -347,8 +387,12 @@ static bool isAccountLocked(const PolkitQt1::Identity &identity)
     bool result = false;
     for (auto item = array.constBegin(); item != array.constEnd(); item++) {
         // 后续可以支持多种认证方式：fingerprint, face, usbkey 等
-        if (item->toObject()["type"].toString() == "password") {
-            result = item->toObject()["locked"].toBool();
+        QJsonObject obj = item->toObject();
+        if (obj["type"].toString() == "password") {
+            result = obj["locked"].toBool();
+            if (unlockTime) {
+                *unlockTime = obj["unlockTime"].toString();
+            }
             break;
         }
     }

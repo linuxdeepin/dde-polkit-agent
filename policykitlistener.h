@@ -52,6 +52,7 @@ private slots:
     void dialogAccepted();
     void dialogCanceled();
     void dialogFinished(int result);
+    void onUnlockTimeout();
 
 private:
     void initDialog(const QString &actionId);
