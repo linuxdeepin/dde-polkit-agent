@@ -31,7 +31,7 @@
     <message>
         <location filename="../AuthDialog.cpp" line="250"/>
         <source>The password of this user has expired. Please authenticate using another user account or change the password and try again.</source>
-        <translation>A password para este utilizador expirou. Por favor autentique com outra conta de utilizador ou altere a password e tente novamente.</translation>
+        <translation>A palavra-passe deste utilizador expirou. Por favor autentique com outra conta de utilizador ou altere a palavra-passe e tente novamente.</translation>
     </message>
     <message>
         <location filename="../AuthDialog.cpp" line="287"/>
@@ -41,7 +41,7 @@
     <message>
         <location filename="../AuthDialog.cpp" line="289"/>
         <source>Wrong password</source>
-        <translation>Palavra-passe incorreta</translation>
+        <translation>Palavra-passe errada</translation>
     </message>
     <message>
         <location filename="../AuthDialog.cpp" line="326"/>
