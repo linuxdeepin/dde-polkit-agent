@@ -364,6 +364,8 @@ bool AuthDialog::event(QEvent *event)
 
 void AuthDialog::initUI()
 {
+    setObjectName("AuthDialog");
+
     if (Dtk::Gui::DGuiApplicationHelper::testAttribute(Dtk::Gui::DGuiApplicationHelper::IsWaylandPlatform)) {
         // create window
         winId();
@@ -406,9 +408,13 @@ void AuthDialog::initUI()
     getButton(confirmId)->setEnabled(false);
 
     getButton(cancelId)->setAccessibleName("Cancel");
+    getButton(cancelId)->setObjectName("CancelButton");
     getButton(confirmId)->setAccessibleName("Confirm");
+    getButton(confirmId)->setObjectName("ConfirmButton");
     m_passwordInput->setAccessibleName("PasswordInput");
+    m_passwordInput->setObjectName("PasswordInput");
     m_adminsCombo->setAccessibleName("AdminUsers");
+    m_adminsCombo->setObjectName("AdminUsers");
 
     m_adminsCombo->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     m_adminsCombo->hide();
