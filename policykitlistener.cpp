@@ -125,10 +125,13 @@ void PolicyKitListener::finishObtainPrivilege()
     // https://gerxxx.xxx.com/c/dpa-ext-gnomekeyring/+/45034/2/gnomekeyringextention.cpp#138
     // 调用了一个可能会阻塞的方法，导致了 bug 82328
     if (m_gainedAuthorization) {
-        (void)QtConcurrent::run([=]() {
-            QString user = m_selectedUser.toString().remove("unix-user:");
-            QString password = m_dialog.data()->password();
-            m_pluginManager->reduce(user, password);
+        const QString user = m_selectedUser.toString().remove("unix-user:");
+        const QString password = m_dialog->password();
+        const QPointer<PluginManager> pluginManager = m_pluginManager;
+        (void)QtConcurrent::run([pluginManager, user, password]() {
+            if (pluginManager) {
+                pluginManager->reduce(user, password);
+            }
         });
     }
 #ifdef USE_DEEPIN_POLKIT
