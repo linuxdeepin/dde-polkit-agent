@@ -1,3 +1,10 @@
+dde-polkit-agent (6.0.25) unstable; urgency=medium
+
+  * fix: prevent crash in async privilege reduction
+  * i18n: Updates for project Deepin Desktop Environment (#199)
+
+ -- zhangkun <zhangkun2@uniontech.com>  Thu, 15 Oct 2026 21:34:11 +0800
+
 dde-polkit-agent (6.0.24) unstable; urgency=medium
 
   * fix(CI): broken cppcheck
