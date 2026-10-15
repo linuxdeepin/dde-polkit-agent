@@ -4,12 +4,12 @@
     <message>
         <location filename="../AuthDialog.cpp" line="72"/>
         <source>Finger moved too fast, please do not lift until prompted</source>
-        <translation type="unfinished"/>
+        <translation>Хуруу хэт хурдан хөдөлсөн, сануулга өгөх хүртэл бүү өргө</translation>
     </message>
     <message>
         <location filename="../AuthDialog.cpp" line="74"/>
         <source>Verification failed, two chances left</source>
-        <translation type="unfinished"/>
+        <translation>Баталгаажуулалт амжилтгүй боллоо, хоёр боломж үлдсэн</translation>
     </message>
     <message>
         <location filename="../AuthDialog.cpp" line="90"/>
@@ -21,22 +21,22 @@
     <message>
         <location filename="../AuthDialog.cpp" line="159"/>
         <source>Expired</source>
-        <translation type="unfinished"/>
+        <translation>Хугацаа дууссан</translation>
     </message>
     <message>
         <location filename="../AuthDialog.cpp" line="248"/>
         <source>Unavailable</source>
-        <translation type="unfinished"/>
+        <translation>Боломжгүй</translation>
     </message>
     <message>
         <location filename="../AuthDialog.cpp" line="250"/>
         <source>The password of this user has expired. Please authenticate using another user account or change the password and try again.</source>
-        <translation type="unfinished"/>
+        <translation>Энэ хэрэглэгчийн нууц үгийн хугацаа дууссан. Өөр хэрэглэгчийн бүртгэлээр баталгаажуулна уу эсвэл нууц үгээ өөрчилөөд дахин оролдоно уу.</translation>
     </message>
     <message>
         <location filename="../AuthDialog.cpp" line="287"/>
         <source>Locked, please try again later</source>
-        <translation type="unfinished"/>
+        <translation>Түгжигдсэн, дараа дахин оролдоно уу</translation>
     </message>
     <message>
         <location filename="../AuthDialog.cpp" line="289"/>
