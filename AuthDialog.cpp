@@ -132,7 +132,7 @@ void AuthDialog::createUserCB(const PolkitQt1::Identity::List &identities)
     bool isOpen = hasOpenSecurity();
 
     // For each user
-    foreach (const PolkitQt1::Identity &identity, identities) {
+    Q_FOREACH (const PolkitQt1::Identity &identity, identities) {
         if (!identity.isValid()) {
             continue;
         }
