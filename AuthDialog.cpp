@@ -132,7 +132,7 @@ void AuthDialog::createUserCB(const PolkitQt1::Identity::List &identities)
     bool isOpen = hasOpenSecurity();
 
     // For each user
-    foreach (const PolkitQt1::Identity &identity, identities) {
+    Q_FOREACH (const PolkitQt1::Identity &identity, identities) {
         if (!identity.isValid()) {
             continue;
         }
@@ -241,7 +241,7 @@ void AuthDialog::on_userCB_currentIndexChanged(int /*index*/)
             m_passwordInput->setEnabled(true);
             m_passwordInput->hideAlertMessage();
             // We need this to restart the auth with the new user
-            emit adminUserSelected(identity);
+            Q_EMIT adminUserSelected(identity);
             // git password label focus
             m_passwordInput->lineEdit()->setFocus();
         }
@@ -314,7 +314,7 @@ void AuthDialog::setLockedState(const QString &unlockTime)
 
 void AuthDialog::onUnlockTimeout()
 {
-    emit unlockTimeout();
+    Q_EMIT unlockTimeout();
 }
 
 void AuthDialog::authenticationFailure(bool &isLock, const QString &unlockTime)
@@ -422,10 +422,10 @@ void AuthDialog::initUI()
     connect(this, &AuthDialog::buttonClicked, [this](int index, QString) {
         switch (index) {
         case 0:
-            emit rejected();
+            Q_EMIT rejected();
             break;
         case 1: {
-            emit accepted();
+            Q_EMIT accepted();
             break;
         }
         default:;

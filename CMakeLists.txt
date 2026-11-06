@@ -4,6 +4,8 @@ set(BIN_NAME dde-polkit-agent)
 
 project(${BIN_NAME} CXX)
 
+add_compile_definitions(QT_NO_KEYWORDS)
+
 #set(CMAKE_VERBOSE_MAKEFILE ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)

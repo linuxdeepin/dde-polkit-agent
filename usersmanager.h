@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2017 - 2022 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2017 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -23,7 +23,7 @@ public:
 
     QString getFullName(const QString &name);
 
-private slots:
+private Q_SLOTS:
     void userAdded(const QString &userPath);
     void userRemoved(const QString &userPath);
 

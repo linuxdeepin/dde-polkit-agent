@@ -65,7 +65,7 @@ public:
     bool hasSecurityHighLever(QString userName);
     void setInAuth(AuthStatus authStatus);
 
-signals:
+Q_SIGNALS:
     void adminUserSelected(PolkitQt1::Identity);
     void unlockTimeout();
 
@@ -77,7 +77,7 @@ private:
     int getLockLimitTryNum();
     bool passwordIsExpired(PolkitQt1::Identity identity);
 
-private slots:
+private Q_SLOTS:
     void on_userCB_currentIndexChanged(int index);
     void onUnlockTimeout();
 
